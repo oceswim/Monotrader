@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerSpawner : MonoBehaviourPun
 {
-    [SerializeField] private GameObject playerPrefab = null;
+    [SerializeField] private GameObject[] playerPrefab = new GameObject[4];
     public Transform[] Spawners;
     private Transform Spawn;
     private int[] otherNumbers;
@@ -35,10 +35,10 @@ public class PlayerSpawner : MonoBehaviourPun
     {
 
         Spawn = Spawners[i];
-        GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
-        myPlayer.name = (i+1).ToString();
-        myPlayer.transform.SetParent(Spawn);
-        Debug.Log(myPlayer.name + "spawning at :" + myPlayer.transform.parent.name);
+        //GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
+        //myPlayer.name = (i+1).ToString();
+        //myPlayer.transform.SetParent(Spawn);
+        //Debug.Log(myPlayer.name + "spawning at :" + myPlayer.transform.parent.name);
 
     
         

@@ -1,9 +1,16 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - Billboard
+    - Exit
     - MainMenu
+    - Movement
     - PlayerNameInput
+    - PlayerNameTag
+    - PlayerSpawner
     - ShootADie
+    PhotonUnityNetworking.Editor.dll:
+    - Photon.Pun.PunSceneSettings
     PhotonUnityNetworking.dll:
     - Photon.Pun.PhotonTransformView
     - Photon.Pun.PhotonView
@@ -72,32 +79,40 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 9928}
     - Class: 114
-      Script: {instanceID: 10344}
+      Script: {instanceID: 10088}
     - Class: 114
-      Script: {instanceID: 10630}
+      Script: {instanceID: 10346}
     - Class: 114
-      Script: {instanceID: 10734}
+      Script: {instanceID: 10632}
     - Class: 114
-      Script: {instanceID: 10964}
+      Script: {instanceID: 10720}
     - Class: 114
-      Script: {instanceID: 11050}
+      Script: {instanceID: 10738}
     - Class: 114
-      Script: {instanceID: 11178}
+      Script: {instanceID: 10808}
     - Class: 114
-      Script: {instanceID: 11242}
+      Script: {instanceID: 10970}
     - Class: 114
-      Script: {instanceID: 11578}
+      Script: {instanceID: 11056}
     - Class: 114
-      Script: {instanceID: 11642}
+      Script: {instanceID: 11184}
     - Class: 114
-      Script: {instanceID: 17622}
+      Script: {instanceID: 11248}
     - Class: 114
-      Script: {instanceID: 17648}
+      Script: {instanceID: 11390}
+    - Class: 114
+      Script: {instanceID: 11586}
+    - Class: 114
+      Script: {instanceID: 11650}
+    - Class: 114
+      Script: {instanceID: 11670}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
       Script: {instanceID: 0}
     - Class: 136
+      Script: {instanceID: 0}
+    - Class: 143
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -120,7 +135,13 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 21
       Script: {instanceID: 0}
+    - Class: 23
+      Script: {instanceID: 0}
     - Class: 28
+      Script: {instanceID: 0}
+    - Class: 33
+      Script: {instanceID: 0}
+    - Class: 43
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
@@ -143,34 +164,46 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 9950}
     - Class: 114
-      Script: {instanceID: 10136}
+      Script: {instanceID: 10088}
     - Class: 114
-      Script: {instanceID: 10344}
+      Script: {instanceID: 10138}
     - Class: 114
-      Script: {instanceID: 10370}
+      Script: {instanceID: 10346}
     - Class: 114
-      Script: {instanceID: 10734}
+      Script: {instanceID: 10372}
     - Class: 114
-      Script: {instanceID: 10782}
+      Script: {instanceID: 10632}
     - Class: 114
-      Script: {instanceID: 10964}
+      Script: {instanceID: 10738}
     - Class: 114
-      Script: {instanceID: 10978}
+      Script: {instanceID: 10786}
     - Class: 114
-      Script: {instanceID: 11058}
+      Script: {instanceID: 10808}
     - Class: 114
-      Script: {instanceID: 11178}
+      Script: {instanceID: 10970}
     - Class: 114
-      Script: {instanceID: 11242}
+      Script: {instanceID: 10984}
     - Class: 114
-      Script: {instanceID: 11420}
+      Script: {instanceID: 11064}
     - Class: 114
-      Script: {instanceID: 11538}
+      Script: {instanceID: 11184}
     - Class: 114
-      Script: {instanceID: 11642}
+      Script: {instanceID: 11248}
+    - Class: 114
+      Script: {instanceID: 11428}
+    - Class: 114
+      Script: {instanceID: 11546}
+    - Class: 114
+      Script: {instanceID: 11586}
+    - Class: 114
+      Script: {instanceID: 11650}
+    - Class: 114
+      Script: {instanceID: 11670}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
+      Script: {instanceID: 0}
+    - Class: 143
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -363,6 +396,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.dll
     namespaceName: Photon.Pun
     className: PhotonHandler
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Billboard
   - hash:
       serializedVersion: 2
       Hash: bd3cf68c8964d3c66d1c43f4f98508c9
@@ -593,6 +632,12 @@ ScriptsOnlyBuild:
     className: TextContainer
   - hash:
       serializedVersion: 2
+      Hash: e0d99d0906b50f75fb96525f1192b020
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayerSpawner
+  - hash:
+      serializedVersion: 2
       Hash: 3cae62e09a50c5d5aae8d0536b3d8fde
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
@@ -615,6 +660,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.dll
     namespaceName: Photon.Pun
     className: ServerSettings
+  - hash:
+      serializedVersion: 2
+      Hash: 82243b12f3586f93ee32ec4f9b524fe0
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayerNameTag
   - hash:
       serializedVersion: 2
       Hash: 4fe8955e1c662935371b0936cafbb89b
@@ -881,6 +932,12 @@ ScriptsOnlyBuild:
     className: PhotonTeamsManager
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Exit
+  - hash:
+      serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -1017,6 +1074,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: SignalEmitter
+  - hash:
+      serializedVersion: 2
+      Hash: 459b50185a167c1d210a783633c72823
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Movement
   - hash:
       serializedVersion: 2
       Hash: 7072231382eb3c4871b3dd75ad0227e1
