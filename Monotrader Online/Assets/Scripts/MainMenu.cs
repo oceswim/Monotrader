@@ -18,7 +18,9 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
+
     }
+
     public void FindOponents()
     {
         isConnecting = true;
@@ -68,7 +70,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             waitingStatusText.text = "Oponent found!";
             Debug.Log("Match ready to begin");
-            //PhotonNetwork.LoadLevel("Game");
+          //PhotonNetwork.LoadLevel("Game");
         }
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)//this shows to the player already in the room
@@ -80,6 +82,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
             waitingStatusText.text = "Opponent found";
 
             PhotonNetwork.LoadLevel("Game");
+ 
         }
     }
     public void ExitGame()

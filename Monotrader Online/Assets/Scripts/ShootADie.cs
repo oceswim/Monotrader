@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ShootADie : MonoBehaviour
@@ -9,10 +7,12 @@ public class ShootADie : MonoBehaviour
     
 
     private Vector3 noVelocity = Vector3.zero;
-    private bool roll,canGuess;
+    private bool canGuess;
+    public bool roll;
     public void Start()
     {
-        roll =  false;
+        GameManager.instance.AddDiceInstance(this);
+        roll = false;
         canGuess = false;
         myBody = transform.GetComponent<Rigidbody>();
  
@@ -39,11 +39,7 @@ public class ShootADie : MonoBehaviour
         }
 
     }
-    // Start is called before the first frame update
-    public void Roll()
-    {
-        roll = true;
-    }
+
     private void w()
     {
       

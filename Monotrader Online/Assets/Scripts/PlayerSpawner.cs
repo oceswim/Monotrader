@@ -1,15 +1,19 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
-
+using TMPro;
 public class PlayerSpawner : MonoBehaviourPun
 {
-    [SerializeField] private GameObject[] playerPrefab = new GameObject[4];
+    [SerializeField] private GameObject playerPrefab;
     public Transform[] Spawners;
     private Transform Spawn;
     private int[] otherNumbers;
+    public GameObject[] inGamePrefabs = new GameObject[4];
+    public static bool spawn;
+    public TMP_Text temp;
     void Start()
     {
+        spawn = false;
         int otherPlayers = PhotonNetwork.PlayerList.Length - 1;
         otherNumbers = new int[otherPlayers];
         int spawnNumber = 0;
@@ -22,28 +26,68 @@ public class PlayerSpawner : MonoBehaviourPun
             spawnNumber = PhotonNetwork.PlayerList[i].ActorNumber;
             if (!otherNumbers.Contains(spawnNumber))
             {
-                Debug.Log(spawnNumber + " -> spawn num");
                 SpawnMyPlayer(spawnNumber - 1);
             }
         }
-        
-       
-       
-        
+         
+    }
+    private void Update()
+    {
+        if(spawn)
+        {
+            spawn = false;
+            SpawnModel();
+        }
     }
     private void SpawnMyPlayer(int i)
     {
 
         Spawn = Spawners[i];
-        //GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
-        //myPlayer.name = (i+1).ToString();
-        //myPlayer.transform.SetParent(Spawn);
-        //Debug.Log(myPlayer.name + "spawning at :" + myPlayer.transform.parent.name);
+        GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
+        myPlayer.name = "Player"+(i+1).ToString();
+        myPlayer.transform.SetParent(Spawn);
+
 
     
         
     }
 
+    private void SpawnModel()
+    {
+        int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        string spawnPath = "StartP" + actorNum.ToString();
+        Transform spawnTarget = GameObject.Find(spawnPath).transform;
+        int ind = PlayerPrefs.GetInt("CharIndex");
+        string prefabName = inGamePrefabs[ind].name;
+        Vector3 prefabPos = spawnTarget.position;
+        GameObject prefab = PhotonNetwork.Instantiate(prefabName,prefabPos,Quaternion.identity);
+        prefab.name = inGamePrefabs[ind].name;
+        prefab.transform.SetParent(spawnTarget.GetChild(0));
+        AdjustPrefab(prefab);
+        
+    }
+    private void AdjustPrefab(GameObject prefb)
+    {
+        string prefbName = prefb.name;
+        switch(prefbName)
+        {
+            case "CoinsStack":
+                prefb.transform.localPosition = new Vector3(0, -.25f, 0);
+                prefb.transform.localScale = new Vector3(150, 150, 150);
+                break;
+            case "CreditCard":
+                prefb.transform.localPosition = new Vector3(0, .72f, 0);
+                break;
+            case "GoldIngot":
+                prefb.transform.localPosition = new Vector3(0, -.25f, 0);
+                break;
+            case "PileBill":
+                prefb.transform.localPosition = new Vector3(0, -.25f, 0);
+                prefb.transform.localScale = new Vector3(40, 40, 40);
+                break;
+        }
+
+    }
 }
 
 

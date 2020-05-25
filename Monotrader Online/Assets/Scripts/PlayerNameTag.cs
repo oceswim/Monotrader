@@ -5,7 +5,7 @@ using TMPro;
 using Photon.Pun;
 using System;
 
-public class PlayerNameTag : MonoBehaviourPun
+public class PlayerScript : MonoBehaviourPun
 {
     // Start is called before the first frame update
     [SerializeField] private TextMeshProUGUI nameText;
