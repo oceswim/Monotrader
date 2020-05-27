@@ -9,7 +9,7 @@ public class CharSelectionScript : MonoBehaviour
     public GameObject[] prefabs;
     private int index;
     public TMP_Text ObjectName;
-    public GameObject CharSelectionObject,mainCamera,charNotAvailable;
+    public GameObject CharSelectionObject,mainCamera,charNotAvailable,playerUI;
     public static bool confirmation;
 
     private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
@@ -107,6 +107,8 @@ public class CharSelectionScript : MonoBehaviour
             CharSelectionObject.SetActive(false);
             //activates main camera
             mainCamera.SetActive(true);
+            playerUI.SetActive(true);
+            GameManager.instance.OnConfirmation();
         }
 
 

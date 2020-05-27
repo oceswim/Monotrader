@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 public class PlayerSpawner : MonoBehaviourPun
 {
+    public MovementManager movementScript;
+    private const string playerNamePrefKey = "myName";
     [SerializeField] private GameObject playerPrefab;
     public Transform[] Spawners;
     private Transform Spawn;
@@ -45,8 +47,9 @@ public class PlayerSpawner : MonoBehaviourPun
         Spawn = Spawners[i];
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
         myPlayer.name = "Player"+(i+1).ToString();
+        PlayerPrefs.SetString(playerNamePrefKey, myPlayer.name);
         myPlayer.transform.SetParent(Spawn);
-
+        movementScript.enabled = true;
 
     
         

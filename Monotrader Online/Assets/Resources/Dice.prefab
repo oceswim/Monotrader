@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 1821191087098755202}
   - component: {fileID: 1821191087098755205}
   - component: {fileID: 1821191087098755204}
-  - component: {fileID: 1821191087098755200}
-  - component: {fileID: 1821191087098755203}
+  - component: {fileID: 2878260551485872969}
+  - component: {fileID: 1204432452248744231}
   m_Layer: 0
   m_Name: Dice
   m_TagString: Untagged
@@ -126,7 +126,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.010000003, y: 0.009999976, z: 0.010000001}
   m_Center: {x: 0, y: -0.000000013504177, z: 0.005000103}
---- !u!114 &1821191087098755200
+--- !u!114 &2878260551485872969
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,11 +144,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 1821191087098755203}
+  - {fileID: 1204432452248744231}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &1821191087098755203
+--- !u!114 &1204432452248744231
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
