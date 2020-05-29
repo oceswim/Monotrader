@@ -3,25 +3,30 @@ using Photon.Realtime;
 using System;
 using UnityEngine;
 
-public class ShootADie : MonoBehaviourPun
+public class DicesManager : MonoBehaviourPun
 {
     private Rigidbody myBody;
-    private const string prefDice1 = "Dice1Val";
-    private const string prefDice2 = "Dice2Val";
     private const string dicesDoneRollingHashKey = "dicesDone";
     private Room myRoom;
 
+    private int myIndex;
     private Vector3 noVelocity = Vector3.zero;
     private bool canGuess;
     public bool roll;
     public void Start()
     {
         myRoom = PhotonNetwork.CurrentRoom;
-        GameManager.instance.AddDiceInstance(this);
         roll = false;
         canGuess = false;
         myBody = transform.GetComponent<Rigidbody>();
- 
+        if(gameObject.name.EndsWith("1"))
+        {
+            myIndex = 1;
+        }
+        else
+        {
+            myIndex = 2;
+        }
     }
 
     private void Update()
@@ -29,7 +34,7 @@ public class ShootADie : MonoBehaviourPun
         if(myBody.velocity.Equals(noVelocity) && canGuess)
         {
             canGuess = false;
-            w();
+            WhichDiceValue();
         }
         if(roll)
         {
@@ -38,7 +43,7 @@ public class ShootADie : MonoBehaviourPun
             float dirX = UnityEngine.Random.Range(0, 500);
             float dirY = UnityEngine.Random.Range(0, 500);
             float dirZ = UnityEngine.Random.Range(0, 500);
-            transform.position = new Vector3(0, 5, 0);
+            transform.position = new Vector3(transform.position.x, 5, transform.position.z);
             transform.rotation = Quaternion.identity;
             myBody.AddForce(transform.up * 500);
             myBody.AddTorque(dirX, dirY, dirZ);
@@ -46,7 +51,7 @@ public class ShootADie : MonoBehaviourPun
 
     }
 
-    private void w()
+    private void WhichDiceValue()
     {
       
         double xRot = Math.Round(transform.localEulerAngles.x);
@@ -92,17 +97,9 @@ public class ShootADie : MonoBehaviourPun
             diceVal = 6;
         }
 
-        if(gameObject.name.Contains("1"))
-        {
-            Debug.Log("Dice 1 set to :" + diceVal.ToString());
-            PlayerPrefs.SetInt(prefDice1, diceVal);
-        }
-        else if(gameObject.name.Contains("2"))
-        {
-            Debug.Log("Dice 2 set to :" + diceVal.ToString());
-            PlayerPrefs.SetInt(prefDice2, diceVal);
-        }
-        SetRoomProperty(dicesDoneRollingHashKey, 1);
+        Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
+        GameManager.instance.SetDicePrefs(diceVal);
+        //SetRoomProperty(dicesDoneRollingHashKey, 1);
     }
     private void SetRoomProperty(string hashKey, int value)//general room properties
     {

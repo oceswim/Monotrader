@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
-    private const int maxPlayerPerRoom = 2;
+    private const int maxPlayerPerRoom = 1;
 
     private void Awake()
     {
@@ -70,7 +70,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             waitingStatusText.text = "Oponent found!";
             Debug.Log("Match ready to begin");
-          //PhotonNetwork.LoadLevel("Game");
+          PhotonNetwork.LoadLevel("Game");
         }
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)//this shows to the player already in the room

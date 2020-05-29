@@ -1,56 +1,210 @@
 ﻿using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 public class MovementManager : MonoBehaviourPun
 {
-    private const string PREFDICE1 = "Dice1Val";
-    private const string PREFdICE2 = "Dice2Val";
+    private const string PREFDICE = "DiceVal";
     private const int TARGET_LIST_SIZE = 27;
     private const int CORNER_1 = 7;
     private const int CORNER_2 = 14;
     private const int CORNER_3 = 21;
     private const int CORNER_4 = 0;
-    private const int MOVE_STEP = 1;
+    private const float SPEED = 5f;
     private const string PLAYER_NAME_PREF_KEY = "myName";
     private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
     public static bool moveMe;
     private Transform[] Targets;
-    private Transform transformToMove;
-    private int myActorNum,myPositionIndex;
-
+    private Transform transformToMove,startingPoint, endPoint;
+    private int myActorNum,myPositionIndex,movementIndex;
+    private bool simpleMove, simpleOverlap, complexOverlap,simpleOverlapReady,complexOverlapReady,step1Complete,step2Complete;
+    private Transform halfwayTarget1, halfwayTarget2;
+    private CharacterController controller = null;
     private void Start()
     {
-        Targets = new Transform[27];
+
+
         PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, 0);
+
+        transformToMove = FindMyTransform();
+        controller = transformToMove.GetComponent<CharacterController>();
+        string pathToTargets = "BoardGame/Player"+myActorNum.ToString()+"Spots";
+        Targets = new Transform[27];
+        InitialiseTargetList(pathToTargets);
+
+        moveMe = simpleOverlapReady = complexOverlapReady = step1Complete = step2Complete = false;
+        movementIndex = 0;
+    }
+    private Transform FindMyTransform()
+    {
+        Transform myTransf;
         myPositionIndex = PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY);
-       string myName = PlayerPrefs.GetString(PLAYER_NAME_PREF_KEY);
-       myActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
-       string spawnPath = "StartP" + myActorNum.ToString();
-       string fullPath = "BoardGame/Spawners/" + spawnPath + "/" + myName;
-       transformToMove = GameObject.Find(fullPath).transform;
-       moveMe = false;
-       string pathToTargets = "BoardGame/Player"+myActorNum.ToString()+"Spots";
-       InitialiseTargetList(pathToTargets);
+        string myName = PlayerPrefs.GetString(PLAYER_NAME_PREF_KEY);
+        myActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        string spawnPath = "StartP" + myActorNum.ToString();
+        string fullPath = "BoardGame/Spawners/" + spawnPath + "/" + myName;
+        myTransf = GameObject.Find(fullPath).transform;
+        Debug.Log("HEY"+myTransf.name);
+        return myTransf;
     }
     private void InitialiseTargetList(string path)
     {
         Transform parentTarget = GameObject.Find(path).transform;
-        Debug.Log("Parent target = " + parentTarget.name);
         for(int i = 0; i< Targets.Length;i++)
         {
             Targets[i] = parentTarget.GetChild(i);
-            
         }
     }
     private void Update()
     {
-        if(moveMe)
+        if (moveMe)
         {
             moveMe = false;
-            int dice1Val = PlayerPrefs.GetInt(PREFDICE1);
-            int dice2Val = PlayerPrefs.GetInt(PREFdICE2);
-            int movementVal = dice1Val + dice2Val;
-            Movement(movementVal);
+            int diceVal = PlayerPrefs.GetInt(PREFDICE);
+            Debug.Log("Move script : v1 = " + diceVal);
+            Movement(diceVal);
         }
+        if (simpleMove)
+        {
+            var theOffSet = GetOffset(endPoint, transformToMove);
+            theOffSet = theOffSet.normalized * SPEED;
+            transformToMove.LookAt(endPoint);
+            controller.Move(theOffSet * Time.deltaTime);
+            Debug.Log(Vector3.Distance(endPoint.position, transformToMove.position));
+            if(Vector3.Distance(endPoint.position,transformToMove.position) < 2f)
+            {
+                simpleMove = false;
+                Debug.Log("I have arrived!");
+            }
+        }
+        else if (simpleOverlap)
+        {
+            if (!simpleOverlapReady)
+            {
+                switch (movementIndex)
+                {
+                    case 2:
+                        halfwayTarget1= Targets[CORNER_1];
+                        break;
+                    case 4:
+                        halfwayTarget1 = Targets[CORNER_2];
+                        break;
+                    case 6:
+                        halfwayTarget1 = Targets[CORNER_3];
+                        break;
+                    case 8:
+                        halfwayTarget1 = Targets[CORNER_4];
+                        break;
+                }
+                simpleOverlapReady = true;
+            }
+            if (!step1Complete)
+            {
+                Vector3 theOffSet = GetOffset(halfwayTarget1,transformToMove);
+                theOffSet = theOffSet.normalized * SPEED;
+                transformToMove.LookAt(halfwayTarget1);
+                controller.Move(theOffSet * Time.deltaTime);
+                Debug.Log(Vector3.Distance(halfwayTarget1.position, transformToMove.position));
+                if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < 2f)
+                { 
+                    step1Complete = true;
+                    Debug.Log("I have arrived!");
+                }
+            }
+            else
+            {
+                Vector3 theOffSet = GetOffset(endPoint, transformToMove);
+                theOffSet = theOffSet.normalized * SPEED;
+                transformToMove.LookAt(endPoint);
+                controller.Move(theOffSet * Time.deltaTime);
+               
+                Debug.Log(Vector3.Distance(endPoint.position, transformToMove.position));
+
+                if (Vector3.Distance(endPoint.position, transformToMove.position) < 2f)
+                {
+                    step1Complete= simpleOverlap = simpleOverlapReady = false;
+                    Debug.Log("I have arrived!");
+                }
+            }
+        }
+        else if (complexOverlap)
+        {
+            if (!complexOverlapReady)
+            {
+                switch (movementIndex)
+                {
+                    case 3:
+
+                        halfwayTarget1 = Targets[CORNER_1];
+                        halfwayTarget2 = Targets[CORNER_2];
+                        break;
+                    case 5:
+
+                        halfwayTarget1 = Targets[CORNER_2];
+                        halfwayTarget2 = Targets[CORNER_3];
+                        break;
+                    case 7:
+
+                        halfwayTarget1 = Targets[CORNER_3];
+                        halfwayTarget2 = Targets[CORNER_4];
+                        break;
+                    case 9:
+
+                        halfwayTarget1 = Targets[CORNER_4];
+                        halfwayTarget2 = Targets[CORNER_1];
+                        break;
+                }
+                complexOverlapReady = true;
+            }
+            if (!step1Complete)
+            {
+                Vector3 theOffSet = GetOffset(halfwayTarget1, transformToMove);
+                transformToMove.LookAt(halfwayTarget1);
+                theOffSet = theOffSet.normalized * SPEED;
+                controller.Move(theOffSet * Time.deltaTime);
+              
+                Debug.Log(controller.transform.position);
+                if (theOffSet.magnitude < .1f)
+                {
+                    step1Complete = true;
+                    Debug.Log("I have arrived!");
+                }
+            }
+            else if (!step2Complete)
+            {
+                Vector3 theOffSet = GetOffset(halfwayTarget2, transformToMove);
+                transformToMove.LookAt(halfwayTarget2) ;
+                theOffSet = theOffSet.normalized * SPEED;
+                controller.Move(theOffSet *Time.deltaTime);
+                Debug.Log(controller.transform.position);
+                if (theOffSet.magnitude < .1f)
+                {
+                    step2Complete = true;
+                    Debug.Log("I have arrived!");
+                }
+            }
+            else
+            {
+                Vector3 theOffSet = GetOffset(endPoint, transformToMove);
+                transformToMove.LookAt(endPoint);
+                theOffSet = theOffSet.normalized * SPEED;
+                controller.Move(theOffSet * Time.deltaTime);
+                Debug.Log(controller.transform.position);
+                if (theOffSet.magnitude < .1f)
+                {
+                    step1Complete = step2Complete = complexOverlap = complexOverlapReady = false;
+                    Debug.Log("I have arrived!");
+                }
+            }
+        }
+    }
+
+    private Vector3 GetOffset(Transform p1, Transform p2)
+    {
+        Debug.Log(p1.position + "P1" + p2.position + " P2");
+        Vector3 offset = p1.position - p2.position;
+
+        return offset;
+
     }
 
     private void Movement(int value)
@@ -62,100 +216,136 @@ public class MovementManager : MonoBehaviourPun
         {
             newPositionIndex = 0;
         }
+        Transform startTarget = Targets[oldPosition];
         Transform finalTarget = Targets[newPositionIndex];
-        if(oldPosition<7 && newPositionIndex >=8)
+        movementIndex=0;
+        int movementMode = 0;
+        if(oldPosition>=0 && oldPosition <=7)
         {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_1], finalTarget);
-            Debug.Log("1 -Starting from less than 7 moving to more than 8: +" + newPositionIndex);
+            if(newPositionIndex <=7)
+            {
+                //straight line
+                movementIndex = 1;
+                movementMode = 1;
+            }
+            else if(newPositionIndex>7 && newPositionIndex <=14)
+            {
+                //simple overlap
+                movementIndex = 2;
+                movementMode = 2;
+            }
+            else if( newPositionIndex>14 && newPositionIndex<=21)
+            {
+                //double overlap
+                movementIndex = 3;
+                movementMode = 3;
+            }
         }
-        else if(oldPosition < 14 && newPositionIndex >= 15)
+        else if(oldPosition >= 7 && oldPosition <= 14)
         {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_2], finalTarget);
-            Debug.Log("2 -Starting from less than 14 moving to more than 14: +" + newPositionIndex);
+            if (newPositionIndex <= 14)
+            {
+                //straight line
+                movementIndex = 1;
+                movementMode = 1;
+            }
+            else if (newPositionIndex > 14 && newPositionIndex <= 21)
+            {
+                //simple overlap
+                movementIndex = 4;
+                movementMode = 2;
+            }
+            else if (newPositionIndex > 21 && newPositionIndex <= 27)
+            {
+                //double overlap
+                movementIndex = 5;
+                movementMode = 3;
+            }
         }
-        else if(oldPosition < 21 && newPositionIndex >= 22)
+        else if(oldPosition >= 14 && oldPosition <= 21)
         {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_3], finalTarget);
-            Debug.Log("3 -Starting from less than 21 moving to more than 21: +" + newPositionIndex);
+            if (newPositionIndex <= 21)
+            {
+                //straight line
+                movementIndex = 1;
+                movementMode = 1;
+            }
+            else if (newPositionIndex > 21 && (newPositionIndex <= 27 || newPositionIndex ==0))
+            {
+                //simple overlap 
+                movementIndex = 6;
+                movementMode = 2;
+                if (newPositionIndex == 0)
+                {
+                    //new turn situation
+                }
+            }
+            else if (newPositionIndex > 0 && newPositionIndex <= 7)
+            {
+                //double overlap + new turn situation
+                movementIndex = 7;
+                movementMode = 3;
+            }
         }
-        else if(oldPosition < 28 && newPositionIndex >= 0)
+        else if (oldPosition >= 21 && oldPosition <= 27)
         {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_4], finalTarget);
-            Debug.Log("4 -Starting from less than 27 moving to more than 0: +" + newPositionIndex);
-            //if zero : new turn!
+            if (newPositionIndex <= 27 || newPositionIndex == 0)
+            {
+                //straight line
+                if(newPositionIndex==0)
+                {
+                    //new turn
+                }
+                movementIndex = 1;
+                movementMode = 1;
+            }
+            else if (newPositionIndex > 0 && newPositionIndex <= 7)
+            {
+                //simple overlap + new turn 
+
+                movementIndex = 8;
+                movementMode = 2;
+            }
+            else if (newPositionIndex > 7 && newPositionIndex <= 14)
+            {
+                //double overlap + new turn
+                movementIndex = 9;
+                movementMode = 3;
+            }
+        }
+        StartProperMovement(movementMode, startTarget, finalTarget);
+        myPositionIndex = newPositionIndex;
+    }
+
+
+    private void StartProperMovement(int moveMode,Transform startTarget,Transform finalTarget)
+    {
+        
+      Movement(startTarget, finalTarget,moveMode);
+
+        
+    }
+    private void Movement(Transform startTarget, Transform endTarget, int mode)
+    {
+        Debug.Log($"Going from {startTarget.name} To {endTarget.name}");
+        Debug.Log($"Going from {startTarget.localPosition} To {endTarget.localPosition}");
+        startingPoint = startTarget;
+        endPoint = endTarget;
+        switch (mode)
+        {
+            case 1:
+                simpleMove = true;
+                break;
+            case 2:
+                simpleOverlap = true;
+                break;
+            case 3:
+                complexOverlap = true;
+                break;
 
         }
-        else if(oldPosition<7 && newPositionIndex>14)
-        {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_1], Targets[CORNER_2], finalTarget);
-            Debug.Log("5 -Starting from less than seven moving to more than 14: +" + newPositionIndex);
 
-        }
-        else if(oldPosition < 14 && newPositionIndex > 21)
-        {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_2], Targets[CORNER_3], finalTarget);
-            Debug.Log("6 -Starting from less than 14 moving to more than 21: +" + newPositionIndex);
-        }
-        else if(oldPosition < 21 && newPositionIndex >= 0)
-        {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_3], Targets[CORNER_4], finalTarget);
-            Debug.Log("7 -Starting from less than 21 moving to more than 0: +" + newPositionIndex);
-            //new turn!
-        }
-        else if(oldPosition < 28 && newPositionIndex > 7)
-        {
-            OverlapMovement(Targets[oldPosition], Targets[CORNER_4], Targets[CORNER_1], finalTarget); 
-            Debug.Log("8 -Starting from less than 28 moving to more than 7: +" + newPositionIndex);
-        }
-        else if((oldPosition>=0 && newPositionIndex<=7)||(oldPosition >=7 && newPositionIndex <= 14) ||(oldPosition >=14 && newPositionIndex <= 21) ||(oldPosition >=21  && newPositionIndex <= 27))
-        {
-            Movement(Targets[oldPosition], Targets[newPositionIndex]);
-            Debug.Log("9 -Moving down one line: +" + newPositionIndex);
-        }
-        else if((oldPosition >= 21 && newPositionIndex == 0))
-        {
-            //new turn logic
-        }
-    }
-    /**
-     * set halfway target as target
-     * player moves to it
-     * then switch target to end target
-     * then look at end target 
-     * then finish moving
-     */
-    private void OverlapMovement(Transform startTarget,Transform halfWayTarget,Transform endTarget)
-    {
-
-        transformToMove.position = Vector3.MoveTowards(startTarget.position, halfWayTarget.position, MOVE_STEP);
-        transformToMove.LookAt(endTarget);
-        transformToMove.position = Vector3.MoveTowards(halfWayTarget.position, endTarget.position, MOVE_STEP);
-    }
-    /**
-    * set halfway target 1 as target
-    * player moves to it
-    * then switch target to halfway target 2
-    * looks at halfway target 2
-    * player moves to it
-    * then switch target to end target
-    * then look at end target 
-    * then finish moving
-    */
-    private void OverlapMovement(Transform startTarget, Transform halfWayTarget1, Transform halfWayTarget2, Transform endTarget)
-    {
-        transformToMove.position = Vector3.MoveTowards(startTarget.position, halfWayTarget1.position, MOVE_STEP);
-        transformToMove.LookAt(halfWayTarget2);
-        transformToMove.position = Vector3.MoveTowards(halfWayTarget1.position, halfWayTarget2.position, MOVE_STEP);
-        transform.LookAt(endTarget);
-        transformToMove.position = Vector3.MoveTowards(halfWayTarget2.position, endTarget.position, MOVE_STEP);
-    }
-    /**
-    * set target to end target
-    * then look at end target 
-    * then moves to end target
-    */
-    private void Movement(Transform startTarget,  Transform endTarget)
-    {
-        transformToMove.position = Vector3.MoveTowards(startTarget.position, endTarget.position, MOVE_STEP);
+    
+    
     }
 }

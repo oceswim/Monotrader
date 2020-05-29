@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 3394995579216333460}
   - component: {fileID: 5928554340346835106}
   - component: {fileID: 106676446494379099}
-  - component: {fileID: 1821191087098755202}
   - component: {fileID: 1821191087098755205}
   - component: {fileID: 1821191087098755204}
   - component: {fileID: 2878260551485872969}
   - component: {fileID: 1204432452248744231}
+  - component: {fileID: 1815571783920447564}
   m_Layer: 0
   m_Name: Dice
   m_TagString: Untagged
@@ -84,19 +84,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1821191087098755202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1821191087098755207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7405bada67274b4448dc6119d1bb6fbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roll: 0
 --- !u!54 &1821191087098755205
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -163,3 +150,16 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
+--- !u!114 &1815571783920447564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821191087098755207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7405bada67274b4448dc6119d1bb6fbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roll: 0

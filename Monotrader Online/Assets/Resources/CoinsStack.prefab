@@ -243,8 +243,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 333623698544269777}
-  - component: {fileID: -6505896944001930278}
-  - component: {fileID: -861522144228821229}
+  - component: {fileID: 4319312358634693034}
+  - component: {fileID: 6685442825375714971}
   m_Layer: 0
   m_Name: CoinsStack
   m_TagString: Untagged
@@ -270,7 +270,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-6505896944001930278
+--- !u!114 &4319312358634693034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -288,11 +288,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: -861522144228821229}
+  - {fileID: 6685442825375714971}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-861522144228821229
+--- !u!114 &6685442825375714971
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
