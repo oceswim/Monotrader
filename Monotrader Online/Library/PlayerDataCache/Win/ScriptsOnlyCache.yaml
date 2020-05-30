@@ -9,6 +9,7 @@ ScriptsOnlyBuild:
     - MainMenu
     - MovementManager
     - PlayerNameInput
+    - PlayerNameTag
     - PlayerSpawner
     - RotateModel
     PhotonUnityNetworking.Demos.dll:
@@ -104,6 +105,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10882}
     - Class: 114
+      Script: {instanceID: 10898}
+    - Class: 114
       Script: {instanceID: 10902}
     - Class: 114
       Script: {instanceID: 11012}
@@ -130,6 +133,8 @@ ScriptsOnlyBuild:
     - Class: 128
       Script: {instanceID: 0}
     - Class: 136
+      Script: {instanceID: 0}
+    - Class: 143
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -218,6 +223,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10712}
     - Class: 114
       Script: {instanceID: 10776}
+    - Class: 114
+      Script: {instanceID: 10898}
     - Class: 114
       Script: {instanceID: 10902}
     - Class: 114
@@ -1035,6 +1042,12 @@ ScriptsOnlyBuild:
     className: ChatController
   - hash:
       serializedVersion: 2
+      Hash: 82243b12f3586f93ee32ec4f9b524fe0
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayerNameTag
+  - hash:
+      serializedVersion: 2
       Hash: 5f1752ed2092162f016c19510c28a8b9
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -1315,12 +1328,6 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.PunBasics
     className: CameraWork
-  - hash:
-      serializedVersion: 2
-      Hash: 897dd686661b3f4fb11878ae3f923f01
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: PlayerManager
   - hash:
       serializedVersion: 2
       Hash: 274152c972478468d8321a977bbca8e3

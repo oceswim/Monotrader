@@ -38,8 +38,6 @@ public class DicesManager : MonoBehaviourPun
         }
         if(roll)
         {
-            roll = false;
-            canGuess = true;
             float dirX = UnityEngine.Random.Range(0, 500);
             float dirY = UnityEngine.Random.Range(0, 500);
             float dirZ = UnityEngine.Random.Range(0, 500);
@@ -47,6 +45,8 @@ public class DicesManager : MonoBehaviourPun
             transform.rotation = Quaternion.identity;
             myBody.AddForce(transform.up * 500);
             myBody.AddTorque(dirX, dirY, dirZ);
+            roll = false;
+            canGuess = true;
         }
 
     }
@@ -99,7 +99,7 @@ public class DicesManager : MonoBehaviourPun
 
         Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
         GameManager.instance.SetDicePrefs(diceVal);
-        //SetRoomProperty(dicesDoneRollingHashKey, 1);
+
     }
     private void SetRoomProperty(string hashKey, int value)//general room properties
     {

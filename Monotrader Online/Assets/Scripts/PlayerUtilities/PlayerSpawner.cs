@@ -85,7 +85,8 @@ public class PlayerSpawner : MonoBehaviourPun
                 prefb.transform.localPosition = new Vector3(0, -.25f, 0);
                 break;
             case "PileBill":
-                prefb.transform.localPosition = new Vector3(0, -.25f, 0);
+                prefb.transform.localPosition = new Vector3(0, .25f, 0);
+                prefb.transform.Rotate(new Vector3(-90, 0, 0));
                 prefb.transform.localScale = new Vector3(40, 40, 40);
                 break;
         }

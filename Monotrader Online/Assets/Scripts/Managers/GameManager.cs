@@ -99,13 +99,10 @@ public class GameManager : MonoBehaviourPun
         {
             if (dicesRolling)
             {
-                Debug.Log("Checking if the dices are done");
-                temp.text = "Are dices done ?";
                 if (diceStatus == 2)
                 {
                     diceStatus = 0;
                     dicesRolling = false;
-                    Debug.Log("Dice stopped rolling");
                     Debug.Log("Move Val: " + moveVal);
                     temp.text = "Move Val: " + moveVal.ToString();
                     PlayerPrefs.SetInt(PREFDICE, moveVal);
@@ -113,7 +110,7 @@ public class GameManager : MonoBehaviourPun
                     //activate movement
                     MovementManager.moveMe = true; 
                     //switch turn once all actions are done
-                    //SwitchTurn();
+                    SwitchTurn();
                     
                 }
             }
@@ -218,8 +215,8 @@ public class GameManager : MonoBehaviourPun
 
             xVal += 3;//seperates the second dice from the first one
         }
-        //int starterIndex = UnityEngine.Random.Range(0, allPlayers.Length);
-        int starterIndex = 0;
+        int starterIndex = UnityEngine.Random.Range(0, allPlayers.Length);
+        //int starterIndex = 0;
         Debug.Log(allPlayers[starterIndex].NickName + " you are starting");
         SetRoomProperty(PLAYER_IN_ACTION_HASHKEY, starterIndex);
         int tempo = (int)myRoom.CustomProperties[PLAYER_IN_ACTION_HASHKEY];
@@ -256,8 +253,6 @@ public class GameManager : MonoBehaviourPun
             s.roll = true;
         }
         dicesRolling = true;
-        SetRoomProperty(DICES_DONE_ROLLING_HASHKEY, 0);
-
 
     }
     public void SetDicePrefs(int val)
@@ -265,8 +260,11 @@ public class GameManager : MonoBehaviourPun
 
         moveVal += val;
         Debug.Log("move val " + moveVal);
-        diceStatus += 1;
         
+        diceStatus += 1;
+        Debug.Log(diceStatus+"dice status");
+
+
     }
 
     public void AddDiceInstance()
@@ -275,8 +273,6 @@ public class GameManager : MonoBehaviourPun
         int dice2Ind = (int)myRoom.CustomProperties[DICE_2_HASHKEY];
         Transform dice1 = PhotonNetwork.GetPhotonView(dice1Ind).transform;
         Transform dice2 = PhotonNetwork.GetPhotonView(dice2Ind).transform;
-        temp.text = " Found " + dice1.name + " and " + dice2.name;
-        Debug.Log(temp.text);
         inGameDices.Add(dice1.GetComponent<DicesManager>());
         inGameDices.Add(dice2.GetComponent<DicesManager>());
     }
