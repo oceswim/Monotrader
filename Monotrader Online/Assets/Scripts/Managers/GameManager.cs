@@ -5,6 +5,7 @@ using TMPro;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
 using System;
+using System.Collections;
 
 public class GameManager : MonoBehaviourPun
 {
@@ -99,6 +100,7 @@ public class GameManager : MonoBehaviourPun
         {
             if (dicesRolling)
             {
+
                 if (diceStatus == 2)
                 {
                     diceStatus = 0;
@@ -110,7 +112,7 @@ public class GameManager : MonoBehaviourPun
                     //activate movement
                     MovementManager.moveMe = true; 
                     //switch turn once all actions are done
-                    SwitchTurn();
+                    //switchturn();
                     
                 }
             }
@@ -224,7 +226,7 @@ public class GameManager : MonoBehaviourPun
         SetRoomProperty(GAME_STATE_HASHKEY, 1);
     }
 
-    private void SwitchTurn()
+    public void SwitchTurn()
     {
         int index = (int)myRoom.CustomProperties[PLAYER_IN_ACTION_HASHKEY];
         myTurn = false;
@@ -277,5 +279,6 @@ public class GameManager : MonoBehaviourPun
         inGameDices.Add(dice2.GetComponent<DicesManager>());
     }
 
+   
 }
 

@@ -45,10 +45,20 @@ public class DicesManager : MonoBehaviourPun
             transform.rotation = Quaternion.identity;
             myBody.AddForce(transform.up * 500);
             myBody.AddTorque(dirX, dirY, dirZ);
+            WaitOut(1);
             roll = false;
             canGuess = true;
         }
 
+    }
+    private void WaitOut(float seconds)
+    {
+        float start = 0;
+        while (start < seconds)
+        {
+            Debug.Log("Waiting " + start);
+            start += Time.deltaTime;
+        }
     }
 
     private void WhichDiceValue()
