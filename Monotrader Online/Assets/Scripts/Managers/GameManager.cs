@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviourPun
 
 
     //room property keys
-    private const string DICES_DONE_ROLLING_HASHKEY = "dicesDone";
     private const string PLAYER_READY_HASHKEY = "playerReady";
     private const string PLAYER_IN_ACTION_HASHKEY = "playerPlaying";
     private const string GAME_STATE_HASHKEY = "gameState";
@@ -25,16 +24,15 @@ public class GameManager : MonoBehaviourPun
     private int playerCount, playerTurnIndex,moveVal, diceStatus;
 
     private Room myRoom; 
-    private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
+
     public GameObject DiceUI;
     public static GameManager instance = null;
     public GameObject Dice;
-    public TMP_Text temp;
+    public TMP_Text PlayerTurn;
     // Start is called before the first frame update
-
     private Player myPlayer;
     private Player[] allPlayers;
-    private Player[] otherPlayer;
+
     private void Awake()
     {
         //Check if instance already exists
@@ -54,15 +52,10 @@ public class GameManager : MonoBehaviourPun
     {
      
         playerCount = PhotonNetwork.PlayerList.Length;
-        Debug.Log("The player count : " + playerCount);
         moveVal  =playerTurnIndex = diceStatus= 0;
-        Debug.Log(PhotonNetwork.PlayerList[playerTurnIndex].NickName + " you will start");
         gameCanStart =dicesRolling= false;
-
-
         myPlayer = PhotonNetwork.LocalPlayer;
         allPlayers = PhotonNetwork.PlayerList;
-        otherPlayer = PhotonNetwork.PlayerListOthers;
         myRoom = PhotonNetwork.CurrentRoom;
 
     }
@@ -106,7 +99,6 @@ public class GameManager : MonoBehaviourPun
                     diceStatus = 0;
                     dicesRolling = false;
                     Debug.Log("Move Val: " + moveVal);
-                    temp.text = "Move Val: " + moveVal.ToString();
                     PlayerPrefs.SetInt(PREFDICE, moveVal);
                     moveVal = 0;
                     //activate movement
@@ -119,8 +111,6 @@ public class GameManager : MonoBehaviourPun
         }
         else if(!myTurn && gameCanStart)
         {
-            Debug.Log("Checking my turn");
-            temp.text = "Checking if my turn";
             if(CheckIfMyTurn())
             {
                 myTurn = true;
@@ -146,7 +136,6 @@ public class GameManager : MonoBehaviourPun
         }
         myRoom.SetCustomProperties(myRoom.CustomProperties);
         Debug.Log(myRoom.CustomProperties[PLAYER_READY_HASHKEY]);
-        temp.text = myRoom.CustomProperties[PLAYER_READY_HASHKEY].ToString();
     }
     private void SetRoomProperty(string hashKey,int value)//general room properties
     {
@@ -191,9 +180,14 @@ public class GameManager : MonoBehaviourPun
         int playerToPlay = (int)myRoom.CustomProperties[PLAYER_IN_ACTION_HASHKEY];
         if (myIndex == playerToPlay)
         {
-            temp.text = "It's my turn!";
             isItMyTurn = true;
+            PlayerTurn.text = "Your turn";
         }
+        else
+        {
+            PlayerTurn.text = PhotonNetwork.PlayerList[playerToPlay].NickName+"'s turn";
+        }
+        
         return isItMyTurn;
     }
     public void PlayersReady()
@@ -203,7 +197,6 @@ public class GameManager : MonoBehaviourPun
         {
             GameObject prefab = PhotonNetwork.InstantiateSceneObject(Dice.name, new Vector3(xVal, 2, 0), Quaternion.identity);
             int prefabViewID = prefab.GetComponent<PhotonView>().ViewID;
-            Debug.Log("Dice" + i + " prefab view ID " + prefabViewID);
             if(i==0)
             {
                 SetRoomProperty(DICE_1_HASHKEY, prefabViewID);
@@ -218,11 +211,7 @@ public class GameManager : MonoBehaviourPun
             xVal += 3;//seperates the second dice from the first one
         }
         int starterIndex = UnityEngine.Random.Range(0, allPlayers.Length);
-        //int starterIndex = 0;
-        Debug.Log(allPlayers[starterIndex].NickName + " you are starting");
         SetRoomProperty(PLAYER_IN_ACTION_HASHKEY, starterIndex);
-        int tempo = (int)myRoom.CustomProperties[PLAYER_IN_ACTION_HASHKEY];
-        temp.text = allPlayers[tempo].NickName + " it's your turn";
         SetRoomProperty(GAME_STATE_HASHKEY, 1);
     }
 

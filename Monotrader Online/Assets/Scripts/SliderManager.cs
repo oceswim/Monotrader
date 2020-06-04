@@ -3,7 +3,7 @@ using UnityEngine.UI;
 public class SliderManager : MonoBehaviour
 {
     private Slider mySlider;
-    public GameObject OnText, OffText, modeToggler,playerUI;
+    public GameObject OnText, OffText, modeToggler,playerUI,trendsHistory;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +20,7 @@ public class SliderManager : MonoBehaviour
             OnText.SetActive(false);
             modeToggler.SetActive(false);
             playerUI.SetActive(false);
+            trendsHistory.SetActive(true);
         }
         else
         {
@@ -28,7 +29,8 @@ public class SliderManager : MonoBehaviour
             OnText.SetActive(true);
             modeToggler.SetActive(true);
             playerUI.SetActive(true);
-            
+            trendsHistory.SetActive(false);
+
         }
     }
 }
