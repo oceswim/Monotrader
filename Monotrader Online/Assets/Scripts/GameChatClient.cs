@@ -29,14 +29,12 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 
 	public GameObject missingAppIdErrorPanel;
 	public GameObject ConnectingLabel;
-
+	public GameObject connectingPanel;
 	public RectTransform ChatPanel;     // set in inspector (to enable/disable panel)
-	public GameObject UserIdFormPanel;
+	//public GameObject UserIdFormPanel;
 	public TMP_InputField InputFieldChat;   // set in inspector
 	public TMP_Text CurrentChannelText;     // set in inspector
 	//public Toggle ChannelToggleToInstantiate; // set in inspector
-	private const string GameVersion = "0.1";
-	ConnectionProtocol connectProtocol;
 	private string myUserName;
 
 
@@ -85,6 +83,7 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 			"\t<color=#E07B00>\\clear</color>";
 
 
+
 	public void Start()
 	{
 		DontDestroyOnLoad(this.gameObject);
@@ -94,11 +93,11 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 		this.StateText.gameObject.SetActive(true);
 
 		//this.Title.SetActive(true);
-		this.ChatPanel.gameObject.SetActive(false);
+		//this.ChatPanel.gameObject.SetActive(false);
 		this.ConnectingLabel.SetActive(false);
 		myUserName = PhotonNetwork.LocalPlayer.NickName;
 		this.UserName = myUserName;
-		PlayerList = new string[PhotonNetwork.PlayerListOthers.Length];
+		PlayerList = new string[PhotonNetwork.PlayerList.Length];
 		PopulatePlayerList();
 		if (string.IsNullOrEmpty(this.UserName))
 		{
@@ -110,20 +109,25 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 #endif
 
 		bool appIdPresent = !string.IsNullOrEmpty(this.chatAppSettings.AppId);
-
+		
 		this.missingAppIdErrorPanel.SetActive(!appIdPresent);
-		this.UserIdFormPanel.gameObject.SetActive(appIdPresent);
+		//this.UserIdFormPanel.gameObject.SetActive(appIdPresent);
 
 		if (!appIdPresent)
 		{
 			Debug.LogError("You need to set the chat app ID in the PhotonServerSettings file in order to continue.");
 		}
+
+		Connect();
 	}
 	private void PopulatePlayerList()
 	{
-		for(int i = 0; i<PhotonNetwork.PlayerListOthers.Length;i++)
+		for(int i = 0; i<PhotonNetwork.PlayerList.Length;i++)
 		{
-			PlayerList[i] = PhotonNetwork.PlayerListOthers[i].NickName;
+
+			PlayerList[i]=PhotonNetwork.PlayerList[i].NickName;
+			Debug.Log("Populated :" + i + " " + PlayerList[i]);
+			
 		}
 	}
 	public void Update()
@@ -144,19 +148,9 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 	}
 
 
-    public void StartChat()
-    {
-        
-        Connect();
-
-    }
-	
-
-
-
 	public void Connect()
 	{
-		this.UserIdFormPanel.gameObject.SetActive(false);
+		//this.UserIdFormPanel.gameObject.SetActive(false);
 
 		this.chatClient = new ChatClient(this);
 #if !UNITY_WEBGL
@@ -388,6 +382,7 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 
 
 		this.chatClient.SetOnlineStatus(ChatUserStatus.Online); // You can set your online state (without a mesage).
+		connectingPanel.SetActive(false);
 	}
 
 	public void OnDisconnected()
