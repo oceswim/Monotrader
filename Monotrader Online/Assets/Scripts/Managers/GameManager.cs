@@ -13,13 +13,14 @@ public class GameManager : MonoBehaviourPun
 
 
     //room property keys
+    private const string PLAYER_STATE = "myState";
     private const string PLAYER_READY_HASHKEY = "playerReady";
     private const string PLAYER_IN_ACTION_HASHKEY = "playerPlaying";
     private const string GAME_STATE_HASHKEY = "gameState";
     private const string DICE_1_HASHKEY = "Dice1Name";
     private const string DICE_2_HASHKEY = "Dice2Name";
     private List<DicesManager> inGameDices = new List<DicesManager>();
-    
+    private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     private bool myTurn,gameCanStart,dicesRolling;
     private int playerCount, playerTurnIndex,moveVal, diceStatus;
 
@@ -63,11 +64,11 @@ public class GameManager : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-     
+
 
         if (!gameCanStart)
         {
-            if (myPlayer.IsMasterClient && myRoom.CustomProperties[PLAYER_READY_HASHKEY] !=null)
+            if (myPlayer.IsMasterClient && myRoom.CustomProperties[PLAYER_READY_HASHKEY] != null)
             {
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
                 if (playerReadyCount == allPlayers.Length)
@@ -102,25 +103,33 @@ public class GameManager : MonoBehaviourPun
                     PlayerPrefs.SetInt(PREFDICE, moveVal);
                     moveVal = 0;
                     //activate movement
-                    MovementManager.moveMe = true; 
+                    MovementManager.moveMe = true;
                     //switch turn once all actions are done
                     //switchturn();
-                    
+
                 }
             }
         }
-        else if(!myTurn && gameCanStart)
+        else if (!myTurn && gameCanStart)
         {
-            if(CheckIfMyTurn())
+            if (CheckIfMyTurn())
             {
                 myTurn = true;
                 DiceUI.SetActive(true);
             }
         }
- 
 
 
     }
+    private void SetCustomPpties(string hashKey,int ind)//
+    {
+        string playerIndexString = ind.ToString();   
+        _myCustomProperty[hashKey] = playerIndexString; 
+        myPlayer.CustomProperties = _myCustomProperty;   
+        myPlayer.SetCustomProperties(myPlayer.CustomProperties);
+
+        }
+    
 
     private void SetRoomProperty()//the room property to check when players are ready
     {
@@ -134,6 +143,7 @@ public class GameManager : MonoBehaviourPun
             myRoom.CustomProperties[PLAYER_READY_HASHKEY] = (newValue+1);
             
         }
+        SetCustomPpties(PLAYER_STATE, 1);
         myRoom.SetCustomProperties(myRoom.CustomProperties);
         Debug.Log(myRoom.CustomProperties[PLAYER_READY_HASHKEY]);
     }

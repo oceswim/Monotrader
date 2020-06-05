@@ -11,6 +11,7 @@ ScriptsOnlyBuild:
     - GameManager
     - IgnoreUiRaycastWhenInactive
     - MainMenu
+    - MoneyManager
     - MovementManager
     - Photon.Chat.UtilityScripts.TextButtonTransition
     - PlayerNameInput
@@ -175,6 +176,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 12064}
     - Class: 114
       Script: {instanceID: 12082}
+    - Class: 114
+      Script: {instanceID: 20448}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1927,6 +1930,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: d5c8f3ef2626841885be3da8536a1a53
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MoneyManager
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
