@@ -8050,6 +8050,114 @@ MonoBehaviour:
   yenAmount: {fileID: 709223123}
   waitingForText: {fileID: 1574701582}
   waitingForObject: {fileID: 869061767}
+  dollarsTrendInGame:
+  - {fileID: 1496453778}
+  - {fileID: 1377150353}
+  - {fileID: 1425648022}
+  - {fileID: 1941008628}
+  - {fileID: 1352482878}
+  - {fileID: 69699341}
+  - {fileID: 930267761}
+  - {fileID: 2048958142}
+  - {fileID: 1209327024}
+  - {fileID: 255993152}
+  - {fileID: 1660277555}
+  - {fileID: 2128419317}
+  - {fileID: 1249180037}
+  - {fileID: 1439955876}
+  - {fileID: 1996341945}
+  - {fileID: 1223692004}
+  - {fileID: 1828813076}
+  - {fileID: 1194277454}
+  - {fileID: 1357877815}
+  - {fileID: 141865226}
+  - {fileID: 908684763}
+  eurosTrendInGame:
+  - {fileID: 323957576}
+  - {fileID: 1088750908}
+  - {fileID: 767682639}
+  - {fileID: 239702148}
+  - {fileID: 271402064}
+  - {fileID: 1665230137}
+  - {fileID: 1614209515}
+  - {fileID: 540570765}
+  - {fileID: 684087856}
+  - {fileID: 1295820856}
+  - {fileID: 1543120694}
+  - {fileID: 1452958154}
+  - {fileID: 519110350}
+  - {fileID: 1977719983}
+  - {fileID: 1930965419}
+  - {fileID: 376802874}
+  - {fileID: 37290723}
+  - {fileID: 179601894}
+  - {fileID: 1658473994}
+  - {fileID: 649332251}
+  - {fileID: 1189143811}
+  poundsTrendInGame:
+  - {fileID: 596030635}
+  - {fileID: 1312240638}
+  - {fileID: 1082607377}
+  - {fileID: 1860840536}
+  - {fileID: 828162973}
+  - {fileID: 33282008}
+  - {fileID: 1627672404}
+  - {fileID: 687150553}
+  - {fileID: 1692436301}
+  - {fileID: 641670339}
+  - {fileID: 1044926043}
+  - {fileID: 564938695}
+  - {fileID: 614406675}
+  - {fileID: 295487188}
+  - {fileID: 1836409607}
+  - {fileID: 1115810472}
+  - {fileID: 1965876549}
+  - {fileID: 192786206}
+  - {fileID: 1670941130}
+  - {fileID: 2101992285}
+  - {fileID: 865530294}
+  yensTrendInGame:
+  - {fileID: 1488425181}
+  - {fileID: 362139900}
+  - {fileID: 1321434986}
+  - {fileID: 757971717}
+  - {fileID: 359930326}
+  - {fileID: 2117300770}
+  - {fileID: 1022199143}
+  - {fileID: 137803125}
+  - {fileID: 370512040}
+  - {fileID: 846208914}
+  - {fileID: 794591496}
+  - {fileID: 189884505}
+  - {fileID: 1958940374}
+  - {fileID: 1409835462}
+  - {fileID: 96854497}
+  - {fileID: 291564924}
+  - {fileID: 568402203}
+  - {fileID: 479594672}
+  - {fileID: 810658100}
+  - {fileID: 2046608606}
+  - {fileID: 987001655}
+  dHistory:
+  - {fileID: 683408294}
+  - {fileID: 1564744468}
+  - {fileID: 1028744176}
+  - {fileID: 365428090}
+  eHistory:
+  - {fileID: 1678641407}
+  - {fileID: 301938867}
+  - {fileID: 1158022096}
+  - {fileID: 2134512097}
+  pHistory:
+  - {fileID: 684376889}
+  - {fileID: 1271592967}
+  - {fileID: 595091241}
+  - {fileID: 1142798128}
+  yHistory:
+  - {fileID: 1841966976}
+  - {fileID: 1028312356}
+  - {fileID: 1863915384}
+  - {fileID: 191183741}
 --- !u!1 &420460352
 GameObject:
   m_ObjectHideFlags: 0

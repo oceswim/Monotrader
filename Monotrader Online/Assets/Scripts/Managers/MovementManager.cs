@@ -206,6 +206,7 @@ public class MovementManager : MonoBehaviourPun
             if (newTurn)
             {
                 BoardManager.SetPositionNewTurn(myPositionIndex);
+                GameManager.instance.TurnManager();
             }
             else
             {

@@ -19,10 +19,13 @@ public class GameManager : MonoBehaviourPun
     private const string GAME_STATE_HASHKEY = "gameState";
     private const string DICE_1_HASHKEY = "Dice1Name";
     private const string DICE_2_HASHKEY = "Dice2Name";
+    private const string TURN_COUNT = "TurnCount";
+    private const string PLAYERS_NEW_TURN = "Player_new_turn";
+    
     private List<DicesManager> inGameDices = new List<DicesManager>();
     private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     private bool myTurn,gameCanStart,dicesRolling;
-    private int playerCount, playerTurnIndex,moveVal, diceStatus;
+    private int moveVal, diceStatus, turnCounter,playerCount;
 
     private Room myRoom; 
 
@@ -51,14 +54,14 @@ public class GameManager : MonoBehaviourPun
     }
     void Start()
     {
-     
+
         playerCount = PhotonNetwork.PlayerList.Length;
-        moveVal  =playerTurnIndex = diceStatus= 0;
+        moveVal   = diceStatus= turnCounter= 0;
         gameCanStart =dicesRolling= false;
         myPlayer = PhotonNetwork.LocalPlayer;
         allPlayers = PhotonNetwork.PlayerList;
         myRoom = PhotonNetwork.CurrentRoom;
-
+        SetRoomProperty(TURN_COUNT, 1);//there's 0 turn done at the beginning.
     }
 
     // Update is called once per frame
@@ -244,7 +247,45 @@ public class GameManager : MonoBehaviourPun
         SetRoomProperty(PLAYER_IN_ACTION_HASHKEY, index);
         
     }
-
+    public void TurnManager()
+    {
+        turnCounter++;
+        if (myRoom.CustomProperties[PLAYERS_NEW_TURN] != null)
+        {
+            int previousCount = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
+            previousCount++;
+            if (previousCount == playerCount)//all players go through a new turn
+            {
+                SetRoomProperty(PLAYERS_NEW_TURN, 0);
+                UpdateTurnCount();//overall turn gets increased
+                MoneyManager.newTurn=true;
+            }
+            else
+            {
+                SetRoomProperty(PLAYERS_NEW_TURN, previousCount);
+            }
+        }
+        else
+        {
+            SetRoomProperty(PLAYERS_NEW_TURN, 1);
+        }
+    }
+    private void UpdateTurnCount()
+    {
+        int previousCount;
+        if (myRoom.CustomProperties[TURN_COUNT] != null)
+        {
+            previousCount = 1;
+           
+        }
+        else
+        {
+            previousCount = (int)myRoom.CustomProperties[TURN_COUNT];
+            previousCount++;
+           
+        }
+        SetRoomProperty(TURN_COUNT, previousCount);
+    }
     public void RollDices()
     {
 
