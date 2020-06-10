@@ -155,29 +155,29 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11338}
     - Class: 114
-      Script: {instanceID: 11480}
+      Script: {instanceID: 11448}
     - Class: 114
-      Script: {instanceID: 11536}
+      Script: {instanceID: 11482}
     - Class: 114
-      Script: {instanceID: 11552}
+      Script: {instanceID: 11538}
     - Class: 114
-      Script: {instanceID: 11720}
+      Script: {instanceID: 11554}
     - Class: 114
-      Script: {instanceID: 11946}
+      Script: {instanceID: 11722}
     - Class: 114
-      Script: {instanceID: 11950}
+      Script: {instanceID: 11948}
     - Class: 114
-      Script: {instanceID: 12020}
+      Script: {instanceID: 11952}
     - Class: 114
       Script: {instanceID: 12022}
     - Class: 114
-      Script: {instanceID: 12044}
+      Script: {instanceID: 12024}
     - Class: 114
-      Script: {instanceID: 12064}
+      Script: {instanceID: 12046}
     - Class: 114
-      Script: {instanceID: 12082}
+      Script: {instanceID: 12066}
     - Class: 114
-      Script: {instanceID: 20448}
+      Script: {instanceID: 12084}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -300,21 +300,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11418}
     - Class: 114
-      Script: {instanceID: 11480}
+      Script: {instanceID: 11482}
     - Class: 114
-      Script: {instanceID: 11552}
+      Script: {instanceID: 11554}
     - Class: 114
-      Script: {instanceID: 11760}
+      Script: {instanceID: 11762}
     - Class: 114
-      Script: {instanceID: 11898}
+      Script: {instanceID: 11900}
     - Class: 114
-      Script: {instanceID: 11946}
+      Script: {instanceID: 11948}
     - Class: 114
-      Script: {instanceID: 12022}
+      Script: {instanceID: 12024}
     - Class: 114
-      Script: {instanceID: 12056}
+      Script: {instanceID: 12058}
     - Class: 114
-      Script: {instanceID: 12064}
+      Script: {instanceID: 12066}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1440,6 +1440,12 @@ ScriptsOnlyBuild:
     className: TMP_TextSelector_B
   - hash:
       serializedVersion: 2
+      Hash: 48aca6f27bf19ed48fe1a4f962c5e57c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MoneyManager
+  - hash:
+      serializedVersion: 2
       Hash: 458215150b18ad62be70c422736998f8
     assemblyName: PhotonUnityNetworking.Utilities.dll
     namespaceName: Photon.Pun.UtilityScripts
@@ -1930,14 +1936,8 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: d5c8f3ef2626841885be3da8536a1a53
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: MoneyManager
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
   - Assets/Scenes/Game.unity
-  playerPath: C:/Users/Oceane/Desktop/Monotrader Online.exe
+  playerPath: C:/Users/Oceane/Desktop/tries/b3/Monotrader Online.exe

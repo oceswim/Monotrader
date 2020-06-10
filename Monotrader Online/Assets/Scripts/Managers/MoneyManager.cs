@@ -3,30 +3,38 @@ using Photon.Realtime;
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using System.Collections;
+
+using System;
+using Random = UnityEngine.Random;
 
 public class MoneyManager : MonoBehaviour
 {
-    
+
     private const float INITIAL_GOLD = 5000;
     private const float INITIAL_CURRENCIES = 2500;
     private const string TURN_COUNT = "TurnCount";
-    private const string EUROS_PRICE  = "Euros_Price";
-    private const string DOLLARS_PRICE  = "Dollars_Price";
-    private const string POUNDS_PRICE  = "Pounds_Price";
-    private const string YEN_PRICE  = "Yen_Price";
-    private const string TRENDS_STATUS  = "Trend_Status";
-    private const string HISTORY_STATUS  = "History_Status";
-    
-    private const string HISTORY_TURN_ACTUAL  = "History_Turn_Actual";
+    private const string EUROS_PRICE = "Euros_Price";
+    private const string DOLLARS_PRICE = "Dollars_Price";
+    private const string POUNDS_PRICE = "Pounds_Price";
+    private const string YEN_PRICE = "Yen_Price";
+    private const string INDEX_STATUS = "Index_Status";
+    private const string TRENDS_STATUS = "Trend_Status";
+    private const string HISTORY_STATUS = "History_Status";
+
+    private const string HISTORY_TURN_ACTUAL = "History_Turn_Actual";
     private const string HISTORY_TURN_M1 = "History_Turn_Minus1";
     private const string HISTORY_TURN_M2 = "History_Turn_Minus2";
     private const string HISTORY_TURN_M3 = "History_Turn_Minus3";
-    
-    private const string EUROS_TREND  = "Euros_Trend";
-    private const string DOLLARS_TREND  = "Dollars_Trend";
-    private const string POUNDS_TREND  = "Pounds_Trend";
-    private const string YEN_TREND  = "Yen_Trend";
+
+    private const string EUROS_TREND = "Euros_Trend";
+    private const string DOLLARS_TREND = "Dollars_Trend";
+    private const string POUNDS_TREND = "Pounds_Trend";
+    private const string YEN_TREND = "Yen_Trend";
+
+    private const string EUROS_TREND_IND = "Euros_Trend_Ind";
+    private const string DOLLARS_TREND_IND = "Dollars_Trend_Ind";
+    private const string POUNDS_TREND_IND = "Pounds_Trend_Ind";
+    private const string YEN_TREND_IND = "Yen_Trend_Ind";
 
 
     private int[] TRENDS_VALUES;
@@ -43,13 +51,13 @@ public class MoneyManager : MonoBehaviour
     private Room myRoom;
     private int playerCount;
     private string actorNumber;
-    private bool playersReady,updateGUI;
+    private bool playersReady;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
-    public TMP_Text goldAmount,dollarsAmount, eurosAmount, poundsAmount, yenAmount,waitingForText;
+    public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText;
     public GameObject waitingForObject;
-    public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame,dHistory,eHistory,pHistory,yHistory;
+    public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
     public static bool newTurn;
     // Start is called before the first frame update
     void Start()
@@ -58,7 +66,7 @@ public class MoneyManager : MonoBehaviour
         PopulateTrendsList();
         myPlayer = PhotonNetwork.LocalPlayer;
         actorNumber = myPlayer.ActorNumber.ToString();
-        playersReady =newTurn=updateGUI= false;
+        playersReady = newTurn = false;
         playerCount = PhotonNetwork.PlayerList.Length;
         myRoom = PhotonNetwork.CurrentRoom;
         InitialiseHashKeys();
@@ -74,13 +82,9 @@ public class MoneyManager : MonoBehaviour
                 playersReady = true;
                 waitingForObject.SetActive(false);
                 SetInitialAmounts(myPlayer.IsMasterClient);
-                if (myPlayer.IsMasterClient)
-                {
-                    PrepareTrends();
-                }
                 Debug.Log("everyone is ready!");
             }
-            else if(!playersReady)
+            else if (!playersReady)
             {
                 string waitingText = "Waiting for ";
                 foreach (Player p in PhotonNetwork.PlayerListOthers)
@@ -90,7 +94,7 @@ public class MoneyManager : MonoBehaviour
                         if (!notReadyPlayers.Contains(p))
                         {
                             notReadyPlayers.Add(p);
-                            
+
                         }
                         if (notReadyPlayers.IndexOf(p).Equals(notReadyPlayers.Count - 1))
                         {
@@ -108,10 +112,10 @@ public class MoneyManager : MonoBehaviour
                             notReadyPlayers.Remove(p);
                         }
 
-                     }
+                    }
                 }
-                                  
-                if(!waitingForText.text.Equals(waitingText))
+
+                if (!waitingForText.text.Equals(waitingText))
                 {
                     waitingForText.text = waitingText;
                 }
@@ -121,37 +125,44 @@ public class MoneyManager : MonoBehaviour
                     Debug.Log(waitingText + "vs " + waitingForText.text);
                 }
             }
-            else if(myRoom.CustomProperties[TRENDS_STATUS]!=null)
+            if (myRoom.CustomProperties[HISTORY_STATUS] != null)
             {
-                if ((int)myRoom.CustomProperties[TRENDS_STATUS] == 1)
-                {
-                    if (myPlayer.IsMasterClient)
-                    {
-                        SetTrends();
-                        updateGUI = true;
-                    }
-                }
-                else if ((int)myRoom.CustomProperties[TRENDS_STATUS] == 0 && updateGUI)
+                
+                Wait();//we wait to make sure every player has the proper room properties.
+                Debug.Log(myPlayer.NickName + "am i master? "+myPlayer.IsMasterClient+" history done "+ myRoom.CustomProperties[HISTORY_STATUS]);
+                if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1)
                 {
                     //update history look
-                    updateGUI = false;
-                    int turn = (int)myRoom.CustomProperties[TURN_COUNT];
+                    Debug.Log("History status on");
+                    UpdateTrendDisplay();
                     UpdateHistoryGUI();
+                    
+                    if (myPlayer.IsMasterClient)
+                    {
+                        SetRoomProperty(HISTORY_STATUS, 0);
+                        Debug.Log("history OFF");
+                    }
+
                 }
             }
+  
+        }
+        if (newTurn)
+        {
+            Debug.Log("NEW TURN " + myPlayer.NickName);
+            newTurn = false;
+            Debug.Log($" history: {myRoom.CustomProperties[HISTORY_STATUS]}");
+            Debug.Log("MONEY MANAGER NEW TURN");
+            PrepareTrends();
             
         }
-        if(newTurn)
-        {
 
-            newTurn = false;
-            PrepareTrends();
-        }
+
     }
     private void PopulateTrendsList()
     {
-         TRENDS_VALUES= new int[21];
-        for(int i =-10;i<11;i++)
+        TRENDS_VALUES = new int[21];
+        for (int i = -10; i < 11; i++)
         {
             int index = i + 10;
             TRENDS_VALUES[index] = i;
@@ -160,12 +171,12 @@ public class MoneyManager : MonoBehaviour
 
     private void InitialiseHashKeys()
     {
-        PLAYER_GOLD= "Player"+actorNumber+"Gold";
-        PLAYER_DOLLARS= "Player" + actorNumber + "Dollars";
+        PLAYER_GOLD = "Player" + actorNumber + "Gold";
+        PLAYER_DOLLARS = "Player" + actorNumber + "Dollars";
         PLAYER_EUROS = "Player" + actorNumber + "Euros";
         PLAYER_YENS = "Player" + actorNumber + "Yens";
         PLAYER_POUNDS = "Player" + actorNumber + "Pounds";
-}
+    }
     private void SetInitialAmounts(bool masterClient)
     {
 
@@ -175,29 +186,30 @@ public class MoneyManager : MonoBehaviour
         float initE;
         float initP;
         float initY;
-        initD= initE = initP=initY = 1;
+        initD = initE = initP = initY = 1;
         if (masterClient)
         {
 
             SetRoomAmounts(myGold, myDollars, myEuros, myPounds, myYens);
             SetRoomPrices(initD, initE, initP, initY);
+            PrepareTrends();//sets up the price trends
 
 
         }
-        
+
         UpdateAmountTexts();
 
     }
-    private void SetRoomAmounts(float g,float d, float e, float p, float y)
+    private void SetRoomAmounts(float g, float d, float e, float p, float y)
     {
-        
-       SetRoomProperty(PLAYER_GOLD, g);
+
+        SetRoomProperty(PLAYER_GOLD, g);
         SetRoomProperty(PLAYER_EUROS, e);
         SetRoomProperty(PLAYER_DOLLARS, d);
         SetRoomProperty(PLAYER_POUNDS, p);
         SetRoomProperty(PLAYER_YENS, y);
     }
-    private void SetRoomPrices(float dol,float eur,float pou,float yen)
+    private void SetRoomPrices(float dol, float eur, float pou, float yen)
     {
         SetRoomProperty(EUROS_PRICE, eur);
         SetRoomProperty(DOLLARS_PRICE, dol);
@@ -211,34 +223,36 @@ public class MoneyManager : MonoBehaviour
         SetRoomProperty(POUNDS_TREND, p);
         SetRoomProperty(YEN_TREND, y);
     }
-    private void UpdateTrendLists(int d,int e, int p, int y)
+    private void UpdateTrendDisplay()
     {
-        dollarsTrendInGame[d].enabled=false;
-        eurosTrendInGame[e].enabled=false;
-        poundsTrendInGame[p].enabled=false;
-        yensTrendInGame[y].enabled =false;
+        int d = (int)myRoom.CustomProperties[DOLLARS_TREND_IND];
+        int e = (int)myRoom.CustomProperties[EUROS_TREND_IND];
+        int p = (int)myRoom.CustomProperties[POUNDS_TREND_IND];
+        int y = (int)myRoom.CustomProperties[YEN_TREND_IND];
+        dollarsTrendInGame[d].enabled = false;
+        eurosTrendInGame[e].enabled = false;
+        poundsTrendInGame[p].enabled = false;
+        yensTrendInGame[y].enabled = false;
+    }
+    private void SetTrendIndexes(int d, int e, int p, int y)
+    {
+        SetRoomProperty(DOLLARS_TREND_IND, d);
+        SetRoomProperty(EUROS_TREND_IND, e);
+        SetRoomProperty(POUNDS_TREND_IND, p);
+        SetRoomProperty(YEN_TREND_IND, y);
     }
     private void PrepareTrends()//set at each new turn
     {
-            int randIndDol = Random.Range(0, 21);
-            int randIndEur = Random.Range(0, 21);
-            int randIndPou = Random.Range(0, 21);
-            int randIndYen = Random.Range(0, 21);
+        int randIndDol = Random.Range(0, 21);
+        int randIndEur = Random.Range(0, 21);
+        int randIndPou = Random.Range(0, 21);
+        int randIndYen = Random.Range(0, 21);
 
-        UpdateTrendLists(randIndDol, randIndEur, randIndPou, randIndYen);//we update the visual
-
-        float dolTrend = (float)TRENDS_VALUES[randIndDol] / 10;
-        float eurTrend = (float)TRENDS_VALUES[randIndEur] / 10;
-        float pouTrend = (float)TRENDS_VALUES[randIndPou] / 10;
-        float yenTrend = (float)TRENDS_VALUES[randIndYen] / 10;
-
-        Debug.Log($"D:{dolTrend} E: {eurTrend} P:{pouTrend} Y:{yenTrend} ");
-
-
-        SetRoomTrends(dolTrend, eurTrend, pouTrend, yenTrend);
-        SetRoomProperty(TRENDS_STATUS, 1);
-
+        SetTrendIndexes(randIndDol, randIndEur, randIndPou, randIndYen);
+        UpdateTrendList();
+        SetTrends();//we actually set the trends based on the generated indexes
     }
+
     private void SetTrends()
     {
         //get the increase or decrease value
@@ -252,44 +266,68 @@ public class MoneyManager : MonoBehaviour
         float pouTrend = (float)myRoom.CustomProperties[POUNDS_TREND];
         float yenTrend = (float)myRoom.CustomProperties[YEN_TREND];
 
-        float newDolPrice = (dolPrice + dolTrend);
-        float newEurPrice = (eurPrice + eurTrend);
-        float newPouPrice = (pouPrice + pouTrend);
-        float newYenPrice = (yenPrice + yenTrend);
+
+        Debug.Log(dolTrend + " TREND");
+
+        double newDolPrice = Math.Round((dolPrice + (dolTrend / 10)), 2);
+        double newEurPrice = Math.Round((eurPrice + (eurTrend / 10)), 2);
+        double newPouPrice = Math.Round((pouPrice + (pouTrend / 10)), 2);
+        double newYenPrice = Math.Round((yenPrice + (yenTrend / 10)), 2);
 
         Debug.Log($"new d price :{newDolPrice} new E price : {newEurPrice} new P price :{newPouPrice} new Y price:{newYenPrice} ");
 
-        
-            SetRoomPrices(newDolPrice, newEurPrice, newPouPrice, newYenPrice);
-        
-            UpdateHistory(newDolPrice, newEurPrice, newPouPrice, newYenPrice);
-        
-            SetRoomProperty(TRENDS_STATUS, 0);
-            
-        
+
+        SetRoomPrices((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
+        UpdateHistory((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
+
+
+
+
     }
-    private void UpdateHistory(float dollars,float euros,float pound,float yen)
+    private void UpdateTrendList()
+    {
+        Debug.Log("Updating trend lists");
+        int randIndDol = (int)myRoom.CustomProperties[DOLLARS_TREND_IND];
+        int randIndEur = (int)myRoom.CustomProperties[EUROS_TREND_IND];
+        int randIndPou = (int)myRoom.CustomProperties[POUNDS_TREND_IND];
+        int randIndYen = (int)myRoom.CustomProperties[YEN_TREND_IND];
+
+
+        float dolTrend = (float)TRENDS_VALUES[randIndDol] / 10;
+        float eurTrend = (float)TRENDS_VALUES[randIndEur] / 10;
+        float pouTrend = (float)TRENDS_VALUES[randIndPou] / 10;
+        float yenTrend = (float)TRENDS_VALUES[randIndYen] / 10;
+
+        Debug.Log($"D:{dolTrend} E: {eurTrend} P:{pouTrend} Y:{yenTrend} ");
+
+        if (myPlayer.IsMasterClient)
+        {
+            SetRoomTrends(dolTrend, eurTrend, pouTrend, yenTrend);
+        }
+
+    }
+    private void UpdateHistory(float dollars, float euros, float pound, float yen)
     {
         //depending on turn count, history gets updated
         int turnCount = (int)myRoom.CustomProperties[TURN_COUNT];
-        int dTrend = (int)myRoom.CustomProperties[DOLLARS_TREND]*10;
-        int eTrend = (int)myRoom.CustomProperties[EUROS_TREND]*10;
-        int pTrend = (int)myRoom.CustomProperties[POUNDS_TREND]*10;
-        int yTrend = (int)myRoom.CustomProperties[YEN_TREND]*10;
+        double dTrend = Math.Round((float)myRoom.CustomProperties[DOLLARS_TREND] * 10, 2);
+        double eTrend = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] * 10, 2);
+        double pTrend = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] * 10, 2);
+        double yTrend = Math.Round((float)myRoom.CustomProperties[YEN_TREND] * 10, 2);
 
-        string newHistoryVal =$"D/{dollars.ToString()}/{dTrend.ToString()}_E/{euros.ToString()}/{eTrend.ToString()}_P/{pound.ToString()}/{pTrend.ToString()}_Y/{yen.ToString()}/{yTrend.ToString()}" ;
+        string newHistoryVal = $"D/{dollars.ToString()}/{dTrend.ToString()}_E/{euros.ToString()}/{eTrend.ToString()}_P/{pound.ToString()}/{pTrend.ToString()}_Y/{yen.ToString()}/{yTrend.ToString()}";
         Debug.Log(newHistoryVal);
         switch (turnCount)
         {
             case 1:
-                myRoom.CustomProperties.Add(HISTORY_TURN_M3, "D/1/0_E/1/0_P/1/0_Y/1/0");
-                myRoom.CustomProperties.Add(HISTORY_TURN_M2, "D/1/0_E/1/0_P/1/0_Y/1/0");
-                myRoom.CustomProperties.Add(HISTORY_TURN_M1, "D/1/0_E/1/0_P/1/0_Y/1/0");
-                myRoom.CustomProperties.Add(HISTORY_TURN_ACTUAL, newHistoryVal);
+                myRoom.CustomProperties[HISTORY_TURN_M3] = "D/1/0_E/1/0_P/1/0_Y/1/0";
+                myRoom.CustomProperties[HISTORY_TURN_M2] = "D/1/0_E/1/0_P/1/0_Y/1/0";
+                myRoom.CustomProperties[HISTORY_TURN_M1] = "D/1/0_E/1/0_P/1/0_Y/1/0";
+                myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 2:
                 myRoom.CustomProperties[HISTORY_TURN_M1] = myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
-                myRoom.CustomProperties[HISTORY_TURN_ACTUAL]= newHistoryVal;
+                myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 3:
                 myRoom.CustomProperties[HISTORY_TURN_M2] = myRoom.CustomProperties[HISTORY_TURN_M1];
@@ -302,9 +340,23 @@ public class MoneyManager : MonoBehaviour
                 myRoom.CustomProperties[HISTORY_TURN_M1] = myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
-                
+
         }
 
+        if (myPlayer.IsMasterClient)
+        {
+            SetRoomProperty(HISTORY_STATUS, 1);//we set the history status as done.
+        }
+        
+    }
+    private void Wait()
+    {
+        float time = 0;
+
+        while(time<1)
+        {
+            time += Time.deltaTime;
+        }
     }
     private void UpdateHistoryGUI()
     {
@@ -352,15 +404,15 @@ public class MoneyManager : MonoBehaviour
         string[] dM0 = actual[0].Split('/');
         string[] eM0 = actual[1].Split('/');
         string[] pM0 = actual[2].Split('/');
-        string[] yM0 = actual[3].Split('/');        
+        string[] yM0 = actual[3].Split('/');
 
         dHistory[0].text = $"{dM0[1]}G  \n {dM0[2]}%";
         eHistory[0].text = $"{eM0[1]}G  \n {eM0[2]}%";
         pHistory[0].text = $"{pM0[1]}G  \n {pM0[2]}%";
         yHistory[0].text = $"{yM0[1]}G  \n {yM0[2]}%";
-          
 
-        
+
+
 
     }
     private void SetRoomProperty(string hashKey, int value)//general room properties

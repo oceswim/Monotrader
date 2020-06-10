@@ -250,24 +250,26 @@ public class GameManager : MonoBehaviourPun
     public void TurnManager()
     {
         turnCounter++;
+        int previousCount;
         if (myRoom.CustomProperties[PLAYERS_NEW_TURN] != null)
         {
-            int previousCount = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
+            previousCount = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
             previousCount++;
-            if (previousCount == playerCount)//all players go through a new turn
-            {
-                SetRoomProperty(PLAYERS_NEW_TURN, 0);
-                UpdateTurnCount();//overall turn gets increased
-                MoneyManager.newTurn=true;
-            }
-            else
-            {
-                SetRoomProperty(PLAYERS_NEW_TURN, previousCount);
-            }
         }
         else
         {
-            SetRoomProperty(PLAYERS_NEW_TURN, 1);
+            previousCount = 1;
+            
+        }
+        if (previousCount == playerCount)//all players go through a new turn
+        {
+            SetRoomProperty(PLAYERS_NEW_TURN, 0);
+            UpdateTurnCount();//overall turn gets increased
+            MoneyManager.newTurn = true;
+        }
+        else
+        {
+            SetRoomProperty(PLAYERS_NEW_TURN, previousCount);
         }
     }
     private void UpdateTurnCount()

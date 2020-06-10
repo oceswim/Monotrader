@@ -13,11 +13,11 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
-    private const int maxPlayerPerRoom = 3;
+    private const int maxPlayerPerRoom =2;
 
     private void Awake()
     {
-        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.AutomaticallySyncScene = false;
 
     }
 
@@ -68,9 +68,9 @@ public class MainMenu : MonoBehaviourPunCallbacks
         }
         else
         {
-            waitingStatusText.text = "Oponent found!";
+            waitingStatusText.text = "Oponent found!-1";
             Debug.Log("Match ready to begin");
-            //PhotonNetwork.LoadLevel("Game");
+            PhotonNetwork.LoadLevel("Game");
         }
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)//this shows to the player already in the room
@@ -79,7 +79,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.CurrentRoom.IsOpen = false; //stops new player from joining
             Debug.Log("Match ready to begin - room full");
-            waitingStatusText.text = "Opponent found";
+            waitingStatusText.text = "Opponent found-2";
 
             PhotonNetwork.LoadLevel("Game");
  

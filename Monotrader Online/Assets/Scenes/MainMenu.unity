@@ -10854,18 +10854,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664006823}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1189092548}
-  m_Father: {fileID: 918714545}
-  m_RootOrder: 1
+  m_Father: {fileID: 1606598305}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -84.7}
-  m_SizeDelta: {x: 397.9, y: 169.4}
+  m_AnchoredPosition: {x: 0, y: -74.05}
+  m_SizeDelta: {x: 397.9, y: 190.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &664006825
 MonoBehaviour:
@@ -16177,18 +16177,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 805961426}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 949100686}
-  m_Father: {fileID: 918714545}
-  m_RootOrder: 2
+  m_Father: {fileID: 1606598305}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 153.79199}
-  m_SizeDelta: {x: 397.7, y: 245.9}
+  m_AnchoredPosition: {x: 0, y: 114.15}
+  m_SizeDelta: {x: 397.7, y: 190.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &805961428
 MonoBehaviour:
@@ -16408,9 +16408,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1606598305}
-  - {fileID: 664006824}
-  - {fileID: 805961427}
-  - {fileID: 1058418561}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16754,17 +16751,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1058418560}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 658234571}
-  m_Father: {fileID: 918714545}
-  m_RootOrder: 3
+  m_Father: {fileID: 1606598305}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -130.5}
+  m_AnchoredPosition: {x: 0, y: -100}
   m_SizeDelta: {x: 397.5, y: 130.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1058418562
@@ -17182,11 +17179,11 @@ RectTransform:
   m_Children:
   - {fileID: 2055275514}
   m_Father: {fileID: 1606598305}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -11}
   m_SizeDelta: {x: 207, y: 64.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1389441385
@@ -17548,14 +17545,17 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1058418561}
   - {fileID: 1389441384}
   - {fileID: 1946356473}
+  - {fileID: 664006824}
+  - {fileID: 805961427}
   m_Father: {fileID: 918714545}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -37}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1606598307
@@ -18381,7 +18381,7 @@ RectTransform:
   m_Children:
   - {fileID: 1649450434}
   m_Father: {fileID: 1606598305}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -18435,17 +18435,6 @@ MonoBehaviour:
       - m_Target: {fileID: 1347120827}
         m_MethodName: SaveName
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1606598304}
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
