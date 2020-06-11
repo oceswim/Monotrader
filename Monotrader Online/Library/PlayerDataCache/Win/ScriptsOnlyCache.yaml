@@ -19,6 +19,7 @@ ScriptsOnlyBuild:
     - PlayerSpawner
     - RotateModel
     - SliderManager
+    - StatePresetManager
     PhotonUnityNetworking.Demos.dll:
     - Photon.Pun.Demo.Asteroids.Asteroid
     - Photon.Pun.Demo.Asteroids.Bullet
@@ -178,6 +179,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 12066}
     - Class: 114
       Script: {instanceID: 12084}
+    - Class: 114
+      Script: {instanceID: 20480}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1188,7 +1191,7 @@ ScriptsOnlyBuild:
     className: TMP_ExampleScript_01
   - hash:
       serializedVersion: 2
-      Hash: d2b49c27121addf842431e3e71f7da78
+      Hash: b8153ec6e2b841d714fce03e57fd859d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -1936,6 +1939,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 32f9f29c41361577a259f1fc5a07051e
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: StatePresetManager
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainMenu.unity

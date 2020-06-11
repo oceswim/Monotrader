@@ -12,7 +12,6 @@ public class PlayerNameInput : MonoBehaviour
 
     private const string playerNameKey = "PlayerName";
 
-    // Start is called before the first frame update
     void Start()
     {
         if (string.IsNullOrEmpty(nameInputField.text))
@@ -22,6 +21,7 @@ public class PlayerNameInput : MonoBehaviour
         SetUpInputField();
     }
 
+    //if a name already exists for this player the input field is filled by the name
     private void SetUpInputField()
     {
         if (!PlayerPrefs.HasKey(playerNameKey)) { return; }
@@ -31,11 +31,13 @@ public class PlayerNameInput : MonoBehaviour
         SetPlayerName(defaultName);
     }
 
+    //sets the name of the player based on the input
     public void SetPlayerName(string name)
     {
         continueButton.interactable = !string.IsNullOrEmpty(name);
     }
 
+    //saves the player name and updates the nickname value of PUN player
     public void SaveName()
     {
         string playerName = nameInputField.text;

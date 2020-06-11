@@ -21,21 +21,25 @@ public class GameManager : MonoBehaviourPun
     private const string DICE_2_HASHKEY = "Dice2Name";
     private const string TURN_COUNT = "TurnCount";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
-    
-    private List<DicesManager> inGameDices = new List<DicesManager>();
-    private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
-    private bool myTurn,gameCanStart,dicesRolling;
-    private int moveVal, diceStatus, turnCounter,playerCount;
+    private const string NEW_TURN_ACTIVE = "NewTurnActive";
 
-    private Room myRoom; 
-
-    public GameObject DiceUI;
-    public static GameManager instance = null;
-    public GameObject Dice;
-    public TMP_Text PlayerTurn;
-    // Start is called before the first frame update
+    //private variables
     private Player myPlayer;
     private Player[] allPlayers;
+    private List<DicesManager> inGameDices = new List<DicesManager>();
+    private bool myTurn, gameCanStart, dicesRolling;
+    private int moveVal, diceStatus, turnCounter;
+    private Room myRoom;
+
+    //public static variables
+    public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
+    public static GameManager instance = null;
+
+
+    //public variables
+    public GameObject DiceUI;
+    public GameObject Dice;
+    public TMP_Text PlayerTurn,turnCountText;
 
     private void Awake()
     {
@@ -54,21 +58,19 @@ public class GameManager : MonoBehaviourPun
     }
     void Start()
     {
-
-        playerCount = PhotonNetwork.PlayerList.Length;
         moveVal   = diceStatus= turnCounter= 0;
         gameCanStart =dicesRolling= false;
         myPlayer = PhotonNetwork.LocalPlayer;
         allPlayers = PhotonNetwork.PlayerList;
         myRoom = PhotonNetwork.CurrentRoom;
-        SetRoomProperty(TURN_COUNT, 1);//there's 0 turn done at the beginning.
+        SetRoomProperty(TURN_COUNT, 1);
+        turnCountText.text = "Turn #1";
+        SetRoomProperty(PLAYERS_NEW_TURN, 0);
     }
 
     // Update is called once per frame
     void Update()
     {
-
-
         if (!gameCanStart)
         {
             if (myPlayer.IsMasterClient && myRoom.CustomProperties[PLAYER_READY_HASHKEY] != null)
@@ -76,6 +78,7 @@ public class GameManager : MonoBehaviourPun
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
                 if (playerReadyCount == allPlayers.Length)
                 {
+                    Debug.Log("EVERYONE READY " + myPlayer.NickName);
                     PlayersReady();//sets the game state for everyone
                 }
             }
@@ -85,10 +88,8 @@ public class GameManager : MonoBehaviourPun
                 int gameState = (int)myRoom.CustomProperties[GAME_STATE_HASHKEY];
                 if (gameState == 1)
                 {
-
                     gameCanStart = true;
                     AddDiceInstance();
-                    //add dice instance to list here
                 }
 
             }
@@ -107,9 +108,6 @@ public class GameManager : MonoBehaviourPun
                     moveVal = 0;
                     //activate movement
                     MovementManager.moveMe = true;
-                    //switch turn once all actions are done
-                    //switchturn();
-
                 }
             }
         }
@@ -124,6 +122,7 @@ public class GameManager : MonoBehaviourPun
 
 
     }
+    //sets the player's custom properties with an int
     private void SetCustomPpties(string hashKey,int ind)//
     {
         string playerIndexString = ind.ToString();   
@@ -134,22 +133,26 @@ public class GameManager : MonoBehaviourPun
         }
     
 
+    //sets the room property when players are ready to play.
     private void SetRoomProperty()//the room property to check when players are ready
     {
+        int newValue;
         if (myRoom.CustomProperties[PLAYER_READY_HASHKEY] == null)
         {
-            myRoom.CustomProperties.Add(PLAYER_READY_HASHKEY, 1);
+            newValue = 1;
+            SetRoomProperty(PLAYER_READY_HASHKEY, newValue);
         }
         else
         {
-            int newValue = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
-            myRoom.CustomProperties[PLAYER_READY_HASHKEY] = (newValue+1);
+            newValue = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY] +1;
+            SetRoomProperty(PLAYER_READY_HASHKEY,newValue);
             
         }
         SetCustomPpties(PLAYER_STATE, 1);
-        myRoom.SetCustomProperties(myRoom.CustomProperties);
-        Debug.Log(myRoom.CustomProperties[PLAYER_READY_HASHKEY]);
+        Debug.Log("there are "+myRoom.CustomProperties[PLAYER_READY_HASHKEY]+" players ready");
     }
+
+    //setting the room property with an int
     private void SetRoomProperty(string hashKey,int value)//general room properties
     {
         if (myRoom.CustomProperties[hashKey] == null)
@@ -165,6 +168,8 @@ public class GameManager : MonoBehaviourPun
         myRoom.SetCustomProperties(myRoom.CustomProperties);
 
     }
+
+    //setting the room property with a string
     private void SetRoomProperty(string hashKey, string value)//dice properties
     {
         if (myRoom.CustomProperties[hashKey] == null)
@@ -179,6 +184,8 @@ public class GameManager : MonoBehaviourPun
         }
         myRoom.SetCustomProperties(myRoom.CustomProperties);
     }
+
+    //when the player confirms his character choice
     public void OnConfirmation()
     {
 
@@ -186,6 +193,8 @@ public class GameManager : MonoBehaviourPun
 
        
     }
+
+    //allows to check if it's the player's turn
     private bool CheckIfMyTurn()
     {
         bool isItMyTurn = false;
@@ -203,6 +212,8 @@ public class GameManager : MonoBehaviourPun
         
         return isItMyTurn;
     }
+
+    //checks if everyplayer is in the room and  ready to play
     public void PlayersReady()
     {
         int xVal = 0;
@@ -228,6 +239,7 @@ public class GameManager : MonoBehaviourPun
         SetRoomProperty(GAME_STATE_HASHKEY, 1);
     }
 
+    //allows to give each player the property of the dices
     public void SwitchTurn()
     {
         int index = (int)myRoom.CustomProperties[PLAYER_IN_ACTION_HASHKEY];
@@ -235,59 +247,73 @@ public class GameManager : MonoBehaviourPun
         if (index ==(allPlayers.Length-1))
         {
             index = 0;
-            Debug.Log("Switching back to 0");
-            
+  
         }
         else
         {
             index += 1;
-            Debug.Log("Adding 1");
-            
+
         }
         SetRoomProperty(PLAYER_IN_ACTION_HASHKEY, index);
         
     }
+
+    //checks if every player went through 1 lap and gives the player who just completed one a fixed amount of money.
     public void TurnManager()
     {
         turnCounter++;
-        int previousCount;
-        if (myRoom.CustomProperties[PLAYERS_NEW_TURN] != null)
+        
+        SetRoomPlayersNewTurn(1);
+        int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
+        Debug.Log(playersTurnUpdated + "vs " + myRoom.CustomProperties[PLAYERS_NEW_TURN]);
+        if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
-            previousCount = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
-            previousCount++;
-        }
-        else
-        {
-            previousCount = 1;
+            SetRoomPlayersNewTurn(0);
+            Debug.Log("every player passed one tour");
+            UpdateTurnCount();//overall turn gets increased
+            SetRoomProperty(NEW_TURN_ACTIVE, 1);//allows money manager to do the new turn 
             
         }
-        if (previousCount == playerCount)//all players go through a new turn
+        else
+        {
+            Debug.Log("not yet new turn");
+            //give player the money
+            //update the amount text
+        }
+
+    }
+
+
+    //updates the room player new turn property
+    private void SetRoomPlayersNewTurn(int ind)
+    {
+        if (ind == 0)
         {
             SetRoomProperty(PLAYERS_NEW_TURN, 0);
-            UpdateTurnCount();//overall turn gets increased
-            MoneyManager.newTurn = true;
         }
         else
         {
-            SetRoomProperty(PLAYERS_NEW_TURN, previousCount);
+            if (myRoom.CustomProperties[PLAYERS_NEW_TURN] != null)
+            {
+                Debug.Log("INF");
+                int nextValue = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN] + 1;
+                SetRoomProperty(PLAYERS_NEW_TURN, nextValue);
+            }
+          
+
         }
     }
+
+    //the turn count is updated when every player goes through one lap which updates the trends 
     private void UpdateTurnCount()
     {
         int previousCount;
-        if (myRoom.CustomProperties[TURN_COUNT] != null)
-        {
-            previousCount = 1;
-           
-        }
-        else
-        {
-            previousCount = (int)myRoom.CustomProperties[TURN_COUNT];
-            previousCount++;
-           
-        }
+        previousCount = (int)myRoom.CustomProperties[TURN_COUNT]+1;
+        Debug.Log("previous count was :" + (int)myRoom.CustomProperties[TURN_COUNT] + " it is now : " + previousCount);
         SetRoomProperty(TURN_COUNT, previousCount);
     }
+
+    //starts the dice rolling mechanics when the player clicks on the roll button.
     public void RollDices()
     {
 
@@ -299,6 +325,9 @@ public class GameManager : MonoBehaviourPun
         dicesRolling = true;
 
     }
+
+
+    //updates the dices player prefs value
     public void SetDicePrefs(int val)
     {
 
@@ -311,6 +340,7 @@ public class GameManager : MonoBehaviourPun
 
     }
 
+    //allows to seperate each dice instantiated
     public void AddDiceInstance()
     {
         int dice1Ind = (int)myRoom.CustomProperties[DICE_1_HASHKEY];

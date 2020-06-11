@@ -2,7 +2,6 @@
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
 
 public class CharSelectionScript : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public class CharSelectionScript : MonoBehaviour
     public GameObject CharSelectionObject,mainCamera,charNotAvailable,playerUI;
     public static bool confirmation;
 
-    private ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
+
     private const string hashKeyIndex = "CharSelected";
     // Update is called once per frame
 
@@ -22,10 +21,12 @@ public class CharSelectionScript : MonoBehaviour
         confirmation = false;
         index = 0;
         UpdatePrefs(index);
+        SetCustomPpties(-1);
         ShowCorrespondingPrefab(index);
     }
  
 
+    //when player clicks on left button
     public void leftButton()
     {
         HideCorrespondingPrefab(index);
@@ -42,6 +43,8 @@ public class CharSelectionScript : MonoBehaviour
         ShowCorrespondingPrefab(index);
         UpdatePrefs(index);
     }
+
+    //when player clicks on right button
     public void rightButton()
     {
         HideCorrespondingPrefab(index);
@@ -59,6 +62,7 @@ public class CharSelectionScript : MonoBehaviour
         UpdatePrefs(index);
     }
 
+    //shows the corresponding prefab based on the index
     private void ShowCorrespondingPrefab(int ind)
     {
         prefabs[ind].SetActive(true);
@@ -66,12 +70,16 @@ public class CharSelectionScript : MonoBehaviour
 
 
     }
+
+    //deactivates the corresponding prefab when index changes
     private void HideCorrespondingPrefab(int ind)
     {
         prefabs[ind].SetActive(false);
 
     }
 
+
+    //function choosing a random character.
     public void RandomChar()
     {
         HideCorrespondingPrefab(index);
@@ -90,11 +98,15 @@ public class CharSelectionScript : MonoBehaviour
         ShowCorrespondingPrefab(randomInt);
         UpdatePrefs(index);
     }
+
+    //updates the player prefs when choice changes
     private void UpdatePrefs(int ind)
     {
         PlayerPrefs.SetInt("CharIndex", ind);
     }
 
+
+    //when player confirms his choice, it is first checked that no other player chose that same character.
     public void Confirm()
     {
         //confirmation = true;
@@ -113,17 +125,21 @@ public class CharSelectionScript : MonoBehaviour
 
 
     }
+
+    //Sets the player custom ppt to the int so that it's synced with other players.
     private void SetCustomPpties(int ind)
     {
         //sets the local value of the selected object and sync it with other player
         int playerIndex = ind;
         string playerIndexString = playerIndex.ToString();
-        _myCustomProperty[hashKeyIndex] = playerIndexString;
-        PhotonNetwork.LocalPlayer.CustomProperties = _myCustomProperty;
+        GameManager._myCustomProperty[hashKeyIndex] = playerIndexString;
+        PhotonNetwork.LocalPlayer.CustomProperties = GameManager._myCustomProperty;
         PhotonNetwork.LocalPlayer.SetCustomProperties(PhotonNetwork.LocalPlayer.CustomProperties);
 
     }
   
+
+    //checks the availablity of a prefab based on player's custom properties
     private bool CheckSelectedAvailability()
     {
         string localProperty = PhotonNetwork.LocalPlayer.CustomProperties[hashKeyIndex].ToString();
@@ -147,6 +163,8 @@ public class CharSelectionScript : MonoBehaviour
         }
         return isAvailable;
     }
+
+    //if not available, a panel is shown.
     private void CharNotAvailable()
     {
         Debug.Log("Not available");

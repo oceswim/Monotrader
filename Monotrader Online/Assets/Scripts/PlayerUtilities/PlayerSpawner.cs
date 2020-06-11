@@ -5,7 +5,7 @@ using TMPro;
 public class PlayerSpawner : MonoBehaviourPun
 {
     public MovementManager movementScript;
-    private const string playerNamePrefKey = "myName";
+    private const string PLAYER_NAME_PREF = "myName";
     [SerializeField] private GameObject playerPrefab;
     public Transform[] Spawners;
     private Transform Spawn;
@@ -18,12 +18,12 @@ public class PlayerSpawner : MonoBehaviourPun
         spawn = false;
         int otherPlayers = PhotonNetwork.PlayerList.Length - 1;
         otherNumbers = new int[otherPlayers];
-        int spawnNumber = 0;
         for(int i = 0; i< PhotonNetwork.PlayerListOthers.Length;i++)
         {
             otherNumbers[i] = PhotonNetwork.PlayerListOthers[i].ActorNumber;
         }
-        for(int i = 0; i< PhotonNetwork.PlayerList.Length;i++)
+        int spawnNumber;
+        for (int i = 0; i< PhotonNetwork.PlayerList.Length;i++)
         { 
             spawnNumber = PhotonNetwork.PlayerList[i].ActorNumber;
             if (!otherNumbers.Contains(spawnNumber))
@@ -41,13 +41,15 @@ public class PlayerSpawner : MonoBehaviourPun
             SpawnModel();
         }
     }
+
+    //for each players present in the room one instance of the player prefab spawns
     private void SpawnMyPlayer(int i)
     {
 
         Spawn = Spawners[i];
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
         myPlayer.name = "Player"+(i+1).ToString();
-        PlayerPrefs.SetString(playerNamePrefKey, myPlayer.name);
+        PlayerPrefs.SetString(PLAYER_NAME_PREF, myPlayer.name);
         myPlayer.transform.SetParent(Spawn);
         movementScript.enabled = true;
 
@@ -55,6 +57,8 @@ public class PlayerSpawner : MonoBehaviourPun
         
     }
 
+
+    //depending on the index chosen the corresponding model is spawned
     private void SpawnModel()
     {
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -69,6 +73,8 @@ public class PlayerSpawner : MonoBehaviourPun
         AdjustPrefab(prefab);
         
     }
+
+    //depending on the prefab name some adjustments are needed
     private void AdjustPrefab(GameObject prefb)
     {
         string prefbName = prefb.name;

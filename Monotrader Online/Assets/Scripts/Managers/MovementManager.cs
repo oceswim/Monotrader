@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 public class MovementManager : MonoBehaviourPun
 {
+    //the different hashkeys and constant private variables
     private const string PREFDICE = "DiceVal";
     private const int TARGET_AMOUNT = 27;
     private const int TARGET_LIST_SIZE = 28;
@@ -13,28 +14,42 @@ public class MovementManager : MonoBehaviourPun
     private const float SPEED = 5f;
     private const string PLAYER_NAME_PREF_KEY = "myName";
     private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
-    public static bool moveMe;
     private Transform[] Targets;
     private Transform transformToMove, endPoint;
     private int myActorNum, myPositionIndex, movementIndex;
-    private bool simpleMove, simpleOverlap, complexOverlap, simpleOverlapReady, complexOverlapReady, step1Complete, step2Complete, doneMoving, newTurn;
+    private bool step1Complete, step2Complete, doneMoving, newTurn;
     private Transform halfwayTarget1, halfwayTarget2;
     private CharacterController controller = null;
+
+    //bool allowing to start the movement mechanics
+    public static bool moveMe;
+    
     private void Start()
     {
-
-
         PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, 0);
-
         transformToMove = FindMyTransform();
         controller = transformToMove.GetComponent<CharacterController>();
         string pathToTargets = "BoardGame/Player" + myActorNum.ToString() + "Spots";
         Targets = new Transform[TARGET_LIST_SIZE];
         InitialiseTargetList(pathToTargets);
-
-        moveMe = simpleOverlapReady = complexOverlapReady = step1Complete = step2Complete = doneMoving = newTurn = false;
+        moveMe = step1Complete = step2Complete = doneMoving = newTurn = false;
         movementIndex = 0;
     }
+
+    private void Update()
+    {
+        //if moveme is on the player starts going to the target
+        if (moveMe)
+        {
+            moveMe = false;
+            int diceVal = PlayerPrefs.GetInt(PREFDICE);
+            Movement(diceVal);
+        }
+
+
+    }
+
+    //allows to instantiate the transform for our player 
     private Transform FindMyTransform()
     {
         Transform myTransf;
@@ -44,55 +59,49 @@ public class MovementManager : MonoBehaviourPun
         string spawnPath = "StartP" + myActorNum.ToString();
         string fullPath = "BoardGame/Spawners/" + spawnPath + "/" + myName;
         myTransf = GameObject.Find(fullPath).transform;
-        Debug.Log("HEY" + myTransf.name);
+        //Debug.Log("HEY" + myTransf.name);
         return myTransf;
     }
+   
+    //the target list of the board
     private void InitialiseTargetList(string path)
     {
         Transform parentTarget = GameObject.Find(path).transform;
         for (int i = 0; i < Targets.Length; i++)
         {
             Targets[i] = parentTarget.GetChild(i);
-            Debug.Log(Targets[i].name);
         }
     }
-    private void Update()
-    {
-        if (moveMe)
-        {
-            moveMe = false;
-            int diceVal = PlayerPrefs.GetInt(PREFDICE);
-            Debug.Log("Move script : v1 = " + diceVal);
-            Movement(diceVal);
-        }
 
 
-    }
-
+    //the offset needed to calculate the overall displacement
     private Vector3 GetOffset(Transform p1, Transform p2)
     {
-        // Debug.Log(p1.position + "P1" + p2.position + " P2");
         Vector3 offset = p1.position - p2.position;
-
         return offset;
 
     }
 
+
+    /*movement function that will determine if it is a
+     * simple move : the player has to move in a straight line
+     * simple overlap : the player needs to go to one corner then to its target
+     * complex overlap : the player has to go to the first corner, then to a second and finally to the endpoint
+     * if a new turn is detected, the newturn logic is activated
+     */
     private void Movement(int value)
     {
         int oldPosition = myPositionIndex;
         int newPositionIndex = oldPosition + value;
         int overlap = -1;
-        Debug.Log(oldPosition + " old pos and NEW POSITION before: " + newPositionIndex);
+
         if (newPositionIndex > TARGET_AMOUNT)
         {
             int temp = newPositionIndex - TARGET_AMOUNT;
             overlap = temp - 1;
-            Debug.Log("IT;S A NEW TURN SITUATION1");
+
             newTurn = true;
         }
-        Transform startTarget = Targets[oldPosition];
-        Debug.Log("NEW POSITION after: " + newPositionIndex);
         Transform finalTarget;
         Transform newTurnTarget;
         if (overlap >= 0)
@@ -111,7 +120,7 @@ public class MovementManager : MonoBehaviourPun
         {
             if (oldPosition >= 0 && oldPosition < 7)
             {
-                Debug.Log("G1");
+
                 if (newPositionIndex <= 7)
                 {
                     //straight line
@@ -133,7 +142,7 @@ public class MovementManager : MonoBehaviourPun
             }
             else if (oldPosition >= 7 && oldPosition < 14)
             {
-                Debug.Log("G2");
+
                 if (newPositionIndex <= 14)
                 {
                     //straight line
@@ -152,11 +161,11 @@ public class MovementManager : MonoBehaviourPun
                     movementIndex = 5;
                     movementMode = 3;
                 }
-                Debug.Log("THE MOVEMENT MODE in g2:" + movementMode);
+
             }
             else if (oldPosition >= 14 && oldPosition < 21)
             {
-                Debug.Log("G3");
+
                 if (newPositionIndex <= 21)
                 {
                     //straight line
@@ -183,7 +192,7 @@ public class MovementManager : MonoBehaviourPun
                     movementIndex = 7;
                     movementMode = 3;
                 }
-                Debug.Log("THE MOVEMENT MODE in g3:" + movementMode);
+
             }
             else if (oldPosition >= 21 && oldPosition <= 27)
             {
@@ -194,27 +203,27 @@ public class MovementManager : MonoBehaviourPun
                     movementMode = 1;
                 }
 
-                Debug.Log("G4" + newPositionIndex + " " + movementIndex + " " + movementMode);
+
             }
             myPositionIndex = newPositionIndex;
-            Movement(startTarget, finalTarget, movementMode);
+            Movement(finalTarget, movementMode);
             
         }
         else//new turn
         {
-            Debug.Log("The OVERLAP = " + overlap);
+
             if (oldPosition >= 14 && oldPosition < 21)
             {
                 if (overlap == 0)
                 {
-                    Debug.Log("NEW TURN IN STRAIGHT overlap");
+
                     movementIndex = 6;
                     movementMode = 2;
 
                 }
                 else if (overlap > 0 && overlap <= 7)
                 {
-                    Debug.Log("NEW TURN IN complex overlap");
+
                     movementIndex = 7;
                     movementMode = 3;
                 }
@@ -224,48 +233,47 @@ public class MovementManager : MonoBehaviourPun
             {
                 if (overlap == 0)
                 {
-                    Debug.Log("NEW TURN IN STRAIGHT LINE");
+ 
                     movementMode = 1;
                 }
                 if (overlap > 0 && overlap <= 7)
                 {
-                    Debug.Log("NEW TURN IN overlap");
+
                     movementIndex = 8;
                     movementMode = 2;
                 }
                 else if (overlap > 7 && overlap <= 14)
                 {
-                    Debug.Log("NEW TURN IN complex overlap LINE");
+
                     movementIndex = 9;
                     movementMode = 3;
                 }
             }
 
-            Debug.Log($"at {startTarget.name} and going to {newTurnTarget.name} and movement mode : {movementMode}");
             myPositionIndex = overlap;
-            Movement(startTarget, newTurnTarget, movementMode);
+            Movement(newTurnTarget, movementMode);
             
 
 
         }
     }
-    private void Movement(Transform startTarget, Transform endTarget, int mode)
+
+    //In the movement function depending on the mode, the player will be moved accordingly
+    //And if new turn detected, then the new turn logic gets activated
+    private void Movement(Transform endTarget, int mode)
     {
-        Debug.Log($"Going from {startTarget.name} To {endTarget.name}");
-        Debug.Log($"Going from {startTarget.localPosition} To {endTarget.localPosition}");
-        Debug.Log("MODE:" + mode);
         endPoint = endTarget;
         switch (mode)
         {
             case 1:
-                Debug.Log("In case 1");
+
                 while (!doneMoving)
                 {
                     var theOffSet = GetOffset(endPoint, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(endPoint);
                     controller.Move(theOffSet * Time.deltaTime);
-                    //Debug.Log(Vector3.Distance(endPoint.position, transformToMove.position));
+
                     if (Vector3.Distance(endPoint.position, transformToMove.position) < 2f)
                     {
 
@@ -275,7 +283,7 @@ public class MovementManager : MonoBehaviourPun
                 }
                 break;
             case 2:
-                Debug.Log("In case 2"+movementIndex);
+
                 switch (movementIndex)
                 {
                     case 2:
@@ -299,7 +307,6 @@ public class MovementManager : MonoBehaviourPun
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(halfwayTarget1);
                     controller.Move(theOffSet * Time.deltaTime);
-                    //Debug.Log(Vector3.Distance(halfwayTarget1.position, transformToMove.position));
                     if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < .5f)
                     {
                         step1Complete = true;
@@ -313,11 +320,9 @@ public class MovementManager : MonoBehaviourPun
                     transformToMove.LookAt(endPoint);
                     controller.Move(theOffSet * Time.deltaTime);
 
-                    //Debug.Log(Vector3.Distance(endPoint.position, transformToMove.position));
-
                     if (Vector3.Distance(endPoint.position, transformToMove.position) < .5f)
                     {
-                        step1Complete = simpleOverlap = simpleOverlapReady = false;
+                        step1Complete = false;
                         doneMoving = true;
                         Debug.Log("I have arrived!");
                     }
@@ -325,7 +330,7 @@ public class MovementManager : MonoBehaviourPun
 
                 break;
             case 3:
-                Debug.Log("In case 3");
+
                 switch (movementIndex)
                 {
                     case 3:
@@ -361,7 +366,7 @@ public class MovementManager : MonoBehaviourPun
                     if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < .5f)
                     {
                         step1Complete = true;
-                        Debug.Log("I have arrived!");
+
                     }
                 }
                 while (!step2Complete)
@@ -370,11 +375,10 @@ public class MovementManager : MonoBehaviourPun
                     transformToMove.LookAt(halfwayTarget2);
                     theOffSet = theOffSet.normalized * SPEED;
                     controller.Move(theOffSet * Time.deltaTime);
-                    Debug.Log(theOffSet.magnitude);
+
                     if (Vector3.Distance(halfwayTarget2.position, transformToMove.position) < .5f)
                     {
                         step2Complete = true;
-                        Debug.Log("I have arrived!");
                     }
                 }
                 while (!doneMoving)
@@ -383,32 +387,25 @@ public class MovementManager : MonoBehaviourPun
                     transformToMove.LookAt(endPoint);
                     theOffSet = theOffSet.normalized * SPEED;
                     controller.Move(theOffSet * Time.deltaTime);
-                    Debug.Log(theOffSet.magnitude);
+
                     if (Vector3.Distance(endPoint.position, transformToMove.position) < .5f)
                     {
-                        step1Complete = step2Complete = complexOverlap = complexOverlapReady = false;
+                        step1Complete = step2Complete = false;
                         doneMoving = true;
-                        Debug.Log("I have arrived!");
+
                     }
                 }
-
                 break;
-
         }
-
+      
         if (newTurn)
         {
             newTurn = false;
-            
-            
             BoardManager.SetPositionNewTurn(myPositionIndex);
-            GameManager.instance.TurnManager();
         }
         else
         {
-            
             BoardManager.SetPosition(myPositionIndex);
-            
         }
         doneMoving = false;
 

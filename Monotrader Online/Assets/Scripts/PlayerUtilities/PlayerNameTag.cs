@@ -3,9 +3,12 @@ using TMPro;
 using Photon.Pun;
 
 
+
+/*
+ * Allows to show the other player names and hide the name if it's our name.
+ */
 public class PlayerNameTag : MonoBehaviourPun
 {
-    // Start is called before the first frame update
     [SerializeField] private TextMeshProUGUI nameText;
     void Start()
     {
@@ -13,6 +16,8 @@ public class PlayerNameTag : MonoBehaviourPun
         SetName();
     }
 
+
+    //sets the text of the billboard to the corresponding player name
     private void SetName()
     {
         nameText.text = photonView.Owner.NickName;

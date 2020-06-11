@@ -56,7 +56,7 @@ public class DicesManager : MonoBehaviourPun
         float start = 0;
         while (start < seconds)
         {
-            Debug.Log("Waiting " + start);
+            //Debug.Log("Waiting " + start);
             start += Time.deltaTime;
         }
     }

@@ -1,5 +1,4 @@
-﻿using ExitGames.Client.Photon;
-using Photon.Chat;
+﻿using Photon.Chat;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
+/*
+ * Allows to handle the in game chat so that the players can communicate together
+ */
 public class GameChatClient : MonoBehaviour, IChatClientListener
 {
 	public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.

@@ -2,7 +2,7 @@
 
 public class BoardManager : MonoBehaviour
 {
-    private static bool actionDone;
+    private static bool actionDone, newTurn;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +16,12 @@ public class BoardManager : MonoBehaviour
         {
             actionDone = false;
             GameManager.instance.SwitchTurn();
+            if(newTurn)
+            {
+                newTurn = false;
+                Debug.Log("CHECKING NEW TURN MANAGER HERE");
+                GameManager.instance.TurnManager();
+            }
         }
         
     }
@@ -84,6 +90,7 @@ public class BoardManager : MonoBehaviour
     public static void SetPositionNewTurn(int index)
     {
         Debug.Log("New turn! you are on "+index);
+       
         switch (index)
         {
             case 0:
@@ -119,6 +126,6 @@ public class BoardManager : MonoBehaviour
 
         }
         actionDone = true;
-
+        newTurn = true;
     }
 }

@@ -1,10 +1,14 @@
 ﻿
 using UnityEngine;
-
+using ExitGames.Client.Photon;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
+
+/*
+ * This script allows to handle the photon unity engine connexion functions.
+ */
 public class MainMenu : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject findOponnentPanel = null;
@@ -85,6 +89,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
  
         }
     }
+   
     public void ExitGame()
     {
 #if UNITY_EDITOR
