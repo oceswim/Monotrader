@@ -3,6 +3,12 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+/*
+ * Allows to set each player's state in order to have the money manager be completely synced among players
+ * when every player has a state property, money manager is enabled as well as the confirm and random button of the character 
+ * selection UI
+ */
 public class StatePresetManager : MonoBehaviour
 {
     private const string PLAYER_STATE = "My_State";

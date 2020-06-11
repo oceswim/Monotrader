@@ -29,103 +29,67 @@ public class BoardManager : MonoBehaviour
     public static void SetPosition(int index)
     {
         Debug.Log("You are on " + index);
-        switch(index)    
-        {
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
-            case 9:
-                break;
-            case 10:
-                break;
-            case 11:
-                break;
-            case 12:
-                break;
-            case 13:
-                break;
-            case 14:
-                break;
-            case 15:
-                break;
-            case 16:
-                break;
-            case 17:
-                break;
-            case 18:
-                break;
-            case 19:
-                break;
-            case 20:
-                break;
-            case 21:
-                break;
-            case 22:
-                break;
-            case 23:
-                break;
-            case 24:
-                break;
-            case 25:
-                break;
-            case 26:
-                break;
-            case 27:
-                break;
-
-        }
+        PositionManager(index);
         actionDone = true;
     }
     public static void SetPositionNewTurn(int index)
     {
         Debug.Log("New turn! you are on "+index);
-       
-        switch (index)
-        {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
-            case 9:
-                break;
-            case 10:
-                break;
-            case 11:
-                break;
-            case 12:
-                break;
-            case 13:
-                break;
-            case 14:
-                break;
-
-        }
+        PositionManager(index);
         actionDone = true;
         newTurn = true;
+    }
+
+    private static void PositionManager(int index)
+    {
+        if (index == 1 || index == 11 || index == 16 || index == 22)
+        {
+            //euros currency -> can buy or sell
+        }
+        else if (index == 3 || index == 8 || index == 17 || index == 25)
+        {
+            //dollars currency -> can buy or sell
+        }
+        else if (index == 6 || index == 10 || index == 19 || index == 23)
+        {
+            //pounds currency -> can buy or sell
+        }
+        else if (index == 5 || index == 12 || index == 20 || index == 24)
+        {
+            //yen currency -> can buy or sell
+        }
+        else if (index == 2 || index == 9)
+        {
+            //crisis
+        }
+        else if (index == 13 || index == 26)
+        {
+            //world variation
+        }
+        else if (index == 4 || index == 15)
+        {
+            //national variation
+        }
+        else if (index == 18 || index == 27)
+        {
+            //taxes
+        }
+        else
+        {
+            switch (index)
+            {
+                case 7:
+                    //black tuesday
+                    break;
+                case 14:
+                    //bank
+                    break;
+        
+                case 21:
+                    //luck?
+                    break;
+
+            }
+        }
     }
 }

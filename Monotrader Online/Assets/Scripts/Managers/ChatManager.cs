@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-public class SliderManager : MonoBehaviour
+public class ChatManager : MonoBehaviour
 {
     private Slider mySlider;
     public GameObject OnText, OffText, modeToggler,playerUI,trendsHistory;
@@ -18,10 +18,7 @@ public class SliderManager : MonoBehaviour
             mySlider.value = mySlider.minValue;
             OffText.SetActive(true);
             OnText.SetActive(false);
-            if (modeToggler != null)
-            {
-                modeToggler.SetActive(false);
-            }
+            modeToggler.SetActive(false);
             playerUI.SetActive(false);
             trendsHistory.SetActive(true);
         }
@@ -30,10 +27,7 @@ public class SliderManager : MonoBehaviour
             mySlider.value = mySlider.maxValue;
             OffText.SetActive(false);
             OnText.SetActive(true);
-            if (modeToggler != null)
-            {
-                modeToggler.SetActive(true);
-            }
+            modeToggler.SetActive(true);
             playerUI.SetActive(true);
             trendsHistory.SetActive(false);
 
