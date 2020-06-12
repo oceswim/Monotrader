@@ -29,12 +29,12 @@ public class GameManager : MonoBehaviourPun
     private List<DicesManager> inGameDices = new List<DicesManager>();
     private bool myTurn, gameCanStart, dicesRolling;
     private int moveVal, diceStatus, turnCounter;
-    private Room myRoom;
+    
 
     //public static variables
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     public static GameManager instance = null;
-
+    public static Room myRoom;
 
     //public variables
     public GameObject DiceUI;

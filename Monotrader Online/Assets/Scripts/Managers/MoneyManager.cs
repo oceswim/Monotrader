@@ -13,6 +13,7 @@ public class MoneyManager : MonoBehaviour
 
     private const float INITIAL_GOLD = 5000;
     private const float INITIAL_CURRENCIES = 2500;
+    private const string FORTUNE = "myFortune";
     private const string TURN_COUNT = "TurnCount";
     private const string EUROS_PRICE = "Euros_Price";
     private const string DOLLARS_PRICE = "Dollars_Price";
@@ -53,11 +54,11 @@ public class MoneyManager : MonoBehaviour
     private Player myPlayer;
     private Room myRoom;
     private string actorNumber;
-    private bool playersReady;
+    private bool playersReady,updateFortune;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
-    public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText;
+    public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText,totalFortuneText;
     public GameObject waitingForObject;
     public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
     public static bool newTurn;
@@ -74,8 +75,8 @@ public class MoneyManager : MonoBehaviour
         
         PopulateTrendsList();
         actorNumber = myPlayer.ActorNumber.ToString();
-        playersReady = newTurn = false;
-        myRoom = PhotonNetwork.CurrentRoom;
+        playersReady = newTurn =updateFortune= false;
+        myRoom = GameManager.myRoom;
         InitialiseHashKeys();
       
         
@@ -230,21 +231,26 @@ public class MoneyManager : MonoBehaviour
 
         myGold = INITIAL_GOLD;
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
+        PlayerPrefs.SetFloat(PLAYER_GOLD, myGold);
+        PlayerPrefs.SetFloat(PLAYER_DOLLARS, myDollars);
+        PlayerPrefs.SetFloat(PLAYER_EUROS, myEuros);
+        PlayerPrefs.SetFloat(PLAYER_POUNDS, myPounds);
+        PlayerPrefs.SetFloat(PLAYER_YENS, myYens);
+        
         float initD;
         float initE;
         float initP;
         float initY;
         initD = initE = initP = initY = 1;
+        
         if (masterClient)
         {
-
-            SetRoomAmounts(myGold, myDollars, myEuros, myPounds, myYens);
+            
             SetRoomPrices(initD, initE, initP, initY);
             PrepareTrends();//sets up the price trends
 
         }
-
-        UpdateAmountTexts();
+        UpdateFortune();
 
     }
    
@@ -263,6 +269,9 @@ public class MoneyManager : MonoBehaviour
         SetRoomProperty(PLAYER_DOLLARS, d);
         SetRoomProperty(PLAYER_POUNDS, p);
         SetRoomProperty(PLAYER_YENS, y);
+
+      
+        
     }
 
     //allows to set each currencies prices to the room properties
@@ -294,6 +303,8 @@ public class MoneyManager : MonoBehaviour
         eurosTrendInGame[e].enabled = false;
         poundsTrendInGame[p].enabled = false;
         yensTrendInGame[y].enabled = false;
+
+
     }
 
     //allows to set each currencies variation indexes to the room properties
@@ -328,15 +339,20 @@ public class MoneyManager : MonoBehaviour
         float pouPrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
         float yenPrice = (float)myRoom.CustomProperties[YEN_PRICE];
 
+
+        //we have values from -.1 to +.1 = a variation in %
+        //if -10% : price * .9f
+        //if +10% : price * 1.1f
+
         float dolTrend = (float)myRoom.CustomProperties[DOLLARS_TREND];
         float eurTrend = (float)myRoom.CustomProperties[EUROS_TREND];
         float pouTrend = (float)myRoom.CustomProperties[POUNDS_TREND];
         float yenTrend = (float)myRoom.CustomProperties[YEN_TREND];
 
-        double newDolPrice = Math.Round((dolPrice + (dolTrend / 10)), 2);
-        double newEurPrice = Math.Round((eurPrice + (eurTrend / 10)), 2);
-        double newPouPrice = Math.Round((pouPrice + (pouTrend / 10)), 2);
-        double newYenPrice = Math.Round((yenPrice + (yenTrend / 10)), 2);
+        double newDolPrice = CalculateNewPrice(dolPrice, dolTrend);
+        double newEurPrice = CalculateNewPrice(eurPrice, eurTrend);
+        double newPouPrice = CalculateNewPrice(pouPrice, pouTrend);
+        double newYenPrice = CalculateNewPrice(yenPrice, yenTrend);
 
 
         SetRoomPrices((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
@@ -347,6 +363,16 @@ public class MoneyManager : MonoBehaviour
 
     }
 
+    private double CalculateNewPrice(float oldPrice,float trend)
+    {  
+        trend = 1 + (trend/10);
+
+        double newPrice = oldPrice * trend;
+
+        return Math.Round(newPrice, 2);
+
+    }
+
     //allows to set the new trends based on the new indexes
     private void UpdateTrendList()
     {
@@ -354,7 +380,6 @@ public class MoneyManager : MonoBehaviour
         int randIndEur = (int)myRoom.CustomProperties[EUROS_TREND_IND];
         int randIndPou = (int)myRoom.CustomProperties[POUNDS_TREND_IND];
         int randIndYen = (int)myRoom.CustomProperties[YEN_TREND_IND];
-
 
         float dolTrend = (float)TRENDS_VALUES[randIndDol] / 10;
         float eurTrend = (float)TRENDS_VALUES[randIndEur] / 10;
@@ -402,12 +427,41 @@ public class MoneyManager : MonoBehaviour
                 break;
 
         }
+
         SetRoomHistoryStatus(1);
         //we set the history status as done.
 
 
     }
 
+    //the fortune is updated based on the current amount of money owned by the player and the conversion to gold of each amount.
+    //the player prefs and the room amount for this player are also updated and the text UI as well.
+
+    private void UpdateFortune()
+    {
+        
+        float euros = (float)myRoom.CustomProperties[EUROS_PRICE] * PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
+        float dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE] * PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
+        float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
+        float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold
+        float gold = PlayerPrefs.GetFloat(PLAYER_GOLD);
+
+       
+        Debug.Log(euros + "e " + dollars + "d " + gold + "g " + yens + "y " + pounds + "p ");
+        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
+        PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
+        totalFortuneText.text = totalFortune.ToString();
+
+        SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
+        PlayerPrefs.SetFloat(PLAYER_EUROS, euros);
+        PlayerPrefs.SetFloat(PLAYER_DOLLARS, dollars);
+        PlayerPrefs.SetFloat(PLAYER_POUNDS, pounds);
+        PlayerPrefs.SetFloat(PLAYER_YENS, yens);
+
+        UpdateAmountText();
+
+
+    }
     //simple wait function allowing to synchronise every room properties when needed
     private void Wait()
     {
@@ -422,7 +476,7 @@ public class MoneyManager : MonoBehaviour
     //allows to update the history gui for each players
     private void UpdateHistoryGUI()
     {
-
+        
         string M3 = (string)myRoom.CustomProperties[HISTORY_TURN_M3];
         string M2 = (string)myRoom.CustomProperties[HISTORY_TURN_M2];
         string M1 = (string)myRoom.CustomProperties[HISTORY_TURN_M1];
@@ -546,14 +600,17 @@ public class MoneyManager : MonoBehaviour
     }
 
     //allows to update the amount of money owned by the player displayed
-    private void UpdateAmountTexts()
-    {
-        goldAmount.text = myGold.ToString();
-        dollarsAmount.text = myDollars.ToString();
-        eurosAmount.text = myEuros.ToString();
-        poundsAmount.text = myPounds.ToString();
-        yenAmount.text = myPounds.ToString();
-    }
 
+
+    private void UpdateAmountText()
+    {
+        goldAmount.text = PlayerPrefs.GetFloat(PLAYER_GOLD).ToString();
+        dollarsAmount.text = PlayerPrefs.GetFloat(PLAYER_DOLLARS).ToString();
+        eurosAmount.text = PlayerPrefs.GetFloat(PLAYER_EUROS).ToString();
+        poundsAmount.text = PlayerPrefs.GetFloat(PLAYER_POUNDS).ToString();
+        yenAmount.text = PlayerPrefs.GetFloat(PLAYER_YENS).ToString();
+        
+
+    }
 
 }

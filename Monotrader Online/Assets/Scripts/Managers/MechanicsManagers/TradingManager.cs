@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
@@ -39,6 +37,7 @@ public class TradingManager : MonoBehaviour
     {
         if (eurosTrading)
         {
+           
             eurosTrading = false;
             myTitles[1].SetActive(true);
             currencyModeText = "€";
@@ -47,6 +46,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (dollarsTrading)
         {
+           
             dollarsTrading = false;
             myTitles[0].SetActive(true);
             currencyModeText = "$";
@@ -54,6 +54,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (poundsTrading)
         {
+            
             poundsTrading = false;
             myTitles[2].SetActive(true);
             currencyModeText = "£";
@@ -61,6 +62,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (yensTrading)
         {
+          
             yensTrading = false;
             myTitles[3].SetActive(true);
             currencyModeText = "¥";
@@ -78,12 +80,15 @@ public class TradingManager : MonoBehaviour
             switch (tradingMode)
             {
                 case 0://buy
+                   //check player pref from lucky so that the transaction is 15% more.
                     price = Math.Round((theValue / currencyPriceInGold), 2);
                     latestValue = price;
                     valueText.text = price.ToString() + " " + currencyModeText;
                     //gold -> currency
                     break;
                 case 1:
+
+                    //check player pref from lucky so that the transaction brings less 15%.
                     price = Math.Round(currencyPriceInGold * theValue);
                     latestValue = price;
                     valueText.text = price.ToString() + " G";
