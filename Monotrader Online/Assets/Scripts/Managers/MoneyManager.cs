@@ -54,150 +54,150 @@ public class MoneyManager : MonoBehaviour
     private Player myPlayer;
     private Room myRoom;
     private string actorNumber;
-    private bool playersReady,updateFortune;
+    private bool playersReady;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
-    public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText,totalFortuneText;
+    public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText, totalFortuneText;
     public GameObject waitingForObject;
     public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
-    public static bool newTurn;
+    public static bool newTurn, updateFortune;
     // Start is called before the first frame update
     private void Awake()
     {
         myPlayer = PhotonNetwork.LocalPlayer;
         //SetCustomsPPT(PLAYER_STATE, 0);
-        
+
     }
     void Start()
     {
-        
-        
+
+
         PopulateTrendsList();
         actorNumber = myPlayer.ActorNumber.ToString();
-        playersReady = newTurn =updateFortune= false;
+        playersReady = newTurn = updateFortune = false;
         myRoom = GameManager.myRoom;
         InitialiseHashKeys();
-      
-        
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
         //if all the players are in the room
-        if(PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.PlayerCount)
+        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.PlayerCount)
         {
-                if (myRoom.CustomProperties[GAME_STATE_HASHKEY] == null)
+            if (myRoom.CustomProperties[GAME_STATE_HASHKEY] == null)
+            {
+                string waitingText = "Waiting for ";
+                foreach (Player p in PhotonNetwork.PlayerListOthers)
                 {
-                    string waitingText = "Waiting for ";
-                    foreach (Player p in PhotonNetwork.PlayerListOthers)
+                    Debug.Log("test player p:" + p.CustomProperties[CHAR_SELECTION].Equals("-1"));
+                    if (p.CustomProperties[CHAR_SELECTION].Equals("-1"))
                     {
-                        Debug.Log("test player p:"+p.CustomProperties[CHAR_SELECTION].Equals("-1"));
-                        if (p.CustomProperties[CHAR_SELECTION].Equals("-1"))
+                        Debug.Log("in the waiting section");
+                        if (!notReadyPlayers.Contains(p))
                         {
-                            Debug.Log("in the waiting section");
-                            if (!notReadyPlayers.Contains(p))
-                            {
-                                notReadyPlayers.Add(p);
+                            notReadyPlayers.Add(p);
 
-                            }
-                            if (notReadyPlayers.IndexOf(p).Equals(notReadyPlayers.Count - 1))
-                            {
-                                waitingText += p.NickName + "....";
-                            }
-                            else
-                            {
-                                waitingText += p.NickName + ", ";
-                            }
+                        }
+                        if (notReadyPlayers.IndexOf(p).Equals(notReadyPlayers.Count - 1))
+                        {
+                            waitingText += p.NickName + "....";
                         }
                         else
                         {
-                            if (notReadyPlayers.Contains(p))
-                            {
-                                notReadyPlayers.Remove(p);
-                            }
-
+                            waitingText += p.NickName + ", ";
                         }
-                    }
-
-                    if (!waitingForText.text.Equals(waitingText))
-                    {
-                        waitingForText.text = waitingText;
                     }
                     else
                     {
-                        Debug.Log("Same text so not updated");
-                        Debug.Log(waitingText + "vs " + waitingForText.text);
-                    }
-                }
-                else if (myRoom.CustomProperties[GAME_STATE_HASHKEY] != null && !playersReady)
-                {
-                    waitingForText.text = "Game is about to start!";
-                    if ((int)myRoom.CustomProperties[GAME_STATE_HASHKEY] == 1)
-                    {
-                        playersReady = true;
-                        waitingForObject.SetActive(false);
-                        SetInitialAmounts(myPlayer.IsMasterClient);
-                        Debug.Log("everyone is ready!" + myPlayer.NickName);
-                    }
-                }
-
-                if (myRoom.CustomProperties[HISTORY_STATUS] != null)
-                {
-                    if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 0)
-                    {
-                        UpdateTrendDisplay();
-                        UpdateHistoryGUI();
-                        SetCustomsPPT(PLAYER_STATE, 1);
-
-                    }
-                    else if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 1)
-                    {
-                        
-                        if (myPlayer.IsMasterClient)
+                        if (notReadyPlayers.Contains(p))
                         {
-                            bool allReady = true;
+                            notReadyPlayers.Remove(p);
+                        }
+
+                    }
+                }
+
+                if (!waitingForText.text.Equals(waitingText))
+                {
+                    waitingForText.text = waitingText;
+                }
+                else
+                {
+                    Debug.Log("Same text so not updated");
+                    Debug.Log(waitingText + "vs " + waitingForText.text);
+                }
+            }
+            else if (myRoom.CustomProperties[GAME_STATE_HASHKEY] != null && !playersReady)
+            {
+                waitingForText.text = "Game is about to start!";
+                if ((int)myRoom.CustomProperties[GAME_STATE_HASHKEY] == 1)
+                {
+                    playersReady = true;
+                    waitingForObject.SetActive(false);
+                    SetInitialAmounts(myPlayer.IsMasterClient);
+                    Debug.Log("everyone is ready!" + myPlayer.NickName);
+                }
+            }
+
+            if (myRoom.CustomProperties[HISTORY_STATUS] != null)
+            {
+                if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 0)
+                {
+                    UpdateTrendDisplay();
+                    UpdateHistoryGUI();
+                    SetCustomsPPT(PLAYER_STATE, 1);
+
+                }
+                else if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 1)
+                {
+
+                    if (myPlayer.IsMasterClient)
+                    {
+                        bool allReady = true;
+                        foreach (Player p in PhotonNetwork.PlayerListOthers)
+                        {
+                            if ((int)p.CustomProperties[PLAYER_STATE] != 1)
+                            {
+                                allReady = false;
+                            }
+                        }
+                        if (allReady)
+                        {
+                            SetRoomHistoryStatus(0);
+                            SetCustomsPPT(PLAYER_STATE, 0);
                             foreach (Player p in PhotonNetwork.PlayerListOthers)
                             {
-                                if ((int)p.CustomProperties[PLAYER_STATE] != 1)
-                                {
-                                    allReady = false;
-                                }
-                            }
-                            if (allReady)
-                            { 
-                                SetRoomHistoryStatus(0);
-                                SetCustomsPPT(PLAYER_STATE, 0);
-                                foreach (Player p in PhotonNetwork.PlayerListOthers)
-                                {
-                                    SetCustomsPPT(PLAYER_STATE, 0, p);
-                                }
+                                SetCustomsPPT(PLAYER_STATE, 0, p);
                             }
                         }
-
-
-
                     }
-
-
 
                 }
-                if (myRoom.CustomProperties[NEW_TURN_ACTIVE] != null)
 
+            }
+            if (myRoom.CustomProperties[NEW_TURN_ACTIVE] != null)
+            {
+                if ((int)myRoom.CustomProperties[NEW_TURN_ACTIVE] == 1)
                 {
-                    if ((int)myRoom.CustomProperties[NEW_TURN_ACTIVE] == 1)
+
+                    if (myPlayer.IsMasterClient)
                     {
-
-                        if (myPlayer.IsMasterClient)
-                        {
-                            SetRoomProperty(NEW_TURN_ACTIVE, 0);
-                            Wait();//allows to wait before trends are prepared so the room property change takes effect.
-                            PrepareTrends();
-                        }
+                        SetRoomProperty(NEW_TURN_ACTIVE, 0);
+                        Wait();//allows to wait before trends are prepared so the room property change takes effect.
+                        PrepareTrends();
                     }
+                }
+            }
 
-                
+            if(updateFortune)
+            {
+                updateFortune = false;
+                Debug.Log("taxes updating fortune.");
+                UpdateFortune();
             }
         }
     }
@@ -218,10 +218,15 @@ public class MoneyManager : MonoBehaviour
     private void InitialiseHashKeys()
     {
         PLAYER_GOLD = "Player" + actorNumber + "Gold";
+        PlayerPrefs.SetString("MYGOLD", PLAYER_GOLD);
         PLAYER_DOLLARS = "Player" + actorNumber + "Dollars";
+        PlayerPrefs.SetString("MYDOLLARS", PLAYER_DOLLARS);
         PLAYER_EUROS = "Player" + actorNumber + "Euros";
+        PlayerPrefs.SetString("MYEUROS", PLAYER_EUROS);
         PLAYER_YENS = "Player" + actorNumber + "Yens";
+        PlayerPrefs.SetString("MYYENS", PLAYER_YENS);
         PLAYER_POUNDS = "Player" + actorNumber + "Pounds";
+        PlayerPrefs.SetString("MYPOUNDS", PLAYER_POUNDS);
     }
 
 
@@ -236,16 +241,16 @@ public class MoneyManager : MonoBehaviour
         PlayerPrefs.SetFloat(PLAYER_EUROS, myEuros);
         PlayerPrefs.SetFloat(PLAYER_POUNDS, myPounds);
         PlayerPrefs.SetFloat(PLAYER_YENS, myYens);
-        
+
         float initD;
         float initE;
         float initP;
         float initY;
         initD = initE = initP = initY = 1;
-        
+
         if (masterClient)
         {
-            
+
             SetRoomPrices(initD, initE, initP, initY);
             PrepareTrends();//sets up the price trends
 
@@ -253,7 +258,7 @@ public class MoneyManager : MonoBehaviour
         UpdateFortune();
 
     }
-   
+
     //the room history allows to set if the history was updated for all player (1) if not (0)
     private void SetRoomHistoryStatus(int ind)
     {
@@ -270,8 +275,8 @@ public class MoneyManager : MonoBehaviour
         SetRoomProperty(PLAYER_POUNDS, p);
         SetRoomProperty(PLAYER_YENS, y);
 
-      
-        
+
+
     }
 
     //allows to set each currencies prices to the room properties
@@ -363,9 +368,9 @@ public class MoneyManager : MonoBehaviour
 
     }
 
-    private double CalculateNewPrice(float oldPrice,float trend)
-    {  
-        trend = 1 + (trend/10);
+    private double CalculateNewPrice(float oldPrice, float trend)
+    {
+        trend = 1 + (trend / 10);
 
         double newPrice = oldPrice * trend;
 
@@ -387,7 +392,7 @@ public class MoneyManager : MonoBehaviour
         float yenTrend = (float)TRENDS_VALUES[randIndYen] / 10;
 
         SetRoomTrends(dolTrend, eurTrend, pouTrend, yenTrend);
-        
+
 
     }
 
@@ -439,14 +444,14 @@ public class MoneyManager : MonoBehaviour
 
     private void UpdateFortune()
     {
-        
+
         float euros = (float)myRoom.CustomProperties[EUROS_PRICE] * PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
         float dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE] * PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
         float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
         float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold
         float gold = PlayerPrefs.GetFloat(PLAYER_GOLD);
 
-       
+
         Debug.Log(euros + "e " + dollars + "d " + gold + "g " + yens + "y " + pounds + "p ");
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
@@ -476,7 +481,7 @@ public class MoneyManager : MonoBehaviour
     //allows to update the history gui for each players
     private void UpdateHistoryGUI()
     {
-        
+
         string M3 = (string)myRoom.CustomProperties[HISTORY_TURN_M3];
         string M2 = (string)myRoom.CustomProperties[HISTORY_TURN_M2];
         string M1 = (string)myRoom.CustomProperties[HISTORY_TURN_M1];
@@ -567,7 +572,7 @@ public class MoneyManager : MonoBehaviour
     }
 
     //allows to set a new or existing player property with an int.
-    private void SetCustomsPPT(string hashKeyIndex,int ind)
+    private void SetCustomsPPT(string hashKeyIndex, int ind)
     {
         int playerIndex = ind;
         if (GameManager._myCustomProperty[hashKeyIndex] != null)
@@ -584,7 +589,7 @@ public class MoneyManager : MonoBehaviour
     }
 
     //allows to set a new or existing room property with an int for each players by the master player.
-    private void SetCustomsPPT(string hashKeyIndex,int ind,Player p)
+    private void SetCustomsPPT(string hashKeyIndex, int ind, Player p)
     {
         int playerIndex = ind;
         if (p.CustomProperties[hashKeyIndex] != null)
@@ -595,7 +600,7 @@ public class MoneyManager : MonoBehaviour
         {
             p.CustomProperties.Add(hashKeyIndex, playerIndex);
         }
-        
+
         p.SetCustomProperties(p.CustomProperties);
     }
 
@@ -609,7 +614,7 @@ public class MoneyManager : MonoBehaviour
         eurosAmount.text = PlayerPrefs.GetFloat(PLAYER_EUROS).ToString();
         poundsAmount.text = PlayerPrefs.GetFloat(PLAYER_POUNDS).ToString();
         yenAmount.text = PlayerPrefs.GetFloat(PLAYER_YENS).ToString();
-        
+
 
     }
 

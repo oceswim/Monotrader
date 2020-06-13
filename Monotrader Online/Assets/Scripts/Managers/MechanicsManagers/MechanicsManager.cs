@@ -68,10 +68,12 @@ public class MechanicsManager : MonoBehaviour
     public void NationalVariation()
     {
         nationalobject.SetActive(true);
+        VariationManager.nationalVar = true;
     }
     public void WorldWideVariation()
     {
         worldWideObject.SetActive(true);
+        VariationManager.worldVar = true;
     }
     public void Savings()
     {
