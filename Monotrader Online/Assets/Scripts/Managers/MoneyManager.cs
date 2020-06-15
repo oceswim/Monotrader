@@ -20,6 +20,7 @@ public class MoneyManager : MonoBehaviour
     private const string POUNDS_PRICE = "Pounds_Price";
     private const string YEN_PRICE = "Yen_Price";
 
+    private const string CRISIS_UPDATE = "Crisis_update";
     private const string HISTORY_STATUS = "History_Status";
     private const string PLAYER_STATE = "My_State";
     private const string NEW_TURN_ACTIVE = "NewTurnActive";
@@ -54,12 +55,12 @@ public class MoneyManager : MonoBehaviour
     private Player myPlayer;
     private Room myRoom;
     private string actorNumber;
-    private bool playersReady;
+    private bool playersReady, newTurnFortune;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
     public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText, totalFortuneText;
-    public GameObject waitingForObject;
+    public GameObject waitingForObject,sectionsManagerObject;
     public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
     public static bool newTurn, updateFortune;
     // Start is called before the first frame update
@@ -139,6 +140,8 @@ public class MoneyManager : MonoBehaviour
                     playersReady = true;
                     waitingForObject.SetActive(false);
                     SetInitialAmounts(myPlayer.IsMasterClient);
+                    //set setctions object to true
+                    sectionsManagerObject.SetActive(true);
                     Debug.Log("everyone is ready!" + myPlayer.NickName);
                 }
             }
@@ -183,7 +186,7 @@ public class MoneyManager : MonoBehaviour
             {
                 if ((int)myRoom.CustomProperties[NEW_TURN_ACTIVE] == 1)
                 {
-
+                    newTurnFortune = true;
                     if (myPlayer.IsMasterClient)
                     {
                         SetRoomProperty(NEW_TURN_ACTIVE, 0);
@@ -191,13 +194,32 @@ public class MoneyManager : MonoBehaviour
                         PrepareTrends();
                     }
                 }
+                else if((int)myRoom.CustomProperties[NEW_TURN_ACTIVE] == 0)
+                {
+                    if(newTurnFortune)
+                    {
+                        Debug.Log("NEW TURN FORTUNE");
+                        UpdateFortune();
+                        newTurnFortune = false;
+                    }
+                }
             }
 
             if(updateFortune)
             {
                 updateFortune = false;
-                Debug.Log("taxes updating fortune.");
-                UpdateFortune();
+                Debug.Log(" updating fortune.");
+                UpdateFortuneInGame();
+            }
+
+            if(myPlayer.CustomProperties[CRISIS_UPDATE] != null)
+            {
+                if((int)myPlayer.CustomProperties[CRISIS_UPDATE]==1)
+                {
+                    SetCustomsPPT(CRISIS_UPDATE, 0);
+                    UpdateHistoryGUI();
+
+                }
             }
         }
     }
@@ -255,6 +277,7 @@ public class MoneyManager : MonoBehaviour
             PrepareTrends();//sets up the price trends
 
         }
+
         UpdateFortune();
 
     }
@@ -361,13 +384,25 @@ public class MoneyManager : MonoBehaviour
 
 
         SetRoomPrices((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
-        UpdateHistory((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
+        UpdateHistory((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice,false);
 
 
 
 
     }
+    public void UpdatePricesOnHistory()
+    {
+        float dolPrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
+        float eurPrice = (float)myRoom.CustomProperties[EUROS_PRICE];
+        float pouPrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
+        float yenPrice = (float)myRoom.CustomProperties[YEN_PRICE];
 
+        UpdateHistory(dolPrice,eurPrice, pouPrice, yenPrice,true);
+        foreach(Player p in PhotonNetwork.PlayerList)
+        {
+            SetCustomsPPT(CRISIS_UPDATE, 1, p);
+        }
+    }
     private double CalculateNewPrice(float oldPrice, float trend)
     {
         trend = 1 + (trend / 10);
@@ -397,7 +432,7 @@ public class MoneyManager : MonoBehaviour
     }
 
     //here the trends history gets updated  and so the history status is set to 1 to be updated in the GUI
-    private void UpdateHistory(float dollars, float euros, float pound, float yen)
+    private void UpdateHistory(float dollars, float euros, float pound, float yen, bool inGame)
     {
         //depending on turn count, history gets updated
         int turnCount = (int)myRoom.CustomProperties[TURN_COUNT];
@@ -433,7 +468,11 @@ public class MoneyManager : MonoBehaviour
 
         }
 
-        SetRoomHistoryStatus(1);
+        if (!inGame)
+        {
+             SetRoomHistoryStatus(1);
+        }
+
         //we set the history status as done.
 
 
@@ -465,6 +504,24 @@ public class MoneyManager : MonoBehaviour
 
         UpdateAmountText();
 
+
+    }
+    private void UpdateFortuneInGame()
+    {
+        float euros = PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
+        float dollars = PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
+        float pounds =PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
+        float yens = PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold
+        float gold = PlayerPrefs.GetFloat(PLAYER_GOLD);
+
+
+        Debug.Log(euros + "e " + dollars + "d " + gold + "g " + yens + "y " + pounds + "p ");
+        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
+        PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
+        totalFortuneText.text = totalFortune.ToString();
+
+        SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
+        UpdateAmountText();
 
     }
     //simple wait function allowing to synchronise every room properties when needed

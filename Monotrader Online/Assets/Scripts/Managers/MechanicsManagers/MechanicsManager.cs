@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
-
+using TMPro;
 public class MechanicsManager : MonoBehaviour
 {
     public static MechanicsManager instance = null;
 
 
     public GameObject currenciesObject, taxesObject, crisisObject, nationalobject, worldWideObject, luckObject, savingsObject, blackTuesdayObject;
+    public TMP_Text savingsText;
     // Start is called before the first frame update
 
     private void Awake()
@@ -25,14 +26,10 @@ public class MechanicsManager : MonoBehaviour
     }
     void Start()
     {
-        
+        savingsText.text = "0 G";
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 
     public void CurrenciesTrading(string mode)
     {
@@ -57,9 +54,10 @@ public class MechanicsManager : MonoBehaviour
     {
         taxesObject.SetActive(true);
     }
-    public void CrisisManager()
+    public void CrisisManage()
     {
         crisisObject.SetActive(true);
+        CrisisManager.BeginProcess = true;
     }
     public void BlackTuesday()
     {

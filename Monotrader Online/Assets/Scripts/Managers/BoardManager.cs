@@ -29,13 +29,15 @@ public class BoardManager : MonoBehaviour
     public static void SetPosition(int index)
     {
         Debug.Log("You are on " + index);
-        PositionManager(index);
+        //PositionManager(index);
+        FakeFuntion();
         actionDone = true;
     }
     public static void SetPositionNewTurn(int index)
     {
         Debug.Log("New turn! you are on "+index);
-        PositionManager(index);
+        //PositionManager(index);
+        FakeFuntion();
         actionDone = true;
         newTurn = true;
     }
@@ -65,7 +67,7 @@ public class BoardManager : MonoBehaviour
         }
         else if (index == 2 || index == 9)
         {
-            MechanicsManager.instance.CrisisManager();
+            MechanicsManager.instance.CrisisManage();
             //crisis
         }
         else if (index == 13 || index == 26)
@@ -103,5 +105,24 @@ public class BoardManager : MonoBehaviour
 
             }
         }
+    }
+
+    private static void FakeFuntion()
+    {
+        //MechanicsManager.instance.CurrenciesTrading("euros");
+        //MechanicsManager.instance.CurrenciesTrading("dollars");
+        //MechanicsManager.instance.CurrenciesTrading("pounds");
+        //MechanicsManager.instance.CurrenciesTrading("yens");
+        MechanicsManager.instance.CrisisManage();
+        //MechanicsManager.instance.NationalVariation();
+        //MechanicsManager.instance.WorldWideVariation();
+        //MechanicsManager.instance.TaxesManager();
+        //MechanicsManager.instance.BlackTuesday();
+        //MechanicsManager.instance.Luck();
+        //MechanicsManager.instance.Savings();
+
+
+
+
     }
 }

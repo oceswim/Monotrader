@@ -23,6 +23,7 @@ public class BlackTuesdayManager : MonoBehaviour
         dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE];
         pounds = (float)myRoom.CustomProperties[POUNDS_PRICE];
         yens = (float)myRoom.CustomProperties[YEN_PRICE];
+        WorldVariation();
     }
 
     // Update is called once per frame
@@ -33,10 +34,12 @@ public class BlackTuesdayManager : MonoBehaviour
     }
     private void WorldVariation()
     {
+        Debug.Log($"Euros {euros.ToString()} dollars {dollars.ToString()} pounds {pounds.ToString()} yens {yens.ToString()} BEFORE");
         euros *= DELTA;
         dollars *= DELTA;
         pounds *= DELTA;
         yens *= DELTA;
+        Debug.Log($"Euros {euros.ToString()} dollars {dollars.ToString()} pounds {pounds.ToString()} yens {yens.ToString()} AFTER");
         SetNewPrices(dollars, euros, pounds, yens);
         blackTuesdayText.text = $"Something horrible happened. Every currencies increased of {increase}%";
     }

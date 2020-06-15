@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SpinTheWheel : MonoBehaviour
 {
+    private const string MALUS = "myMalus";
     public GameObject theWheel,confirmButton;
     private bool spin;
     private float rotSpeed;
@@ -64,8 +65,9 @@ public class SpinTheWheel : MonoBehaviour
         }
         else if(value >= 274.1 && value <= 360)
         {
-            Debug.Log("+15");
+            Debug.Log("Malus applied.");
             //use player pref here.
+            PlayerPrefs.SetInt(MALUS, 1);
         }
         else if(value >= 190.1 && value <= 274)
         {

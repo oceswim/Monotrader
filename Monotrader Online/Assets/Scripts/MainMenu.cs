@@ -21,6 +21,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        PlayerPrefs.DeleteAll();
         PhotonNetwork.AutomaticallySyncScene = false;
 
     }

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using TMPro;
-using Photon.Pun;
 using System;
 using Photon.Realtime;
 

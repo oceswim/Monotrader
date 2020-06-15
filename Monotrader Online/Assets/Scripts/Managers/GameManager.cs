@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviourPun
     private const string TURN_COUNT = "TurnCount";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
     private const string NEW_TURN_ACTIVE = "NewTurnActive";
+    private string PLAYER_GOLD;
 
     //private variables
     private Player myPlayer;
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviourPun
     }
     void Start()
     {
+        
         moveVal   = diceStatus= turnCounter= 0;
         gameCanStart =dicesRolling= false;
         myPlayer = PhotonNetwork.LocalPlayer;
@@ -90,6 +92,7 @@ public class GameManager : MonoBehaviourPun
                 {
                     gameCanStart = true;
                     AddDiceInstance();
+                    
                 }
 
             }
@@ -266,6 +269,9 @@ public class GameManager : MonoBehaviourPun
         SetRoomPlayersNewTurn(1);
         int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
         Debug.Log(playersTurnUpdated + "vs " + myRoom.CustomProperties[PLAYERS_NEW_TURN]);
+       
+        NewTurnMechanic();
+
         if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
             SetRoomPlayersNewTurn(0);
@@ -274,16 +280,21 @@ public class GameManager : MonoBehaviourPun
             SetRoomProperty(NEW_TURN_ACTIVE, 1);//allows money manager to do the new turn 
             
         }
-        else
-        {
-            Debug.Log("not yet new turn");
-            //give player the money
-            //update the amount text
-        }
 
     }
 
-
+    /*
+     *  give player the money
+     *  update the amount text
+     *  update fortune in game
+     */
+    private void NewTurnMechanic()
+    {
+        PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
+        float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 2000;
+        PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
+        MoneyManager.updateFortune = true;
+    }
     //updates the room player new turn property
     private void SetRoomPlayersNewTurn(int ind)
     {
