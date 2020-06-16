@@ -40,6 +40,10 @@ public class TradingManager : MonoBehaviour
         
     }
 
+    private void OnDisable()
+    {
+        BoardManager.NextTurn();
+    }
     // Update is called once per frame
     void Update()
     {

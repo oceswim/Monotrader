@@ -51,6 +51,7 @@ public class SpinTheWheel : MonoBehaviour
             mode1 = false;
             MoneyManager.updateFortune = true;
         }
+        BoardManager.NextTurn();
     }
     public void Spin()
     {        

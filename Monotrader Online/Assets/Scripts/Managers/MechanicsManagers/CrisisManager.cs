@@ -34,6 +34,11 @@ public class CrisisManager : MonoBehaviour
         PopulateList();
 
     }
+    private void OnDisable()
+    {
+        BoardManager.NextTurn();
+
+    }
     private void Update()
     {
         if(BeginProcess)

@@ -31,8 +31,13 @@ public class TaxesManager : MonoBehaviour
     void Start()
     {
         myRoom = GameManager.myRoom;
+
         InitialiseHashKeys();
-}
+    }
+    private void OnDisable()
+    {
+        BoardManager.NextTurn();
+    }
     private void Update()
     {
         if(BeginProcess)
@@ -49,7 +54,7 @@ public class TaxesManager : MonoBehaviour
         generalDollars = GetGeneralPrices(priceD, playerD);
         generalPounds = GetGeneralPrices(priceP, playerP);
         generalYens = GetGeneralPrices(priceY, playerY);
-
+        Debug.Log($"GENERAL E {generalEuros} D {generalDollars} P {generalPounds} Y {generalYens}");
         if (playerFortune <= 10000)
         {
             taxesPercent = .05f;
@@ -62,7 +67,8 @@ public class TaxesManager : MonoBehaviour
         {
             taxesPercent = .15f;
         }
-        int percent = (int)taxesPercent * 100;
+        float percent = taxesPercent * 100;
+        Debug.Log("PERCENT " + percent);
         double total = Math.Round(playerFortune * taxesPercent, 2);
         content.text = $"It is time to pay your taxes! After some calculations, it was decided you had to pay {percent.ToString()}% of your fortune. The total to pay is {total.ToString()} Gold.";
 
@@ -83,9 +89,11 @@ public class TaxesManager : MonoBehaviour
     public void SubstractTaxes()
     {
         float toRemove = 1-(taxesPercent / TOTAL_MONEY_TYPE); // EITHER 1% 2% 3% per currencies.
+        Debug.Log("TO REMOVE :" + toRemove);
         if (generalDollars * toRemove > 0)
         {
             generalDollars = generalDollars * toRemove;
+            Debug.Log($"D {generalDollars}");
         }
         else
         {
@@ -94,7 +102,9 @@ public class TaxesManager : MonoBehaviour
         }
         if (generalEuros * toRemove > 0)
         {
+
             generalEuros *= toRemove;
+            Debug.Log($"E {generalEuros}");
         }
         else
         {
@@ -104,6 +114,7 @@ public class TaxesManager : MonoBehaviour
         if (generalPounds * toRemove > 0)
         {
             generalPounds *= toRemove;
+            Debug.Log($"P {generalPounds}");
         }
         else
         {
@@ -112,17 +123,24 @@ public class TaxesManager : MonoBehaviour
         }
         if (generalYens * toRemove > 0)
         {
-            Debug.Log("There was not enough yens for taxes");
+           
             generalYens *= toRemove;
+            Debug.Log($"Y {generalYens}");
         }
         else
         {
+            Debug.Log("There was not enough yens for taxes");
             playerG *= toRemove;
         }
         playerG *= toRemove;
+        generalDollars = (float)(Math.Round(generalDollars,1));
+        generalEuros= (float)(Math.Round(generalEuros, 1));
+        generalPounds = (float)(Math.Round(generalPounds, 1));
+        generalYens = (float)(Math.Round(generalYens, 1));
+        playerG = (float)(Math.Round(playerG, 1));
 
         SetPrefs(generalDollars, generalEuros, generalPounds, generalYens, playerG);
-        
+        MoneyManager.updateFortune = true;
     }
 
     //converting currencies back to 1 on 1 proportion.
@@ -143,7 +161,6 @@ public class TaxesManager : MonoBehaviour
             float tempPercent = 1 + (1 - price);
             newVal = value * tempPercent;
         }
-        
         return newVal;
     }
     private void GetPrices()
@@ -165,14 +182,13 @@ public class TaxesManager : MonoBehaviour
     }
     private void SetPrefs(float d, float e, float p, float y,float g)
     {
+        Debug.Log($"TO SET : {d},{e},{p},{g}");
         PlayerPrefs.SetFloat(PLAYER_EUROS, e);
         PlayerPrefs.SetFloat(PLAYER_DOLLARS, d);
         PlayerPrefs.SetFloat(PLAYER_YENS, y);
         PlayerPrefs.SetFloat(PLAYER_POUNDS, p);
         PlayerPrefs.SetFloat(PLAYER_GOLD, g);
     }
-    public void Confirm()
-    {
-        MoneyManager.updateFortune = true;
-    }
+ 
+    
 }

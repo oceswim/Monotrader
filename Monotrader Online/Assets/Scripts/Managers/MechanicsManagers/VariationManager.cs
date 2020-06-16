@@ -34,6 +34,8 @@ public class VariationManager : MonoBehaviour
         myRoom = GameManager.myRoom;
         
     }
+
+        
     
     // Update is called once per frame
     void Update()
@@ -45,6 +47,7 @@ public class VariationManager : MonoBehaviour
         }
         if (worldVar)
         {
+            Debug.Log("HEY");
             worldVar = false;
             WorldVariation();
         }
@@ -73,12 +76,13 @@ public class VariationManager : MonoBehaviour
         dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE];
         pounds = (float)myRoom.CustomProperties[POUNDS_PRICE];
         yens = (float)myRoom.CustomProperties[YEN_PRICE];
-        worldVar = false;
+        
     }
 
     //World variation 
     private void WorldVariation()
     {
+        Debug.Log("world var");
         float delta = 0;
         string mode = "";
         float newTrendE,newTrendD,newTrendP,newTrendY;
@@ -97,12 +101,16 @@ public class VariationManager : MonoBehaviour
                 break;
         }
         euros *= delta;
+        euros = (float)Math.Round(euros, 2);
         newTrendE = (float)myRoom.CustomProperties[EUROS_TREND] + trendDelta;
         dollars *= delta;
+        dollars = (float)Math.Round(dollars, 2);
         newTrendD = (float)myRoom.CustomProperties[DOLLARS_TREND] + trendDelta;
         pounds *= delta;
+        pounds = (float)Math.Round(pounds, 2);
         newTrendP = (float)myRoom.CustomProperties[POUNDS_TREND] + trendDelta;
         yens *= delta;
+        yens = (float)Math.Round(yens, 2);
         newTrendY = (float)myRoom.CustomProperties[YEN_TREND] + trendDelta;
         SetNewPrices(dollars, euros, pounds, yens);
         SetNewTrends(newTrendD, newTrendE, newTrendP, newTrendY);
@@ -183,6 +191,7 @@ public class VariationManager : MonoBehaviour
         {
             case 1:
                 euros *= delta;
+                euros = (float)Math.Round(euros, 2);
                 nationality = "French";
                 currency = "Euros";
                 newTrend = (float)myRoom.CustomProperties[EUROS_TREND] + trendDelta;
@@ -191,6 +200,7 @@ public class VariationManager : MonoBehaviour
                 break;
             case 2:
                 dollars *= delta;
+                dollars = (float)Math.Round(dollars, 2);
                 nationality = "Americans";
                 currency = "Dollars";
                 newTrend = (float)myRoom.CustomProperties[DOLLARS_TREND] + trendDelta;
@@ -199,6 +209,7 @@ public class VariationManager : MonoBehaviour
                 break;
             case 3:
                 pounds *= delta;
+                pounds = (float)Math.Round(pounds, 2);
                 nationality = "English";
                 currency = "Pounds";
                 newTrend = (float)myRoom.CustomProperties[POUNDS_TREND] + trendDelta;
@@ -207,6 +218,7 @@ public class VariationManager : MonoBehaviour
                 break;
             case 4:
                 yens *= delta;
+                yens = (float)Math.Round(yens, 2);
                 nationality = "Japanese";
                 currency = "Yens";
                 newTrend = (float)myRoom.CustomProperties[YEN_TREND] + trendDelta;
@@ -261,6 +273,10 @@ public class VariationManager : MonoBehaviour
         }
         myRoom.SetCustomProperties(myRoom.CustomProperties);
 
+    }
+    public void Done()
+    {
+        BoardManager.NextTurn();
     }
 
   

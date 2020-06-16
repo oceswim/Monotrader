@@ -31,17 +31,20 @@ public class BoardManager : MonoBehaviour
         Debug.Log("You are on " + index);
         //PositionManager(index);
         FakeFuntion();
-        actionDone = true;
+        //actionDone = true;
     }
     public static void SetPositionNewTurn(int index)
     {
         Debug.Log("New turn! you are on "+index);
         //PositionManager(index);
         FakeFuntion();
-        actionDone = true;
+        //actionDone = true;
         newTurn = true;
     }
-
+    public static void NextTurn()
+    {
+        actionDone = true;
+    }
     private static void PositionManager(int index)
     {
         if (index == 1 || index == 11 || index == 16 || index == 22)
@@ -114,15 +117,16 @@ public class BoardManager : MonoBehaviour
         //MechanicsManager.instance.CurrenciesTrading("pounds");
         //MechanicsManager.instance.CurrenciesTrading("yens");
 
-        //MechanicsManager.instance.NationalVariation();
-        //MechanicsManager.instance.WorldWideVariation();
-        MechanicsManager.instance.TaxesManage();
-        //MechanicsManager.instance.Savings();
+
 
 
         //ok
         //MechanicsManager.instance.BlackTuesday();
         //MechanicsManager.instance.Luck();
         //MechanicsManager.instance.CrisisManage();
+        //MechanicsManager.instance.TaxesManage();
+        //MechanicsManager.instance.NationalVariation();
+        //MechanicsManager.instance.WorldWideVariation();
+        //MechanicsManager.instance.Savings();
     }
 }
