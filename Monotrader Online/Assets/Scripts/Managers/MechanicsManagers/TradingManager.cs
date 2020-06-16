@@ -32,18 +32,24 @@ public class TradingManager : MonoBehaviour
     private float currencyPriceInGold;
     private double latestValue;
     private string currencyModeText, currencyToChange;
+    public static bool BeginProcess;
     // Start is called before the first frame update
     void Start()
     {
         myRoom = PhotonNetwork.CurrentRoom;
-        tradingMode = 0;//set to buy intially.
-        UpdateText(tradingMode);
-        GetPrefs();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (BeginProcess)
+        {
+            tradingMode = 0;//set to buy intially.
+            UpdateText(tradingMode);
+            GetPrefs();
+            BeginProcess = false;
+        }
         if (eurosTrading)
         {
             currencyToChange = PLAYER_EUROS;

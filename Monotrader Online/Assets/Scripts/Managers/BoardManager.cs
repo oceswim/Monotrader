@@ -82,7 +82,7 @@ public class BoardManager : MonoBehaviour
         }
         else if (index == 18 || index == 27)
         {
-            MechanicsManager.instance.TaxesManager();
+            MechanicsManager.instance.TaxesManage();
             //taxes
         }
         else
@@ -113,16 +113,16 @@ public class BoardManager : MonoBehaviour
         //MechanicsManager.instance.CurrenciesTrading("dollars");
         //MechanicsManager.instance.CurrenciesTrading("pounds");
         //MechanicsManager.instance.CurrenciesTrading("yens");
-        MechanicsManager.instance.CrisisManage();
+
         //MechanicsManager.instance.NationalVariation();
         //MechanicsManager.instance.WorldWideVariation();
-        //MechanicsManager.instance.TaxesManager();
-        //MechanicsManager.instance.BlackTuesday();
-        //MechanicsManager.instance.Luck();
+        MechanicsManager.instance.TaxesManage();
         //MechanicsManager.instance.Savings();
 
 
-
-
+        //ok
+        //MechanicsManager.instance.BlackTuesday();
+        //MechanicsManager.instance.Luck();
+        //MechanicsManager.instance.CrisisManage();
     }
 }

@@ -17,7 +17,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
-    private const int maxPlayerPerRoom =1;
+    private const int maxPlayerPerRoom =2;
 
     private void Awake()
     {

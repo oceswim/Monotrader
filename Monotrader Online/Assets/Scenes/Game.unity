@@ -2308,6 +2308,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 418712193}
+        m_MethodName: UpdatePricesOnHistory
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &69360476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9283,7 +9294,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 926661695}
         m_MethodName: Spin
         m_Mode: 1
         m_Arguments:
@@ -11120,6 +11131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blackTuesdayText: {fileID: 477225781}
+  confirm: {fileID: 1482868986}
 --- !u!1 &453188502
 GameObject:
   m_ObjectHideFlags: 0
@@ -22926,7 +22938,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &869061768
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24088,6 +24100,17 @@ MonoBehaviour:
       - m_Target: {fileID: 926661691}
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 926661695}
+        m_MethodName: Confirm
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -29518,6 +29541,7 @@ MonoBehaviour:
   confirmButton: {fileID: 69360473}
   panelNational: {fileID: 875270266}
   wheelPanel: {fileID: 18390988}
+  worldConfirm: {fileID: 1906999320}
 --- !u!1 &1123563042
 GameObject:
   m_ObjectHideFlags: 0
@@ -34406,6 +34430,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 919335770}
+        m_MethodName: Confirm
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1318932713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38399,7 +38434,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1482868987}
   m_OnClick:
     m_PersistentCalls:
@@ -38407,6 +38442,17 @@ MonoBehaviour:
       - m_Target: {fileID: 440395845}
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 418712193}
+        m_MethodName: UpdatePricesOnHistory
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -50299,7 +50345,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1906999321}
   m_OnClick:
     m_PersistentCalls:
@@ -50307,6 +50353,17 @@ MonoBehaviour:
       - m_Target: {fileID: 1163407913}
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 418712193}
+        m_MethodName: UpdatePricesOnHistory
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

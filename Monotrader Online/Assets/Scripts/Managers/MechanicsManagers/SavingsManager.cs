@@ -13,15 +13,23 @@ public class SavingsManager : MonoBehaviour
     public TMP_Text savingsText,totalSavings;
     private string PLAYER_GOLD;
     public Button yesButton, noButton;
+    public static bool BeginProcess;
     // Start is called before the first frame update
     void Start()
     {
         PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD"); 
-        myGold = PlayerPrefs.GetFloat(PLAYER_GOLD);
-        myFortune= PlayerPrefs.GetFloat(FORTUNE);
-        SetSavingsText();
+        
     }
-
+    private void Update()
+    {
+        if(BeginProcess)
+        {
+            myGold = PlayerPrefs.GetFloat(PLAYER_GOLD);
+            myFortune = PlayerPrefs.GetFloat(FORTUNE);
+            SetSavingsText();
+            BeginProcess = false;
+        }
+    }
     private void SetSavingsText()
     {
         percentage = Math.Round(myGold * .15f, 1);

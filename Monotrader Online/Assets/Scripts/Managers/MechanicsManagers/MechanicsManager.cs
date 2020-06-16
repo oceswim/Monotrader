@@ -50,9 +50,10 @@ public class MechanicsManager : MonoBehaviour
                 break;
         }
     }
-    public void TaxesManager()
+    public void TaxesManage()
     {
         taxesObject.SetActive(true);
+        TaxesManager.BeginProcess = true;
     }
     public void CrisisManage()
     {
@@ -62,23 +63,29 @@ public class MechanicsManager : MonoBehaviour
     public void BlackTuesday()
     {
         blackTuesdayObject.SetActive(true);
+        BlackTuesdayManager.BeginProcess = true;
     }
     public void NationalVariation()
     {
         nationalobject.SetActive(true);
+        VariationManager.BeginProcess = true;
         VariationManager.nationalVar = true;
+
     }
     public void WorldWideVariation()
     {
         worldWideObject.SetActive(true);
+        VariationManager.BeginProcess = true;
         VariationManager.worldVar = true;
     }
     public void Savings()
     {
+        SavingsManager.BeginProcess = true;
         savingsObject.SetActive(true);
     }
     public void Luck()
     {
+        SpinTheWheel.BeginProcess = true;
         luckObject.SetActive(true);
     }
     

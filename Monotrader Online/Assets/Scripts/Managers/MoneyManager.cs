@@ -20,7 +20,8 @@ public class MoneyManager : MonoBehaviour
     private const string POUNDS_PRICE = "Pounds_Price";
     private const string YEN_PRICE = "Yen_Price";
 
-    private const string CRISIS_UPDATE = "Crisis_update";
+    private const string HISTORY_UPDATE = "History_Update";
+    private const string UPDATE_DONE = "UpdateDone";
     private const string HISTORY_STATUS = "History_Status";
     private const string PLAYER_STATE = "My_State";
     private const string NEW_TURN_ACTIVE = "NewTurnActive";
@@ -55,7 +56,7 @@ public class MoneyManager : MonoBehaviour
     private Player myPlayer;
     private Room myRoom;
     private string actorNumber;
-    private bool playersReady, newTurnFortune;
+    private bool playersReady, newTurnFortune,updateOnceFortune, updateOnceGUI;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
@@ -150,9 +151,15 @@ public class MoneyManager : MonoBehaviour
             {
                 if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 0)
                 {
+                    SetCustomsPPT(PLAYER_STATE, 1);
+                    if (updateOnceFortune)
+                    {
+                        updateOnceFortune = false;
+                        UpdateFortune();
+                    }
                     UpdateTrendDisplay();
                     UpdateHistoryGUI();
-                    SetCustomsPPT(PLAYER_STATE, 1);
+                    
 
                 }
                 else if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1 && (int)myPlayer.CustomProperties[PLAYER_STATE] == 1)
@@ -212,13 +219,51 @@ public class MoneyManager : MonoBehaviour
                 UpdateFortuneInGame();
             }
 
-            if(myPlayer.CustomProperties[CRISIS_UPDATE] != null)
+            if(myRoom.CustomProperties[HISTORY_UPDATE] != null)
             {
-                if((int)myPlayer.CustomProperties[CRISIS_UPDATE]==1)
+                if((int)myRoom.CustomProperties[HISTORY_UPDATE]==1 && !updateOnceGUI)
                 {
-                    SetCustomsPPT(CRISIS_UPDATE, 0);
-                    UpdateHistoryGUI();
+                    Debug.Log(PhotonNetwork.NickName + " HERE");
+                    
+                    if (!updateOnceGUI)
+                    {
+                        SetCustomsPPT(UPDATE_DONE, 1);
+                        UpdateHistoryGUI();
+                        updateOnceGUI = true;
+                    }
+                    if(myPlayer.IsMasterClient)
+                    {
+                        bool done = true;
+                        foreach(Player p in PhotonNetwork.PlayerList)
+                        {
+                            if(p.CustomProperties[UPDATE_DONE] !=null)
+                            {
+                                if ((int)p.CustomProperties[UPDATE_DONE] != 1)
+                                {
+                                   done = false;
+                                }
+                            }
+                            else
+                            {
+                                done = false;
+                            }
+                        }
+                        if(done)
+                        {
+                            SetRoomProperty(HISTORY_UPDATE, 0);
+                        }
+                    }
 
+
+                }
+                else
+                {
+                    if(updateOnceGUI)
+                    {
+                        Debug.Log(myPlayer.NickName + " UPDATE DONE AND BOOL RESET");
+                        SetCustomsPPT(UPDATE_DONE, 0);
+                        updateOnceGUI = false;
+                    }
                 }
             }
         }
@@ -277,9 +322,7 @@ public class MoneyManager : MonoBehaviour
             PrepareTrends();//sets up the price trends
 
         }
-
-        UpdateFortune();
-
+        updateOnceFortune = true;
     }
 
     //the room history allows to set if the history was updated for all player (1) if not (0)
@@ -398,10 +441,8 @@ public class MoneyManager : MonoBehaviour
         float yenPrice = (float)myRoom.CustomProperties[YEN_PRICE];
 
         UpdateHistory(dolPrice,eurPrice, pouPrice, yenPrice,true);
-        foreach(Player p in PhotonNetwork.PlayerList)
-        {
-            SetCustomsPPT(CRISIS_UPDATE, 1, p);
-        }
+        SetRoomProperty(HISTORY_UPDATE, 1);
+        
     }
     private double CalculateNewPrice(float oldPrice, float trend)
     {
@@ -484,7 +525,9 @@ public class MoneyManager : MonoBehaviour
     private void UpdateFortune()
     {
 
+        Debug.Log(myPlayer.NickName + " euros price:" + myRoom.CustomProperties[EUROS_PRICE]);
         float euros = (float)myRoom.CustomProperties[EUROS_PRICE] * PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
+        
         float dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE] * PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
         float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
         float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold

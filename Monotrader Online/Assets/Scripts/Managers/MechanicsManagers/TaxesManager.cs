@@ -26,33 +26,46 @@ public class TaxesManager : MonoBehaviour
     private const string FORTUNE = "myFortune";
     private float generalDollars,generalEuros,generalYens,generalPounds,priceE, priceD,priceP,priceY,playerE, playerD, playerP, playerY, playerG, playerFortune,taxesPercent;
     public TMP_Text content;
+    public static bool BeginProcess;
     // Start is called before the first frame update
     void Start()
     {
         myRoom = GameManager.myRoom;
         InitialiseHashKeys();
+}
+    private void Update()
+    {
+        if(BeginProcess)
+        {
+            BeginProcess = false;
+            Initialise();
+        }
+    }
+    private void Initialise()
+    {
         GetPrefs();
         GetPrices();
-        generalEuros= GetGeneralPrices(priceE, playerE);
-        generalDollars= GetGeneralPrices(priceD, playerD);
-        generalPounds= GetGeneralPrices(priceP, playerP);
-        generalYens= GetGeneralPrices(priceY, playerY);
+        generalEuros = GetGeneralPrices(priceE, playerE);
+        generalDollars = GetGeneralPrices(priceD, playerD);
+        generalPounds = GetGeneralPrices(priceP, playerP);
+        generalYens = GetGeneralPrices(priceY, playerY);
 
-        if(playerFortune<=10000)
+        if (playerFortune <= 10000)
         {
             taxesPercent = .05f;
         }
-        else if(playerFortune>10000 && playerFortune<=20000)
+        else if (playerFortune > 10000 && playerFortune <= 20000)
         {
             taxesPercent = .1f;
         }
-        else if(playerFortune>20000)
+        else if (playerFortune > 20000)
         {
             taxesPercent = .15f;
         }
         int percent = (int)taxesPercent * 100;
-        double total = Math.Round(playerFortune * taxesPercent,2);
+        double total = Math.Round(playerFortune * taxesPercent, 2);
         content.text = $"It is time to pay your taxes! After some calculations, it was decided you had to pay {percent.ToString()}% of your fortune. The total to pay is {total.ToString()} Gold.";
+
     }
     private void InitialiseHashKeys()
     {
@@ -63,11 +76,6 @@ public class TaxesManager : MonoBehaviour
         PLAYER_POUNDS = PlayerPrefs.GetString("MYPOUNDS");
     }
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     //to properly substract taxes : we need to bring every currencies back to a 1 on 1 proportion.
     //once it's done, then we substract the tax. then we call update fortune on moneymanager which will update the player's fortune
@@ -114,7 +122,7 @@ public class TaxesManager : MonoBehaviour
         playerG *= toRemove;
 
         SetPrefs(generalDollars, generalEuros, generalPounds, generalYens, playerG);
-        MoneyManager.updateFortune = true;
+        
     }
 
     //converting currencies back to 1 on 1 proportion.
@@ -162,5 +170,9 @@ public class TaxesManager : MonoBehaviour
         PlayerPrefs.SetFloat(PLAYER_YENS, y);
         PlayerPrefs.SetFloat(PLAYER_POUNDS, p);
         PlayerPrefs.SetFloat(PLAYER_GOLD, g);
+    }
+    public void Confirm()
+    {
+        MoneyManager.updateFortune = true;
     }
 }
