@@ -267,9 +267,7 @@ public class GameManager : MonoBehaviourPun
         turnCounter++;
         
         SetRoomPlayersNewTurn(1);
-        int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
-        Debug.Log(playersTurnUpdated + "vs " + myRoom.CustomProperties[PLAYERS_NEW_TURN]);
-       
+        int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];     
         NewTurnMechanic();
 
         if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
@@ -292,8 +290,10 @@ public class GameManager : MonoBehaviourPun
     {
         PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
         float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 2000;
+        BankManager.instance.UpdateGold(-2000);
         PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
         MoneyManager.updateFortune = true;
+        Debug.Log("2000 WERE GIVEN TO " + myPlayer.NickName);
     }
     //updates the room player new turn property
     private void SetRoomPlayersNewTurn(int ind)

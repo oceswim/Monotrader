@@ -34,6 +34,7 @@ public class MechanicsManager : MonoBehaviour
     public void CurrenciesTrading(string mode)
     {
         currenciesObject.SetActive(true);
+        TradingManager.BeginProcess = true;
         switch (mode)
         {
             case "euros":
@@ -49,6 +50,7 @@ public class MechanicsManager : MonoBehaviour
                 TradingManager.yensTrading = true;
                 break;
         }
+
     }
     public void TaxesManage()
     {

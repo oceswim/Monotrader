@@ -19,7 +19,6 @@ public class BoardManager : MonoBehaviour
             if(newTurn)
             {
                 newTurn = false;
-                Debug.Log("CHECKING NEW TURN MANAGER HERE");
                 GameManager.instance.TurnManager();
             }
         }
@@ -28,17 +27,17 @@ public class BoardManager : MonoBehaviour
 
     public static void SetPosition(int index)
     {
-        Debug.Log("You are on " + index);
-        //PositionManager(index);
-        FakeFuntion();
-        //actionDone = true;
+
+        PositionManager(index);
+        //FakeFuntion();
+       
     }
     public static void SetPositionNewTurn(int index)
     {
-        Debug.Log("New turn! you are on "+index);
-        //PositionManager(index);
-        FakeFuntion();
-        //actionDone = true;
+
+        PositionManager(index);
+        //FakeFuntion();
+
         newTurn = true;
     }
     public static void NextTurn()
@@ -47,7 +46,12 @@ public class BoardManager : MonoBehaviour
     }
     private static void PositionManager(int index)
     {
-        if (index == 1 || index == 11 || index == 16 || index == 22)
+        if(index == 0)
+        {
+            actionDone = true;
+
+        }
+        else if (index == 1 || index == 11 || index == 16 || index == 22)
         {
             MechanicsManager.instance.CurrenciesTrading("euros");
             //
@@ -112,15 +116,11 @@ public class BoardManager : MonoBehaviour
 
     private static void FakeFuntion()
     {
-        //MechanicsManager.instance.CurrenciesTrading("euros");
-        //MechanicsManager.instance.CurrenciesTrading("dollars");
-        //MechanicsManager.instance.CurrenciesTrading("pounds");
-        //MechanicsManager.instance.CurrenciesTrading("yens");
-
-
-
-
         //ok
+        //MechanicsManager.instance.CurrenciesTrading("yens");
+        //MechanicsManager.instance.CurrenciesTrading("pounds");
+        //MechanicsManager.instance.CurrenciesTrading("dollars");
+        //MechanicsManager.instance.CurrenciesTrading("euros");
         //MechanicsManager.instance.BlackTuesday();
         //MechanicsManager.instance.Luck();
         //MechanicsManager.instance.CrisisManage();

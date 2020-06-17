@@ -90,49 +90,71 @@ public class TaxesManager : MonoBehaviour
     {
         float toRemove = 1-(taxesPercent / TOTAL_MONEY_TYPE); // EITHER 1% 2% 3% per currencies.
         Debug.Log("TO REMOVE :" + toRemove);
+        float oldD = generalDollars;
+        float oldE = generalEuros;
+        float oldG = playerG;
+        float oldP = generalPounds;
+        float oldY = generalYens;
+
+        float removedG, removedD, removedE, removedP, removedY;
+
         if (generalDollars * toRemove > 0)
         {
             generalDollars = generalDollars * toRemove;
+            removedD = oldD - generalDollars;
             Debug.Log($"D {generalDollars}");
         }
         else
         {
             Debug.Log("There was not enough dollars for taxes");
+            removedD = 0;
             playerG *= toRemove;
         }
         if (generalEuros * toRemove > 0)
         {
 
             generalEuros *= toRemove;
+            removedE = oldE - generalEuros;
             Debug.Log($"E {generalEuros}");
         }
         else
         {
             Debug.Log("There was not enough euros for taxes");
+            removedE = 0;
             playerG = playerG * toRemove;
         }
         if (generalPounds * toRemove > 0)
         {
             generalPounds *= toRemove;
+            removedP = oldP - generalPounds;
             Debug.Log($"P {generalPounds}");
         }
         else
         {
             Debug.Log("There was not enough pounds for taxes");
+            removedP = 0;
             playerG = playerG * toRemove;
         }
         if (generalYens * toRemove > 0)
         {
            
             generalYens *= toRemove;
+            removedY = oldY - generalYens;
             Debug.Log($"Y {generalYens}");
         }
         else
         {
             Debug.Log("There was not enough yens for taxes");
+            removedY = 0;
             playerG *= toRemove;
         }
         playerG *= toRemove;
+        
+        removedG = oldG - playerG;
+        
+
+
+
         generalDollars = (float)(Math.Round(generalDollars,1));
         generalEuros= (float)(Math.Round(generalEuros, 1));
         generalPounds = (float)(Math.Round(generalPounds, 1));
@@ -140,9 +162,11 @@ public class TaxesManager : MonoBehaviour
         playerG = (float)(Math.Round(playerG, 1));
 
         SetPrefs(generalDollars, generalEuros, generalPounds, generalYens, playerG);
+        BankManager.instance.TaxIncome(removedG, removedD, removedE, removedP, removedY);
         MoneyManager.updateFortune = true;
     }
 
+    
     //converting currencies back to 1 on 1 proportion.
     private float GetGeneralPrices(float price, float value)
     {

@@ -79,6 +79,7 @@ public class SpinTheWheel : MonoBehaviour
         {
             Debug.Log("+500");
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 500;
+            BankManager.instance.UpdateGold(-500);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
             mode1 = true;
         }
@@ -87,6 +88,7 @@ public class SpinTheWheel : MonoBehaviour
             Debug.Log("-250");
             mode1 = true;
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - 250;
+            BankManager.instance.UpdateGold(250);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
         }
         else if(value >= 274.1 && value <= 360)
@@ -106,18 +108,22 @@ public class SpinTheWheel : MonoBehaviour
             {
                 case 0:
                     key= PLAYER_DOLLARS;
+                    BankManager.instance.UpdateDollars(-500);
                     //dollars
                     break;
                 case 1:
                     key =PLAYER_EUROS;
+                    BankManager.instance.UpdateEuros(-500);
                     //euros
                     break;
                 case 2:
                     key=PLAYER_POUNDS;
+                    BankManager.instance.UpdatePounds(-500);
                     //pounds
                     break;
                 case 3:
                     key=PLAYER_YENS;
+                    BankManager.instance.UpdateYens(-500);
                     //yen
                     break;
 

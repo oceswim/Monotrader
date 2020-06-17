@@ -27,7 +27,7 @@ public class TradingManager : MonoBehaviour
     public TMP_InputField myInputField;
     public Slider mySlider;
     public TMP_Text currencyText, valueText, buyText, sellText;
-    private int tradingMode; // 0 is buy 1 is sell
+    private int tradingMode,currencyMode; // 0 is buy 1 is sell
     public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading;
     private float currencyPriceInGold;
     private double latestValue;
@@ -39,7 +39,6 @@ public class TradingManager : MonoBehaviour
         myRoom = PhotonNetwork.CurrentRoom;
         
     }
-
     private void OnDisable()
     {
         BoardManager.NextTurn();
@@ -61,7 +60,7 @@ public class TradingManager : MonoBehaviour
             myTitles[1].SetActive(true);
             currencyModeText = "€";
             currencyPriceInGold = (float)myRoom.CustomProperties[EUROS_PRICE];
-
+            currencyMode = 2;
         }
         else if (dollarsTrading)
         {
@@ -70,6 +69,7 @@ public class TradingManager : MonoBehaviour
             myTitles[0].SetActive(true);
             currencyModeText = "$";
             currencyPriceInGold = (float)myRoom.CustomProperties[DOLLARS_PRICE];
+            currencyMode = 1;
         }
         else if (poundsTrading)
         {
@@ -78,6 +78,7 @@ public class TradingManager : MonoBehaviour
             myTitles[2].SetActive(true);
             currencyModeText = "£";
             currencyPriceInGold = (float)myRoom.CustomProperties[POUNDS_PRICE];
+            currencyMode = 3;
         }
         else if (yensTrading)
         {
@@ -86,6 +87,7 @@ public class TradingManager : MonoBehaviour
             myTitles[3].SetActive(true);
             currencyModeText = "¥";
             currencyPriceInGold = (float)myRoom.CustomProperties[YEN_PRICE];
+            currencyMode = 4;
         }
 
     }
@@ -123,6 +125,7 @@ public class TradingManager : MonoBehaviour
                     }
                     latestValue = price;
                     valueText.text = price.ToString() + " " + currencyModeText;
+
                     //gold -> currency
                     break;
                 case 1:
@@ -205,7 +208,9 @@ public class TradingManager : MonoBehaviour
             switch (tradingMode)
             {
                 case 0://buy
-                    Debug.Log("BOUGHT with cost of " + theValue + " gold :" + latestValue + " " + currencyModeText);
+                   
+
+                    Debug.Log("Giving " + theValue + " gold to receive :" + latestValue + " " + currencyModeText);
                     //remove thevalue of gold
                     newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - theValue;
                     PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
@@ -215,7 +220,7 @@ public class TradingManager : MonoBehaviour
                     //gold -> currency
                     break;
                 case 1:
-                    Debug.Log("sold with cost of " + theValue + " " + currencyModeText + ":" + latestValue + " gold");
+                    Debug.Log("giving " + theValue + " " + currencyModeText + " to receive :" + latestValue + " gold");
                      newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + (float)latestValue;
                     PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
                      newCurr = PlayerPrefs.GetFloat(currencyToChange) - theValue;
@@ -225,7 +230,76 @@ public class TradingManager : MonoBehaviour
                     //currency -> gold
                     break;
             }
-            MoneyManager.updateFortune=true;
+            MoneyManager.updateFortune = true;
+            UpdateBankings(theValue, (int)Math.Round(latestValue, 0), currencyMode, tradingMode);
+           
+        }
+    }
+    private void UpdateBankings(int toAdd,int toRemove,int currency,int tradeMode)
+    {
+        switch(currency)
+        {
+            case 1://dollars
+                switch(tradeMode)
+                {
+                    case 0://buy
+                        Debug.Log("Update dollars buy");
+                        BankManager.instance.UpdateGold(toAdd);
+                        BankManager.instance.UpdateDollars(-toRemove);
+                        break;
+                    case 1:
+                        Debug.Log("Update dollars sell");
+                        BankManager.instance.UpdateGold(-toRemove);
+                        BankManager.instance.UpdateDollars(toAdd);
+                        break;
+                }
+                break;
+            case 2://euros
+                switch (tradeMode)
+                {
+                    case 0://buy
+                        Debug.Log("Update euros buy");
+                        BankManager.instance.UpdateGold(toAdd);
+                        BankManager.instance.UpdateEuros(-toRemove);
+                        break;
+
+                    case 1:
+                        Debug.Log("Update euros sell");
+                        BankManager.instance.UpdateGold(-toRemove);
+                        BankManager.instance.UpdateEuros(toAdd);
+                        break;
+                }
+                break;
+            case 3://pounds
+                switch (tradeMode)
+                {
+                    case 0://buy
+                        Debug.Log("Update pounds buy");
+                        BankManager.instance.UpdateGold(toAdd);
+                        BankManager.instance.UpdatePounds(-toRemove);
+                        break;
+                    case 1:
+                        Debug.Log("Update pounds sell");
+                        BankManager.instance.UpdateGold(-toRemove);
+                        BankManager.instance.UpdatePounds(toAdd);
+                        break;
+                }
+                break;
+            case 4://yens
+                switch (tradeMode)
+                {
+                    case 0://buy
+                        Debug.Log("Update yens buy");
+                        BankManager.instance.UpdateGold(toAdd);
+                        BankManager.instance.UpdateYens(-toRemove);
+                        break;
+                    case 1:
+                        Debug.Log("Update yens sell");
+                        BankManager.instance.UpdateGold(-toRemove);
+                        BankManager.instance.UpdateYens(toAdd);
+                        break;
+                }
+                break;
         }
     }
 }
