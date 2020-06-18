@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Photon.Pun;
 using Photon.Realtime;
 using System;
 
 public class TradingManager : MonoBehaviour
 {
+
     private const float MALUS_AMOUNT = .85f;
     private const string MALUS = "myMalus";
     private const string EUROS_PRICE = "Euros_Price";
@@ -36,13 +36,10 @@ public class TradingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        myRoom = PhotonNetwork.CurrentRoom;
+        myRoom = GameManager.myRoom;
         
     }
-    private void OnDisable()
-    {
-        BoardManager.NextTurn();
-    }
+  
     // Update is called once per frame
     void Update()
     {
@@ -209,7 +206,6 @@ public class TradingManager : MonoBehaviour
             {
                 case 0://buy
                    
-
                     Debug.Log("Giving " + theValue + " gold to receive :" + latestValue + " " + currencyModeText);
                     //remove thevalue of gold
                     newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - theValue;
@@ -301,5 +297,23 @@ public class TradingManager : MonoBehaviour
                 }
                 break;
         }
+        //SetRoomProperty(TRIGGER_UPDATE, 1);
+        BankManager.Trigger = true;
+      
+    }
+    private void SetRoomProperty(string hashKey, int value)
+    {
+        if (myRoom.CustomProperties[hashKey] == null)
+        {
+            myRoom.CustomProperties.Add(hashKey, value);
+        }
+        else
+        {
+
+            myRoom.CustomProperties[hashKey] = value;
+
+        }
+        myRoom.SetCustomProperties(myRoom.CustomProperties);
+
     }
 }

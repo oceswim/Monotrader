@@ -20,10 +20,7 @@ public class SavingsManager : MonoBehaviour
         PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD"); 
         
     }
-    private void OnDisable()
-    {
-        BoardManager.NextTurn();
-    }
+  
     private void Update()
     {
         if(BeginProcess)
@@ -62,6 +59,10 @@ public class SavingsManager : MonoBehaviour
         float newGold = myGold - (float)percentage;
         PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
         MoneyManager.updateFortune = true;
-       
+        
+    }
+    public void Done()
+    {
+        BoardManager.NextTurn();
     }
 }

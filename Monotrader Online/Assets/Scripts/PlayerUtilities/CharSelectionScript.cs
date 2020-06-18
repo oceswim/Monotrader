@@ -114,7 +114,7 @@ public class CharSelectionScript : MonoBehaviour
         SetCustomPpties(theIndex);
        if (CheckSelectedAvailability())
         {
-            PlayerSpawner.spawn = true;
+            PrefabSpawner.spawn = true;
             //hide charselection menu
             CharSelectionObject.SetActive(false);
             //activates main camera

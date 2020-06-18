@@ -34,11 +34,6 @@ public class CrisisManager : MonoBehaviour
         PopulateList();
 
     }
-    private void OnDisable()
-    {
-        BoardManager.NextTurn();
-
-    }
     private void Update()
     {
         if(BeginProcess)
@@ -190,6 +185,11 @@ public class CrisisManager : MonoBehaviour
         confirmButton.interactable = true;
     }
 
+    public void Done()
+    {
+
+        BoardManager.NextTurn();
+    }
     private void SetRoomProperty(string hashKey, float value)
     {
         if (myRoom.CustomProperties[hashKey] == null)

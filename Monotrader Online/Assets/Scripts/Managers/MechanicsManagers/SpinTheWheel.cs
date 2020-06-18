@@ -1,8 +1,16 @@
-﻿using System;
+﻿using Photon.Realtime;
+using System;
 using UnityEngine;
 
 public class SpinTheWheel : MonoBehaviour
 {
+    public const string TRIGGER_UPDATE = "UpdateActivated";
+    public const string GOLD_UPDATE = "GoldUpdate";
+    public const string DOLLARS_UPDATE = "DollarsUpdate";
+    public const string EUROS_UPDATE = "EurosUpdate";
+    public const string POUNDS_UPDATE = "PoundsUpdate";
+    public const string YENS_UPDATE = "YensUpdate";
+
     private string PLAYER_GOLD;
     private string PLAYER_DOLLARS;
     private string PLAYER_EUROS;
@@ -14,9 +22,11 @@ public class SpinTheWheel : MonoBehaviour
     private float rotSpeed;
     public static bool BeginProcess;
     private bool mode1;
+    private Room myRoom;
     // Start is called before the first frame update
     void Start()
     {
+        myRoom = GameManager.myRoom;
         spin = false;
         rotSpeed = 0;
         theWheel.transform.eulerAngles = new Vector3(0, 0, 0);
@@ -46,12 +56,13 @@ public class SpinTheWheel : MonoBehaviour
     }
     public void Confirm()
     {
+        SetRoomProperty(TRIGGER_UPDATE, 1);
         if(mode1)
         {
             mode1 = false;
             MoneyManager.updateFortune = true;
         }
-        BoardManager.NextTurn();
+
     }
     public void Spin()
     {        
@@ -78,9 +89,11 @@ public class SpinTheWheel : MonoBehaviour
         if(value>=0 && value<=96)
         {
             Debug.Log("+500");
+            
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 500;
             BankManager.instance.UpdateGold(-500);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
+
             mode1 = true;
         }
         else if(value >= 96.1 && value <=190)
@@ -90,6 +103,7 @@ public class SpinTheWheel : MonoBehaviour
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - 250;
             BankManager.instance.UpdateGold(250);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
+
         }
         else if(value >= 274.1 && value <= 360)
         {
@@ -109,21 +123,25 @@ public class SpinTheWheel : MonoBehaviour
                 case 0:
                     key= PLAYER_DOLLARS;
                     BankManager.instance.UpdateDollars(-500);
+
                     //dollars
                     break;
                 case 1:
                     key =PLAYER_EUROS;
                     BankManager.instance.UpdateEuros(-500);
+
                     //euros
                     break;
                 case 2:
                     key=PLAYER_POUNDS;
                     BankManager.instance.UpdatePounds(-500);
+
                     //pounds
                     break;
                 case 3:
                     key=PLAYER_YENS;
                     BankManager.instance.UpdateYens(-500);
+
                     //yen
                     break;
 
@@ -144,5 +162,20 @@ public class SpinTheWheel : MonoBehaviour
       PLAYER_YENS =  PlayerPrefs.GetString("MYYENS");
       PLAYER_POUNDS =  PlayerPrefs.GetString("MYPOUNDS");
         
+    }
+    private void SetRoomProperty(string hashKey, int value)
+    {
+        if (myRoom.CustomProperties[hashKey] == null)
+        {
+            myRoom.CustomProperties.Add(hashKey, value);
+        }
+        else
+        {
+
+            myRoom.CustomProperties[hashKey] = value;
+
+        }
+        myRoom.SetCustomProperties(myRoom.CustomProperties);
+
     }
 }

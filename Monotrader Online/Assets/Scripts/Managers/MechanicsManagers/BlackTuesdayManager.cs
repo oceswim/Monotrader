@@ -29,10 +29,7 @@ public class BlackTuesdayManager : MonoBehaviour
         myRoom = GameManager.myRoom;
         
     }
-    private void OnDisable()
-    {
-        BoardManager.NextTurn();
-    }
+
     private void Update()
     {
         if(BeginProcess)
@@ -106,5 +103,9 @@ public class BlackTuesdayManager : MonoBehaviour
         }
         myRoom.SetCustomProperties(myRoom.CustomProperties);
 
+    }
+    public void Done()
+    {
+        BoardManager.NextTurn();
     }
 }

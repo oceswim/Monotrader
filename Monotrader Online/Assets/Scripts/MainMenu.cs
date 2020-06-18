@@ -1,10 +1,8 @@
 ﻿
 using UnityEngine;
-using ExitGames.Client.Photon;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 
 
 /*
@@ -18,11 +16,11 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
-    private const int maxPlayerPerRoom =1;
+    private const int maxPlayerPerRoom =2;
 
     private void Awake()
     {
-        PlayerPrefs.DeleteAll();
+        PlayerPrefs.DeleteAll();//TO DELLLLLL
         PhotonNetwork.AutomaticallySyncScene = false;
 
     }
@@ -76,6 +74,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             waitingStatusText.text = "Oponent found!-1";
             Debug.Log("Match ready to begin");
+            //PhotonNetwork.LoadLevel("Test");
             PhotonNetwork.LoadLevel("Game");
         }
     }
@@ -88,6 +87,8 @@ public class MainMenu : MonoBehaviourPunCallbacks
             waitingStatusText.text = "Opponent found-2";
 
             PhotonNetwork.LoadLevel("Game");
+            //PhotonNetwork.LoadLevel("Test");
+
  
         }
     }

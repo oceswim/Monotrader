@@ -929,7 +929,8 @@ namespace Photon.Pun
 
             if (PhotonNetwork.LogLevel >= PunLogLevel.Full)
             {
-                Debug.Log("Registered PhotonView: " + netView.ViewID);
+                
+                Debug.Log("Registered PhotonView: " + netView.ViewID+ " object name:"+ netView.transform.name);
             }
         }
 
