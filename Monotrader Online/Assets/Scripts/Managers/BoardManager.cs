@@ -122,7 +122,7 @@ public class BoardManager : MonoBehaviour
         //MechanicsManager.instance.CurrenciesTrading("dollars");
         //MechanicsManager.instance.CurrenciesTrading("euros");
         //MechanicsManager.instance.BlackTuesday();
-        //MechanicsManager.instance.Luck();
+        MechanicsManager.instance.Luck();
         //MechanicsManager.instance.CrisisManage();
         //MechanicsManager.instance.TaxesManage();
         //MechanicsManager.instance.NationalVariation();

@@ -226,6 +226,22 @@ public class TradingManager : MonoBehaviour
                     //currency -> gold
                     break;
             }
+            if(myTitles[0].activeSelf)
+            {
+                myTitles[0].SetActive(false);
+            }
+            if (myTitles[1].activeSelf)
+            {
+                myTitles[1].SetActive(false);
+            }
+            if (myTitles[2].activeSelf)
+            {
+                myTitles[2].SetActive(false);
+            }
+            if (myTitles[3].activeSelf)
+            {
+                myTitles[3].SetActive(false);
+            }
             MoneyManager.updateFortune = true;
             UpdateBankings(theValue, (int)Math.Round(latestValue, 0), currencyMode, tradingMode);
            

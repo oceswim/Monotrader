@@ -54,6 +54,7 @@ public class MoneyManager : MonoBehaviour
     private string PLAYER_YENS;
     private string PLAYER_POUNDS;
     private float myGold, myDollars, myEuros, myYens, myPounds;
+    private int trendUpdateCounter;
     private Player myPlayer;
     private Room myRoom;
     private string actorNumber;
@@ -69,13 +70,10 @@ public class MoneyManager : MonoBehaviour
     private void Awake()
     {
         myPlayer = PhotonNetwork.LocalPlayer;
-        //SetCustomsPPT(PLAYER_STATE, 0);
-
     }
     void Start()
     {
-
-
+        trendUpdateCounter = 0;
         PopulateTrendsList();
         actorNumber = myPlayer.ActorNumber.ToString();
         playersReady = newTurn = updateFortune = false;
@@ -378,6 +376,30 @@ public class MoneyManager : MonoBehaviour
         poundsTrendInGame[p].enabled = false;
         yensTrendInGame[y].enabled = false;
 
+        trendUpdateCounter++;
+        //if more than 6 trends are off we reset the board
+        if(trendUpdateCounter>6)
+        {
+            for(int i = 0; i<dollarsTrendInGame.Length;i++)
+            {
+                if(i!=d)
+                {
+                    dollarsTrendInGame[i].enabled = true;
+                }
+                if(i!=e)
+                {
+                    eurosTrendInGame[i].enabled = true;
+                }
+                if(i != p)
+                {
+                    poundsTrendInGame[i].enabled = true;
+                }
+                if(i != y)
+                {
+                    yensTrendInGame[i].enabled = true;
+                }
+            }
+        }
 
     }
 
