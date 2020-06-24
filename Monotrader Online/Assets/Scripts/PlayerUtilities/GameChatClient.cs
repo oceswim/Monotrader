@@ -10,8 +10,10 @@ using TMPro;
 /*
  * Allows to handle the in game chat so that the players can communicate together
  */
-public class GameChatClient : MonoBehaviour, IChatClientListener
+public class GameChatClient : MonoBehaviourPun, IChatClientListener
 {
+	private const string FORTUNE = "myFortune";
+
 	public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.
 
 	private string[] PlayerList;
@@ -42,7 +44,7 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 
 
 	public GameObject FriendListUiItemtoInstantiate;
-
+	public Transform itemParent;
 	private readonly Dictionary<string, Toggle> channelToggles = new Dictionary<string, Toggle>();
 
 	private readonly Dictionary<string, FriendItem> friendListItemLUT = new Dictionary<string, FriendItem>();
@@ -369,11 +371,22 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 			// add to the UI as well
 			foreach (string _friend in this.PlayerList)
 			{
-				if (this.FriendListUiItemtoInstantiate != null && _friend != this.UserName)
+				/*if (this.FriendListUiItemtoInstantiate != null && _friend != this.UserName)
 				{
 					this.InstantiateFriendButton(_friend);
+				}*/
+				if (this.FriendListUiItemtoInstantiate != null)
+				{
+					if (_friend != this.UserName)
+					{
+						this.InstantiateFriendButton(_friend,false);
+					}
+					else
+					{
+						this.InstantiateFriendButton("You",true);
+					}
 				}
-
+				
 			}
 
 		}
@@ -457,17 +470,22 @@ public class GameChatClient : MonoBehaviour, IChatClientListener
 		this.channelToggles.Add(channelName, cbtn);*/
 	}
 
-	private void InstantiateFriendButton(string friendId)
+	private void InstantiateFriendButton(string friendId,bool myItem)
 	{
 		GameObject fbtn = (GameObject)Instantiate(this.FriendListUiItemtoInstantiate);
+		
 		fbtn.gameObject.SetActive(true);
 		FriendItem _friendItem = fbtn.GetComponent<FriendItem>();
 
 		_friendItem.FriendId = friendId;
-
-		fbtn.transform.SetParent(this.FriendListUiItemtoInstantiate.transform.parent, false);
-
+		_friendItem.FortuneLabel.text = PlayerPrefs.GetFloat(FORTUNE).ToString();
+		fbtn.transform.SetParent(itemParent, false);
 		this.friendListItemLUT[friendId] = _friendItem;
+		if(myItem)
+		{
+			FriendsManager.instance.SetFriendInstance(_friendItem);
+		}
+		FriendsManager.instance.AddInstanceToList(_friendItem);
 	}
 
 

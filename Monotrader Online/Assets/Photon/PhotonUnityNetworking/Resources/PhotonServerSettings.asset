@@ -42,6 +42,9 @@ MonoBehaviour:
   - Jump
   - SetBankText
   - SetPlayerTurnPref
+  - UpdateMyFortune
+  - UpdateAllFortune
+  - UpdateOtherPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

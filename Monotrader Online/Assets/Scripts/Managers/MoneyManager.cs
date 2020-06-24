@@ -26,6 +26,7 @@ public class MoneyManager : MonoBehaviour
     private const string PLAYER_STATE = "My_State";
     private const string NEW_TURN_ACTIVE = "NewTurnActive";
     private const string CHAR_SELECTION = "CharSelected";
+    private const string FORTUNE_UPDATE = "Fortune_update";
 
 
     private const string HISTORY_TURN_ACTUAL = "History_Turn_Actual";
@@ -143,6 +144,7 @@ public class MoneyManager : MonoBehaviour
                     SetInitialAmounts(myPlayer.IsMasterClient);
                     //set setctions object to true
                     sectionsManagerObject.SetActive(true);
+                    FriendsManager.initialFortune = true;
                     Debug.Log("everyone is ready!" + myPlayer.NickName);
                 }
             }
@@ -154,8 +156,9 @@ public class MoneyManager : MonoBehaviour
                     SetCustomsPPT(PLAYER_STATE, 1);
                     if (updateOnceFortune)
                     {
-                        updateOnceFortune = false;
                         UpdateFortune();
+                        updateOnceFortune = false;
+                        
                     }
                     UpdateTrendDisplay();
                     UpdateHistoryGUI();
@@ -546,6 +549,11 @@ public class MoneyManager : MonoBehaviour
         PlayerPrefs.SetFloat(PLAYER_YENS, yens);
 
         UpdateAmountText();
+        if (!updateOnceFortune)
+        {
+            FriendsManager.changeFortune = true;
+        }
+        Debug.Log($"{myPlayer.NickName} calling showFortune and ppt {myPlayer.CustomProperties[FORTUNE_UPDATE]}");
 
 
     }
@@ -565,6 +573,7 @@ public class MoneyManager : MonoBehaviour
 
         SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
         UpdateAmountText();
+        FriendsManager.changeFortune = true;
 
     }
     //simple wait function allowing to synchronise every room properties when needed

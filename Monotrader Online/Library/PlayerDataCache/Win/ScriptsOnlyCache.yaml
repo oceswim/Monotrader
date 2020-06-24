@@ -10,6 +10,7 @@ ScriptsOnlyBuild:
     - DicesManager
     - Exit
     - FriendItem
+    - FriendsManager
     - GameChatClient
     - GameManager
     - IgnoreUiRaycastWhenInactive
@@ -17,7 +18,6 @@ ScriptsOnlyBuild:
     - MechanicsManager
     - MoneyManager
     - MovementManager
-    - Photon.Chat.UtilityScripts.TextButtonTransition
     - PlayerNameInput
     - PlayerNameTag
     - PrefabSpawner
@@ -162,58 +162,56 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11026}
     - Class: 114
-      Script: {instanceID: 11044}
-    - Class: 114
       Script: {instanceID: 11050}
     - Class: 114
       Script: {instanceID: 11074}
     - Class: 114
       Script: {instanceID: 11078}
     - Class: 114
-      Script: {instanceID: 11128}
+      Script: {instanceID: 11094}
     - Class: 114
-      Script: {instanceID: 11180}
+      Script: {instanceID: 11130}
     - Class: 114
-      Script: {instanceID: 11232}
+      Script: {instanceID: 11182}
     - Class: 114
-      Script: {instanceID: 11236}
+      Script: {instanceID: 11234}
     - Class: 114
-      Script: {instanceID: 11324}
+      Script: {instanceID: 11238}
     - Class: 114
-      Script: {instanceID: 11340}
+      Script: {instanceID: 11326}
     - Class: 114
-      Script: {instanceID: 11362}
+      Script: {instanceID: 11342}
     - Class: 114
-      Script: {instanceID: 11472}
+      Script: {instanceID: 11364}
     - Class: 114
-      Script: {instanceID: 11506}
+      Script: {instanceID: 11474}
     - Class: 114
-      Script: {instanceID: 11562}
+      Script: {instanceID: 11508}
     - Class: 114
-      Script: {instanceID: 11578}
+      Script: {instanceID: 11564}
     - Class: 114
-      Script: {instanceID: 11746}
+      Script: {instanceID: 11580}
     - Class: 114
-      Script: {instanceID: 11972}
+      Script: {instanceID: 11748}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11974}
     - Class: 114
-      Script: {instanceID: 12046}
+      Script: {instanceID: 11978}
     - Class: 114
       Script: {instanceID: 12048}
     - Class: 114
-      Script: {instanceID: 12070}
+      Script: {instanceID: 12050}
     - Class: 114
       Script: {instanceID: 12072}
     - Class: 114
-      Script: {instanceID: 12092}
+      Script: {instanceID: 12074}
     - Class: 114
-      Script: {instanceID: 12110}
+      Script: {instanceID: 12094}
+    - Class: 114
+      Script: {instanceID: 12112}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
-      Script: {instanceID: 0}
-    - Class: 136
       Script: {instanceID: 0}
     - Class: 143
       Script: {instanceID: 0}
@@ -289,6 +287,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10000}
     - Class: 114
+      Script: {instanceID: 10120}
+    - Class: 114
       Script: {instanceID: 10170}
     - Class: 114
       Script: {instanceID: 10232}
@@ -313,39 +313,43 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11090}
     - Class: 114
-      Script: {instanceID: 11176}
+      Script: {instanceID: 11178}
     - Class: 114
-      Script: {instanceID: 11186}
+      Script: {instanceID: 11188}
     - Class: 114
-      Script: {instanceID: 11236}
+      Script: {instanceID: 11234}
     - Class: 114
-      Script: {instanceID: 11254}
+      Script: {instanceID: 11238}
     - Class: 114
-      Script: {instanceID: 11340}
+      Script: {instanceID: 11256}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11326}
     - Class: 114
-      Script: {instanceID: 11418}
+      Script: {instanceID: 11342}
     - Class: 114
-      Script: {instanceID: 11434}
+      Script: {instanceID: 11350}
     - Class: 114
-      Script: {instanceID: 11442}
+      Script: {instanceID: 11420}
     - Class: 114
-      Script: {instanceID: 11506}
+      Script: {instanceID: 11436}
     - Class: 114
-      Script: {instanceID: 11578}
+      Script: {instanceID: 11444}
     - Class: 114
-      Script: {instanceID: 11786}
+      Script: {instanceID: 11508}
     - Class: 114
-      Script: {instanceID: 11924}
+      Script: {instanceID: 11580}
     - Class: 114
-      Script: {instanceID: 11972}
+      Script: {instanceID: 11788}
     - Class: 114
-      Script: {instanceID: 12048}
+      Script: {instanceID: 11926}
     - Class: 114
-      Script: {instanceID: 12084}
+      Script: {instanceID: 11974}
     - Class: 114
-      Script: {instanceID: 12092}
+      Script: {instanceID: 12050}
+    - Class: 114
+      Script: {instanceID: 12086}
+    - Class: 114
+      Script: {instanceID: 12094}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -402,15 +406,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10464}
     - Class: 114
-      Script: {instanceID: 11236}
+      Script: {instanceID: 11238}
     - Class: 114
-      Script: {instanceID: 11506}
+      Script: {instanceID: 11508}
     - Class: 114
-      Script: {instanceID: 11578}
+      Script: {instanceID: 11580}
     - Class: 114
-      Script: {instanceID: 11972}
+      Script: {instanceID: 11974}
     - Class: 114
-      Script: {instanceID: 12048}
+      Script: {instanceID: 12050}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1068,7 +1072,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: 61ea3f24f47b6248b0de453dd6373edf
+      Hash: 8e35b3f69bd2de412decc2ecdb83ed9a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameChatClient
@@ -1350,6 +1354,12 @@ ScriptsOnlyBuild:
     className: PlayerUI
   - hash:
       serializedVersion: 2
+      Hash: 1debecd70a2976fa3e8ecdc906dee721
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FriendsManager
+  - hash:
+      serializedVersion: 2
       Hash: 24ac753ebc6a9abbcd34964ed965a9e7
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
@@ -1476,7 +1486,7 @@ ScriptsOnlyBuild:
     className: AppVersionProperty
   - hash:
       serializedVersion: 2
-      Hash: ae1347d9113eee8b83c5c8047dcf31a8
+      Hash: f08dcc65d7fc53c62e7663434fc948ee
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FriendItem
