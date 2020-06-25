@@ -13,11 +13,13 @@ public class DicesManager : MonoBehaviourPun
     private Vector3 noVelocity = Vector3.zero;
     private bool canGuess;
     public bool roll;
+    public bool taxesRoll;
     public void Start()
     {
         myRoom = PhotonNetwork.CurrentRoom;
         roll = false;
         canGuess = false;
+        taxesRoll = false;
         myBody = transform.GetComponent<Rigidbody>();
         if(gameObject.name.EndsWith("1"))
         {
@@ -108,7 +110,16 @@ public class DicesManager : MonoBehaviourPun
         }
 
         Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
-        GameManager.instance.SetDicePrefs(diceVal);
+        if (!taxesRoll)
+        {
+            GameManager.instance.SetDicePrefs(diceVal);
+        }
+        else
+        {
+            Debug.Log("HERE " + Time.deltaTime);
+            TaxesManager.values.Add(diceVal);
+            TaxesManager.status++;
+        }
 
     }
     private void SetRoomProperty(string hashKey, int value)//general room properties

@@ -334,15 +334,22 @@ public class GameManager : MonoBehaviourPun
     }
 
     //starts the dice rolling mechanics when the player clicks on the roll button.
-    public void RollDices()
+    public void RollDices(bool taxesRoll)
     {
 
         foreach (DicesManager s in inGameDices)
         {
             s.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.LocalPlayer);
             s.roll = true;
+            if(taxesRoll)
+            {
+                s.taxesRoll = true;
+            }
         }
-        dicesRolling = true;
+        if (!taxesRoll)
+        {
+            dicesRolling = true;
+        }
 
     }
 

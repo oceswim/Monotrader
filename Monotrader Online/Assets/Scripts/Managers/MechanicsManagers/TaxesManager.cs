@@ -2,6 +2,7 @@
 using TMPro;
 using System;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 //single player
 public class TaxesManager : MonoBehaviour
@@ -21,17 +22,24 @@ public class TaxesManager : MonoBehaviour
     private const string DOLLARS_PRICE = "Dollars_Price";
     private const string POUNDS_PRICE = "Pounds_Price";
     private const string YEN_PRICE = "Yen_Price";
+    private const string PREFDICE = "DiceVal";
+    private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
+    private const int BACK_POS_1 = -4;
+    private const int BACK_POS_2 = -6;
 
     private Room myRoom;
     private const string FORTUNE = "myFortune";
     private float generalDollars,generalEuros,generalYens,generalPounds,priceE, priceD,priceP,priceY,playerE, playerD, playerP, playerY, playerG, playerFortune,taxesPercent;
-    public TMP_Text content;
+    public TMP_Text content,buttonContent;
     public static bool BeginProcess;
+    public static int status;
+    private int dice1, dice2;
+    public static List<int> values = new List<int>();
     // Start is called before the first frame update
     void Start()
     {
         myRoom = GameManager.myRoom;
-
+        dice1 = dice2 = 0;
         InitialiseHashKeys();
     }
     private void Update()
@@ -40,6 +48,26 @@ public class TaxesManager : MonoBehaviour
         {
             BeginProcess = false;
             Initialise();
+        }
+        if(status==2)
+        {
+            
+            status = 0;
+            dice1 = values[0];
+            dice2 = values[1];
+            Debug.Log("HERE bitch"+ dice1 +" and "+dice2);
+            if (dice1 != dice2)
+            {
+                MoveBack();
+                dice1 = 0;
+                dice2 = 0;
+            }
+            else
+            {
+                BoardManager.NextTurn();//double done so can keep playing.
+                //add some effects here.
+            }
+
         }
     }
     private void Initialise()
@@ -66,7 +94,10 @@ public class TaxesManager : MonoBehaviour
         float percent = taxesPercent * 100;
         Debug.Log("PERCENT " + percent);
         double total = Math.Round(playerFortune * taxesPercent, 2);
-        content.text = $"It is time to pay your taxes! After some calculations, it was decided you had to pay {percent.ToString()}% of your fortune. The total to pay is {total.ToString()} Gold.";
+        content.text = $"The Police is here! You haven't paid your taxes in a long time. " +
+            $"Pay {total.ToString()} Gold or roll the dices to get a chance to escape. " +
+            $"If you miss you go backwards!";
+        buttonContent.text = $"Pay {total.ToString()}";
 
     }
     private void InitialiseHashKeys()
@@ -164,6 +195,30 @@ public class TaxesManager : MonoBehaviour
 
     }
 
+    //here we call gamemanager roll with taxes roll set to true
+    public void MoveBack()
+    {
+        Debug.Log(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
+            //set pref dice to minus
+            if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==18)
+            {
+                PlayerPrefs.SetInt(PREFDICE, BACK_POS_1);
+                Debug.Log("moving back of " + PlayerPrefs.GetInt(PREFDICE));
+            MovementManager.backWards = true;
+                MovementManager.moveMe = true;
+            }
+            else if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==27)
+            {
+                PlayerPrefs.SetInt(PREFDICE, BACK_POS_2);
+                Debug.Log("moving back of " + PlayerPrefs.GetInt(PREFDICE));
+                MovementManager.backWards = true;
+                MovementManager.moveMe = true;
+            }
+            //go backwards
+            //if index == 27 -> go to 21
+            //if index == 18 -> go to 14
+        
+    }
     
     //converting currencies back to 1 on 1 proportion.
     private float GetGeneralPrices(float price, float value)

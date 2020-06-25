@@ -22,7 +22,7 @@ public class MovementManager : MonoBehaviourPun
     private CharacterController controller = null;
 
     //bool allowing to start the movement mechanics
-    public static bool moveMe;
+    public static bool moveMe,backWards;
     
     private void Start()
     {
@@ -41,8 +41,9 @@ public class MovementManager : MonoBehaviourPun
         //if moveme is on the player starts going to the target
         if (moveMe)
         {
+
             moveMe = false;
-            int diceVal = PlayerPrefs.GetInt(PREFDICE);
+            int diceVal= PlayerPrefs.GetInt(PREFDICE);
             Movement(diceVal);
         }
 
@@ -93,13 +94,14 @@ public class MovementManager : MonoBehaviourPun
     {
         int oldPosition = myPositionIndex;
         int newPositionIndex = oldPosition + value;
+        Debug.Log($"NEW :{newPositionIndex} OLD: {oldPosition}");
         int overlap = -1;
 
+   
         if (newPositionIndex > TARGET_AMOUNT)
         {
             int temp = newPositionIndex - TARGET_AMOUNT;
             overlap = temp - 1;
-
             newTurn = true;
         }
         Transform finalTarget;
@@ -397,15 +399,24 @@ public class MovementManager : MonoBehaviourPun
                 }
                 break;
         }
-      
-        if (newTurn)
+        PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, myPositionIndex);
+        if (!backWards)
         {
-            newTurn = false;
-            BoardManager.SetPositionNewTurn(myPositionIndex);
+            if (newTurn)
+            {
+                newTurn = false;
+                BoardManager.SetPositionNewTurn(myPositionIndex);
+            }
+            else
+            {
+
+                BoardManager.SetPosition(myPositionIndex);
+            }
         }
         else
         {
-            BoardManager.SetPosition(myPositionIndex);
+            backWards = false;
+            Debug.Log("Have to call board manager function "+ PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
         }
         doneMoving = false;
 

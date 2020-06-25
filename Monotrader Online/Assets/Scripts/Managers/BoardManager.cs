@@ -2,11 +2,12 @@
 
 public class BoardManager : MonoBehaviour
 {
-    private static bool actionDone, newTurn;
+    private static bool actionDone, newTurn,reset,taxesBack;
+    public GameObject taxeSubPanel, taxesPanel;
     // Start is called before the first frame update
     void Start()
     {
-        actionDone = false;
+        actionDone =reset= false;
     }
 
     // Update is called once per frame
@@ -22,15 +23,26 @@ public class BoardManager : MonoBehaviour
                 GameManager.instance.TurnManager();
             }
         }
+        if(reset)
+        {
+            reset = false;
+            
+            taxesPanel.SetActive(false); 
+            taxeSubPanel.SetActive(true);
+        }
         
     }
 
     public static void SetPosition(int index)
     {
-
+        
         PositionManager(index);
         //FakeFuntion();
        
+    }
+    public void BackWardMechanic()
+    {
+        reset = true;
     }
     public static void SetPositionNewTurn(int index)
     {
@@ -122,7 +134,7 @@ public class BoardManager : MonoBehaviour
         //MechanicsManager.instance.CurrenciesTrading("dollars");
         //MechanicsManager.instance.CurrenciesTrading("euros");
         //MechanicsManager.instance.BlackTuesday();
-        MechanicsManager.instance.Luck();
+        //MechanicsManager.instance.Luck();
         //MechanicsManager.instance.CrisisManage();
         //MechanicsManager.instance.TaxesManage();
         //MechanicsManager.instance.NationalVariation();

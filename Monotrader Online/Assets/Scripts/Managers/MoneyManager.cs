@@ -380,6 +380,8 @@ public class MoneyManager : MonoBehaviour
         //if more than 6 trends are off we reset the board
         if(trendUpdateCounter>6)
         {
+            Debug.Log("in if: " + trendUpdateCounter); 
+            trendUpdateCounter = 0;
             for(int i = 0; i<dollarsTrendInGame.Length;i++)
             {
                 if(i!=d)

@@ -43,13 +43,7 @@ public class TradingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (BeginProcess)
-        {
-            tradingMode = 0;//set to buy intially.
-            UpdateText(tradingMode);
-            GetPrefs();
-            BeginProcess = false;
-        }
+        
         if (eurosTrading)
         {
             currencyToChange = PLAYER_EUROS;
@@ -86,7 +80,13 @@ public class TradingManager : MonoBehaviour
             currencyPriceInGold = (float)myRoom.CustomProperties[YEN_PRICE];
             currencyMode = 4;
         }
-
+        if (BeginProcess)
+        {
+            tradingMode = 0;//set to buy intially.
+            UpdateText(tradingMode);
+            GetPrefs();
+            BeginProcess = false;
+        }
     }
 
     private void GetPrefs()
@@ -244,7 +244,7 @@ public class TradingManager : MonoBehaviour
             }
             MoneyManager.updateFortune = true;
             UpdateBankings(theValue, (int)Math.Round(latestValue, 0), currencyMode, tradingMode);
-           
+            myInputField.text = string.Empty;
         }
     }
     private void UpdateBankings(int toAdd,int toRemove,int currency,int tradeMode)
