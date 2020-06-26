@@ -46,7 +46,7 @@ public class DicesManager : MonoBehaviourPun
             transform.position = new Vector3(transform.position.x, 5, transform.position.z);
             transform.rotation = Quaternion.identity;
             myBody.AddForce(transform.up * 500);
-            myBody.AddTorque(dirX, dirY, dirZ);
+            myBody.AddTorque(dirX, dirY, dirZ,ForceMode.VelocityChange);
             WaitOut(1);
             roll = false;
             canGuess = true;

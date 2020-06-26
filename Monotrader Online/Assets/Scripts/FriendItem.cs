@@ -10,6 +10,7 @@ using Photon.Pun;
 /// </summary>
 public class FriendItem : MonoBehaviour {
 
+	
 	[HideInInspector]
 	public string FriendId
 	{
@@ -25,11 +26,38 @@ public class FriendItem : MonoBehaviour {
 	public TMP_Text NameLabel;
 	public TMP_Text FortuneLabel;
 	public static FriendItem instance = null;
+	public const string REDPREF = "myRedVal";
+	public const string GREENPREF = "myGreenVal";
+	public const string BLUEPREF = "myBlueVal";
+	private int r, g, b;
+	private Button myButton;
 	public void Awake()
 	{
-
+		myButton = GetComponent<Button>();
 		NameLabel.text = string.Empty;
 		FortuneLabel.text = string.Empty;
+		SetColor();
+		
+	}
+	private void SetColor()
+	{
+		r = PlayerPrefs.GetInt(REDPREF);
+		g = PlayerPrefs.GetInt(GREENPREF);
+		b = PlayerPrefs.GetInt(BLUEPREF);
+		Debug.Log(r + " " + g + " " + b);
+		int transparancy=0;
+		if(r>200 && b>200 && g>200)
+		{
+			transparancy = 100;
+		}
+		else
+		{
+			transparancy = 255;
+		}
+		Color32 color = new Color32((byte)r, (byte)g, (byte)b, (byte)transparancy);
+		var newColorBlock = myButton.colors;
+		newColorBlock.disabledColor = color;
+		myButton.colors = newColorBlock;
 	}
 	public void OnFriendStatusUpdate(int status, bool gotMessage, object message)
 	{
