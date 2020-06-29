@@ -54,6 +54,7 @@ public class MechanicsManager : MonoBehaviour
     }
     public void TaxesManage()
     {
+        Debug.Log("In taxes manage");
         taxesObject.SetActive(true);
         TaxesManager.BeginProcess = true;
     }

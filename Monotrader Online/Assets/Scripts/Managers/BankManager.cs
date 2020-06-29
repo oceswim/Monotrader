@@ -64,7 +64,6 @@ public class BankManager : MonoBehaviourPun
         myRoom = GameManager.myRoom;
         
         playerCount = myRoom.PlayerCount;
-        Debug.Log("PLAYER COUNT " + playerCount);
         GoldBank = new GameObject(GOLD_BANK);
         GoldBank.AddComponent<BankScript>();
         
@@ -90,19 +89,13 @@ public class BankManager : MonoBehaviourPun
         {
             Trigger = false;
 
-            if (!photonView.IsMine)
-            {
-                photonView.TransferOwnership(myPlayer);
-                Debug.Log("here" + PhotonNetwork.LocalPlayer.NickName);
-            }
-
             int g = CheckValue(GOLD_UPDATE);
             int d = CheckValue(DOLLARS_UPDATE);
             int e = CheckValue(EUROS_UPDATE);
             int p = CheckValue(POUNDS_UPDATE);
             int y = CheckValue(YENS_UPDATE);
             UpdateMyGUI(g, d, e, p, y);
-            Debug.Log(myPlayer.NickName + " calling next turn");
+         
             BoardManager.NextTurn();
             
                 
@@ -294,15 +287,18 @@ public class BankManager : MonoBehaviourPun
         {
             y = "";
         }
-        Debug.Log("calling RPC " + myPlayer.NickName);
-       
+  
+        if (!photonView.IsMine)
+        {
+            photonView.TransferOwnership(myPlayer);
+        
+        }
         photonView.RPC("SetBankText", RpcTarget.AllBuffered, g,d,e,p,y);
     }
 
     public void TaxIncome(float gold, float dollars,float euros,float pounds, float yens)
     {
-        Debug.Log($"After taxes the bank gets : {gold}G {dollars}D {euros}E {pounds}P {yens}Y");
-        Debug.Log($"converted to int : {(int)Math.Round(gold, 0)}G {(int)Math.Round(dollars, 0)}D {(int)Math.Round(euros, 0)}E {(int)Math.Round(pounds, 0)}P {(int)Math.Round(yens, 0)}Y");
+
         if(gold>0)
         {
             UpdateGold((int)Math.Round(gold, 0));

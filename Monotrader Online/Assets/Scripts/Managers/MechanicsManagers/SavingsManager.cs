@@ -48,12 +48,12 @@ public class SavingsManager : MonoBehaviour
           float oldPercentage =  PlayerPrefs.GetFloat(MY_SAVINGS);
           float newPercentage = oldPercentage + (float)percentage;
           PlayerPrefs.SetFloat(MY_SAVINGS, newPercentage);
-          Debug.Log($"SAVINGS before :{oldPercentage.ToString()}, savings now : {newPercentage.ToString()}");
+          
         }
         else
         {
             PlayerPrefs.SetFloat(MY_SAVINGS, (float)percentage);
-            Debug.Log($"SAVINGS set :{PlayerPrefs.GetFloat(MY_SAVINGS).ToString()}");
+           
         }
         totalSavings.text = PlayerPrefs.GetFloat(MY_SAVINGS).ToString()+ " G";
         float newGold = myGold - (float)percentage;

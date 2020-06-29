@@ -62,7 +62,7 @@ public class SpinTheWheel : MonoBehaviour
             mode1 = false;
             MoneyManager.updateFortune = true;
         }
-
+        BoardManager.NextTurn();
     }
     public void Spin()
     {        
@@ -83,13 +83,12 @@ public class SpinTheWheel : MonoBehaviour
 
     private void DeterminePerk(float rotation)
     {
-        Debug.Log("final rot:" + rotation);
+      
         double value = Math.Round(rotation, 1);
 
         if(value>=0 && value<=96)
         {
-            Debug.Log("+500");
-            
+           
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 500;
             BankManager.instance.UpdateGold(-500);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
@@ -98,7 +97,6 @@ public class SpinTheWheel : MonoBehaviour
         }
         else if(value >= 96.1 && value <=190)
         {
-            Debug.Log("-250");
             mode1 = true;
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - 250;
             BankManager.instance.UpdateGold(250);
@@ -107,13 +105,13 @@ public class SpinTheWheel : MonoBehaviour
         }
         else if(value >= 274.1 && value <= 360)
         {
-            Debug.Log("Malus applied.");
+         
             //use player pref here.
             PlayerPrefs.SetInt(MALUS, 1);
         }
         else if(value >= 190.1 && value <= 274)
         {
-            Debug.Log("+500$");
+           
             mode1 = true;
             string key = "";
 

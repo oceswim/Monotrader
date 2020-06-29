@@ -37,12 +37,8 @@ public class StatePresetManager : MonoBehaviour
                 if(p.CustomProperties[PLAYER_STATE]==null)
                 {
                     once = true;
-                    Debug.Log(p.NickName + "is not ready yet");
                 }
-                else
-                {
-                    Debug.Log(p.NickName + "is ready");
-                }
+          
                 
             }
             if (!once)
@@ -74,6 +70,5 @@ public class StatePresetManager : MonoBehaviour
         PhotonNetwork.LocalPlayer.CustomProperties = GameManager._myCustomProperty;
         PhotonNetwork.LocalPlayer.SetCustomProperties(PhotonNetwork.LocalPlayer.CustomProperties);
 
-        Debug.Log("TEST"+PhotonNetwork.LocalPlayer.CustomProperties[PLAYER_STATE]);
     }
 }

@@ -52,21 +52,17 @@ public class CrisisManager : MonoBehaviour
     }
     private void WhichCurrency()
     {
-        Debug.Log(Time.deltaTime + " in which currencies");
         affectedCurrencies = new List<string>();
         
         int randomInt = UnityEngine.Random.Range(1, 5);//1 to 4 
-        Debug.Log(randomInt + " currencies will be affected");
+    
         if (randomInt < 4 && randomInt >1)
         {
             var rng = new System.Random();
             var values = Enumerable.Range(0, 4).OrderBy(x => rng.Next()).ToArray();//the random currency affected
             if (randomInt == 2)
             { 
-                foreach(var v in values)
-                {
-                    Debug.Log(v);
-                }
+               
                 int first = values[0];
                 int second = values[1];
 
@@ -76,10 +72,7 @@ public class CrisisManager : MonoBehaviour
             }
             else if (randomInt == 3)
             {
-                foreach (var v in values)
-                {
-                    Debug.Log(v);
-                }
+                
                 int first = values[0];
                 int second = values[1];
                 int third = values[2];
@@ -94,7 +87,6 @@ public class CrisisManager : MonoBehaviour
         {
             int randomIndex = UnityEngine.Random.Range(0, 4);//0 to 3 the random currency affected initially
             string currency = currencies[randomIndex];
-            Debug.Log("calling flucuate for : " + currency);
             FluctuateCurrency(currency);
         
         }
@@ -102,7 +94,7 @@ public class CrisisManager : MonoBehaviour
         {
             foreach(string s in currencies)
             {
-                Debug.Log("calling flucuate for : " + s);
+            
                 FluctuateCurrency(s);
             }
         }
@@ -111,7 +103,7 @@ public class CrisisManager : MonoBehaviour
     private void CallFluctuate(int v)
     {
         string currency = currencies[v];
-        Debug.Log("calling flucuate for : " + currency);
+        
         FluctuateCurrency(currency);
     }
     //depending on the set properties, the corresponding price for a currency gets updated.
@@ -158,7 +150,7 @@ public class CrisisManager : MonoBehaviour
         string text = "A crisis just hit the trading market. The ";
         foreach(string s in affectedCurrencies)
         {
-            Debug.Log(s + " index : " + affectedCurrencies.IndexOf(s) + "vs count :" + affectedCurrencies.Count);
+            
             if (affectedCurrencies.IndexOf(s) == (affectedCurrencies.Count - 1))
             {
                 if(affectedCurrencies.Count>1)

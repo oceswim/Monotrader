@@ -47,7 +47,7 @@ public class VariationManager : MonoBehaviour
         }
         if (worldVar)
         {
-            Debug.Log("HEY");
+ 
             worldVar = false;
             WorldVariation();
         }
@@ -82,7 +82,7 @@ public class VariationManager : MonoBehaviour
     //World variation 
     private void WorldVariation()
     {
-        Debug.Log("world var");
+      
         float delta = 0;
         string mode = "";
         float newTrendE,newTrendD,newTrendP,newTrendY;
@@ -136,30 +136,30 @@ public class VariationManager : MonoBehaviour
     }
     private void DetermineCountry(float rotation)
     {
-        Debug.Log("final rot:" + rotation);
+  
         double value = Math.Round(rotation, 1);
 
         if (value >= 0 && value <= 96)
         {
-            Debug.Log("america 2");
+    
             NationalVariation(2);
             
         }
         else if (value >= 96.1 && value <= 190)
         {
-            Debug.Log("france 1");
+           
             NationalVariation(1);
            
         }
         else if (value >= 274.1 && value <= 360)
         {
-            Debug.Log("japan 4");
+           
             NationalVariation(4);
             //use player pref here.
         }
         else if (value >= 190.1 && value <= 274)
         {
-            Debug.Log("england 3");
+    
             NationalVariation(3);
         }
 
@@ -242,7 +242,7 @@ public class VariationManager : MonoBehaviour
     private int VariationMode()
     {
         int rand = UnityEngine.Random.Range(0, 2);
-        Debug.Log("VARIATION SCRIPT MODE:" + rand);
+ 
         return rand;
     }
     private void SetNewTrends(float d, float e, float p, float y)

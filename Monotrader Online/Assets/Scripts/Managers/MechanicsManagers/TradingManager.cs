@@ -23,7 +23,7 @@ public class TradingManager : MonoBehaviour
 
     public Button confirmButton;
     public GameObject[] myTitles = new GameObject[4];
-    public GameObject malusObject;
+    public GameObject malusObject, valueMinimumText;
     public TMP_InputField myInputField;
     public Slider mySlider;
     public TMP_Text currencyText, valueText, buyText, sellText;
@@ -97,7 +97,7 @@ public class TradingManager : MonoBehaviour
         PLAYER_YENS = PlayerPrefs.GetString("MYYENS");
         PLAYER_POUNDS = PlayerPrefs.GetString("MYPOUNDS");
     }
-    public void UpdateTextValue(string value)
+    public void UpdateTextValue(string value) // check here if the value is less than what's in the bank + is less than what player has. otherwise need to put less.
     {
         if (!string.IsNullOrEmpty(value))
         {
@@ -114,9 +114,9 @@ public class TradingManager : MonoBehaviour
                         if(PlayerPrefs.GetInt(MALUS)>0)
                         {
                             //we decrease the value obtained with the gold input
-                            Debug.Log($"MALUS price before {price.ToString()}");
+                        
                             price *= MALUS_AMOUNT;
-                            Debug.Log($"MALUS price after {price.ToString()}");
+                
                             PlayerPrefs.SetInt(MALUS, 0);
                         }
                     }
@@ -134,9 +134,9 @@ public class TradingManager : MonoBehaviour
                         if (PlayerPrefs.GetInt(MALUS) > 0)
                         {
                             //we decrease the value obtained with the gold input
-                            Debug.Log($"MALUS price before {price.ToString()}");
+                      
                             price *= MALUS_AMOUNT;
-                            Debug.Log($"MALUS price after {price.ToString()}");
+                    
                             PlayerPrefs.SetInt(MALUS, 0);
                         }
                     }
@@ -145,7 +145,26 @@ public class TradingManager : MonoBehaviour
                     //currency -> gold
                     break;
             }
-            confirmButton.interactable = true;
+            if (Int32.Parse(value) > 500)
+            {
+                if (valueMinimumText.activeSelf)
+                {
+                    valueMinimumText.SetActive(false);
+                }
+                confirmButton.interactable = true;
+            }
+            else
+            {
+                if(!valueMinimumText.activeSelf)
+                {
+                    if(confirmButton.interactable)
+                    {
+                        confirmButton.interactable = false;
+                    }
+                    valueMinimumText.SetActive(true);
+                    
+                }
+            }
         }
         else
         {
@@ -206,7 +225,7 @@ public class TradingManager : MonoBehaviour
             {
                 case 0://buy
                    
-                    Debug.Log("Giving " + theValue + " gold to receive :" + latestValue + " " + currencyModeText);
+               
                     //remove thevalue of gold
                     newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - theValue;
                     PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
@@ -216,7 +235,7 @@ public class TradingManager : MonoBehaviour
                     //gold -> currency
                     break;
                 case 1:
-                    Debug.Log("giving " + theValue + " " + currencyModeText + " to receive :" + latestValue + " gold");
+               
                      newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + (float)latestValue;
                     PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
                      newCurr = PlayerPrefs.GetFloat(currencyToChange) - theValue;
@@ -255,12 +274,12 @@ public class TradingManager : MonoBehaviour
                 switch(tradeMode)
                 {
                     case 0://buy
-                        Debug.Log("Update dollars buy");
+            
                         BankManager.instance.UpdateGold(toAdd);
                         BankManager.instance.UpdateDollars(-toRemove);
                         break;
                     case 1:
-                        Debug.Log("Update dollars sell");
+                        
                         BankManager.instance.UpdateGold(-toRemove);
                         BankManager.instance.UpdateDollars(toAdd);
                         break;
@@ -270,13 +289,13 @@ public class TradingManager : MonoBehaviour
                 switch (tradeMode)
                 {
                     case 0://buy
-                        Debug.Log("Update euros buy");
+                        
                         BankManager.instance.UpdateGold(toAdd);
                         BankManager.instance.UpdateEuros(-toRemove);
                         break;
 
                     case 1:
-                        Debug.Log("Update euros sell");
+                        
                         BankManager.instance.UpdateGold(-toRemove);
                         BankManager.instance.UpdateEuros(toAdd);
                         break;
@@ -286,12 +305,12 @@ public class TradingManager : MonoBehaviour
                 switch (tradeMode)
                 {
                     case 0://buy
-                        Debug.Log("Update pounds buy");
+                       
                         BankManager.instance.UpdateGold(toAdd);
                         BankManager.instance.UpdatePounds(-toRemove);
                         break;
                     case 1:
-                        Debug.Log("Update pounds sell");
+                       
                         BankManager.instance.UpdateGold(-toRemove);
                         BankManager.instance.UpdatePounds(toAdd);
                         break;
@@ -301,12 +320,12 @@ public class TradingManager : MonoBehaviour
                 switch (tradeMode)
                 {
                     case 0://buy
-                        Debug.Log("Update yens buy");
+                       
                         BankManager.instance.UpdateGold(toAdd);
                         BankManager.instance.UpdateYens(-toRemove);
                         break;
                     case 1:
-                        Debug.Log("Update yens sell");
+                     
                         BankManager.instance.UpdateGold(-toRemove);
                         BankManager.instance.UpdateYens(toAdd);
                         break;

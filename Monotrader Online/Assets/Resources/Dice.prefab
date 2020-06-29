@@ -163,4 +163,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roll: 0
+  goodToRoll: 0
   taxesRoll: 0

@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Realtime;
-using Photon.Pun.UtilityScripts;
-using System;
-using System.Collections;
+
 
 public class GameManager : MonoBehaviourPun
 {
     private const string PREFDICE = "DiceVal";
 
     //room property keys
-
+    private const string DICEROLLCOUNTER = "diceRollsCount";
     private const string PLAYER_STATE = "myState";
     private const string PLAYER_READY_HASHKEY = "playerReady";
     private const string PLAYER_IN_ACTION_HASHKEY = "playerPlaying";
@@ -29,9 +27,10 @@ public class GameManager : MonoBehaviourPun
     private Player[] allPlayers;
     private List<DicesManager> inGameDices = new List<DicesManager>();
     private bool myTurn, gameCanStart, dicesRolling;
-    private int moveVal, diceStatus, turnCounter;
+    //private int moveVal, diceStatus, turnCounter;
+    private int moveVal, turnCounter;
     
-
+    public int diceStatus;//TEMP
     //public static variables
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     public static GameManager instance = null;
@@ -60,13 +59,14 @@ public class GameManager : MonoBehaviourPun
     void Start()
     {
         
-        moveVal   = diceStatus= turnCounter= 0;
+        moveVal   = diceStatus= 0 ;
+        turnCounter = 1;
         gameCanStart =dicesRolling= false;
         myPlayer = PhotonNetwork.LocalPlayer;
         allPlayers = PhotonNetwork.PlayerList;
         myRoom = PhotonNetwork.CurrentRoom;
         SetRoomProperty(TURN_COUNT, 1);
-        turnCountText.text = "Turn #1";
+        turnCountText.text = "Turn #"+turnCounter.ToString();
         SetRoomProperty(PLAYERS_NEW_TURN, 0);
     }
 
@@ -80,7 +80,6 @@ public class GameManager : MonoBehaviourPun
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
                 if (playerReadyCount == allPlayers.Length)
                 {
-                    Debug.Log("EVERYONE READY " + myPlayer.NickName);
                     PlayersReady();//sets the game state for everyone
                 }
             }
@@ -106,7 +105,7 @@ public class GameManager : MonoBehaviourPun
                 {
                     diceStatus = 0;
                     dicesRolling = false;
-                    Debug.Log("Move Val: " + moveVal);
+           
                     PlayerPrefs.SetInt(PREFDICE, moveVal);
                     moveVal = 0;
                     //activate movement
@@ -118,7 +117,7 @@ public class GameManager : MonoBehaviourPun
         {
             if (CheckIfMyTurn())
             {
-                Debug.Log(myPlayer.NickName + "it's my turn"+ Time.deltaTime);
+
                 myTurn = true;
                 DiceUI.SetActive(true);
             }
@@ -153,7 +152,7 @@ public class GameManager : MonoBehaviourPun
             
         }
         SetCustomPpties(PLAYER_STATE, 1);
-        Debug.Log("there are "+myRoom.CustomProperties[PLAYER_READY_HASHKEY]+" players ready");
+        
     }
 
     //setting the room property with an int
@@ -248,7 +247,7 @@ public class GameManager : MonoBehaviourPun
     public void SwitchTurn()
     {
         int index = PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY);
-        Debug.Log("IT WAS THE TURN OF " + PhotonNetwork.PlayerList[index].NickName);
+    
         myTurn = false;
         if (index ==(allPlayers.Length-1))
         {
@@ -263,29 +262,36 @@ public class GameManager : MonoBehaviourPun
         if (!photonView.IsMine)
         {
             photonView.TransferOwnership(myPlayer);
-            Debug.Log("here" + PhotonNetwork.LocalPlayer.NickName);
+      
         }
         photonView.RPC("SetPlayerTurnPref", RpcTarget.AllBuffered, index);
-        Debug.Log("IT IS NOW THE TURN OF " + PhotonNetwork.PlayerList[PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY)].NickName);
+
     }
 
     //checks if every player went through 1 lap and gives the player who just completed one a fixed amount of money.
     public void TurnManager()
     {
         turnCounter++;
-        
         SetRoomPlayersNewTurn(1);
-        int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];     
+        int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
+        Debug.Log("Turn manager at " + Time.deltaTime + " by " + PhotonNetwork.LocalPlayer.NickName+" and playersturn updated :"+playersTurnUpdated);
+        turnCountText.text = "Turn #"+turnCounter.ToString();
         NewTurnMechanic();
-
         if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
+           
             SetRoomPlayersNewTurn(0);
-            Debug.Log("every player passed one tour");
+            Debug.Log("New turn for both players by " + PhotonNetwork.LocalPlayer.NickName + " and playersturn updated :" + (int)myRoom.CustomProperties[PLAYERS_NEW_TURN]);
             UpdateTurnCount();//overall turn gets increased
-            SetRoomProperty(NEW_TURN_ACTIVE, 1);//allows money manager to do the new turn 
-            
+            if (!photonView.IsMine)
+            {
+                photonView.TransferOwnership(myPlayer);
+             
+            }
+            photonView.RPC("TurnMechanic", RpcTarget.AllBuffered);//allows money manager to do the new turn 
+
         }
+       
 
     }
 
@@ -299,10 +305,10 @@ public class GameManager : MonoBehaviourPun
         PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
         float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 2000;
         BankManager.instance.UpdateGold(-2000);
+        BankManager.Trigger = true;
         PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
         MoneyManager.updateFortune = true;
 
-        Debug.Log("2000 WERE GIVEN TO " + myPlayer.NickName);
     }
     //updates the room player new turn property
     private void SetRoomPlayersNewTurn(int ind)
@@ -315,7 +321,7 @@ public class GameManager : MonoBehaviourPun
         {
             if (myRoom.CustomProperties[PLAYERS_NEW_TURN] != null)
             {
-                Debug.Log("INF");
+         
                 int nextValue = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN] + 1;
                 SetRoomProperty(PLAYERS_NEW_TURN, nextValue);
             }
@@ -329,7 +335,7 @@ public class GameManager : MonoBehaviourPun
     {
         int previousCount;
         previousCount = (int)myRoom.CustomProperties[TURN_COUNT]+1;
-        Debug.Log("previous count was :" + (int)myRoom.CustomProperties[TURN_COUNT] + " it is now : " + previousCount);
+  
         SetRoomProperty(TURN_COUNT, previousCount);
     }
 
@@ -340,6 +346,7 @@ public class GameManager : MonoBehaviourPun
         foreach (DicesManager s in inGameDices)
         {
             s.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.LocalPlayer);
+            WaitOut(1);
             s.roll = true;
             if(taxesRoll)
             {
@@ -349,20 +356,39 @@ public class GameManager : MonoBehaviourPun
         if (!taxesRoll)
         {
             dicesRolling = true;
-        }
 
+            if (myRoom.CustomProperties[DICEROLLCOUNTER] != null)
+            {
+                int newCount = (int)myRoom.CustomProperties[DICEROLLCOUNTER] + 1;
+                SetRoomProperty(DICEROLLCOUNTER, newCount);
+            }
+            else
+            {
+                SetRoomProperty(DICEROLLCOUNTER, 1);
+            }
+            if ((int)myRoom.CustomProperties[DICEROLLCOUNTER] == myRoom.PlayerCount)
+            {
+                SetRoomProperty(DICEROLLCOUNTER, 0);
+       
+                if (!photonView.IsMine)
+                {
+                    photonView.TransferOwnership(myPlayer);
+      
+                }
+                photonView.RPC("TrendsUpdates", RpcTarget.AllBuffered);
+            }
+        }
     }
 
 
     //updates the dices player prefs value
     public void SetDicePrefs(int val)
     {
-
+        Debug.Log("In dice prefs");
         moveVal += val;
-        Debug.Log("move val " + moveVal);
-        
+  
         diceStatus += 1;
-        Debug.Log(diceStatus+"dice status");
+     
 
 
     }
@@ -382,7 +408,17 @@ public class GameManager : MonoBehaviourPun
     private void SetPlayerTurnPref(int index)
     {  
         PlayerPrefs.SetInt(PLAYER_IN_ACTION_HASHKEY, index);
+        Debug.Log("player pref in action set to :" + index + " by " + myPlayer.NickName) ;
     }
 
+    private void WaitOut(float seconds)
+    {
+        float start = 0;
+        while (start < seconds)
+        {
+            //Debug.Log("Waiting " + start);
+            start += Time.deltaTime;
+        }
+    }
 }
 

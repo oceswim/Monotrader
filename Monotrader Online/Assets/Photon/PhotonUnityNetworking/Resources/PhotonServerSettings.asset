@@ -45,6 +45,10 @@ MonoBehaviour:
   - UpdateMyFortune
   - UpdateAllFortune
   - UpdateOtherPlayer
+  - Testing
+  - UpdateTrends
+  - TrendsUpdates
+  - TurnMechanic
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

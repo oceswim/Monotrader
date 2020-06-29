@@ -54,7 +54,7 @@ public class BlackTuesdayManager : MonoBehaviour
     }
     private void WorldVariation()
     {
-        Debug.Log($"Euros {euros.ToString()} dollars {dollars.ToString()} pounds {pounds.ToString()} yens {yens.ToString()} BEFORE");
+       
         euros *= (float)DELTA;
         dollars *= (float)DELTA;
         pounds *= (float)DELTA;
@@ -63,9 +63,9 @@ public class BlackTuesdayManager : MonoBehaviour
         double roundDollars = Math.Round(dollars, 2);
         double roundPounds = Math.Round(pounds, 2);
         double roundYens = Math.Round(yens, 2);
-        Debug.Log($"Euros {euros.ToString()} dollars {dollars.ToString()} pounds {pounds.ToString()} yens {yens.ToString()} AFTER");
+     
         SetNewPrices((float)roundDollars, (float)roundEuros, (float)roundPounds, (float)roundYens);
-        blackTuesdayText.text = $"Something horrible happened. Every currencies increased of {increase}%";
+        blackTuesdayText.text = $"Something horrible happened. Every currencies increased of {increase*100}%";
         confirm.interactable = true;
     }
     private void SetNewTrends(float val)
@@ -75,7 +75,7 @@ public class BlackTuesdayManager : MonoBehaviour
         double e = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] + val, 2);
         double p = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] + val, 2);
         double y = Math.Round((float)myRoom.CustomProperties[YEN_TREND] + val, 2);
-        Debug.Log($"New trends : d {d} e {e} p {p} y {y}");
+      
         SetRoomProperty(DOLLARS_TREND, (float)d);
         SetRoomProperty(EUROS_TREND, (float)e);
         SetRoomProperty(POUNDS_TREND, (float)p);

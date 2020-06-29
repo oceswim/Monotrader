@@ -6,20 +6,20 @@ using UnityEngine;
 public class DicesManager : MonoBehaviourPun
 {
     private Rigidbody myBody;
-    private const string dicesDoneRollingHashKey = "dicesDone";
     private Room myRoom;
 
-    private int myIndex;
+    private int myIndex, temp;
     private Vector3 noVelocity = Vector3.zero;
     private bool canGuess;
-    public bool roll;
+    public bool roll,goodToRoll;
     public bool taxesRoll;
+    private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
+    private static float dirX, dirY, dirZ;
     public void Start()
     {
+        dirX = dirY = dirZ =temp= 0;
         myRoom = PhotonNetwork.CurrentRoom;
-        roll = false;
-        canGuess = false;
-        taxesRoll = false;
+        roll = canGuess = taxesRoll =goodToRoll= false;
         myBody = transform.GetComponent<Rigidbody>();
         if(gameObject.name.EndsWith("1"))
         {
@@ -33,23 +33,38 @@ public class DicesManager : MonoBehaviourPun
 
     private void Update()
     {
-        if(myBody.velocity.Equals(noVelocity) && canGuess)
+      
+        if (roll)
+        {
+             dirX = UnityEngine.Random.Range(0, 500);
+
+             dirY = UnityEngine.Random.Range(0, 500);
+
+             dirZ = UnityEngine.Random.Range(0, 500);
+            goodToRoll = true;
+            roll = false;
+        }
+        else if(goodToRoll)
+        {
+            if (!canGuess)
+            {
+                transform.position = new Vector3(transform.position.x, 5, transform.position.z);
+                transform.rotation = Quaternion.identity;
+                int force = UnityEngine.Random.Range(250, 351);
+                myBody.AddForce(transform.up * force);
+                myBody.AddTorque(dirX, dirY, dirZ, ForceMode.VelocityChange);
+ 
+            }
+            if (!myBody.velocity.Equals(noVelocity))//allows to make sure the dice roll before a value is guessed
+            {
+                canGuess = true;
+                goodToRoll = false;
+            }
+        }
+        else if (myBody.velocity.Equals(noVelocity) && canGuess)
         {
             canGuess = false;
             WhichDiceValue();
-        }
-        if(roll)
-        {
-            float dirX = UnityEngine.Random.Range(0, 500);
-            float dirY = UnityEngine.Random.Range(0, 500);
-            float dirZ = UnityEngine.Random.Range(0, 500);
-            transform.position = new Vector3(transform.position.x, 5, transform.position.z);
-            transform.rotation = Quaternion.identity;
-            myBody.AddForce(transform.up * 500);
-            myBody.AddTorque(dirX, dirY, dirZ,ForceMode.VelocityChange);
-            WaitOut(1);
-            roll = false;
-            canGuess = true;
         }
 
     }
@@ -112,10 +127,13 @@ public class DicesManager : MonoBehaviourPun
         Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
         if (!taxesRoll)
         {
+           
             GameManager.instance.SetDicePrefs(diceVal);
+            
         }
         else
         {
+            taxesRoll = false;
             Debug.Log("HERE " + Time.deltaTime);
             TaxesManager.values.Add(diceVal);
             TaxesManager.status++;
@@ -146,4 +164,5 @@ public class DicesManager : MonoBehaviourPun
 
         myRoom.SetCustomProperties(myRoom.CustomProperties);
     }
+   
 }

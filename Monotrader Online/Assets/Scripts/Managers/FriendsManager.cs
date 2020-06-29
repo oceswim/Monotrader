@@ -47,7 +47,7 @@ public class FriendsManager : MonoBehaviourPun
             if (!photonView.IsMine)
             {
                 photonView.TransferOwnership(myPlayer);
-                Debug.Log("Fortune ownership to : " + photonView.Owner.NickName);
+     
             }
             string theFortune = PlayerPrefs.GetFloat(FORTUNE).ToString();
             UpdateMyFortune(theFortune);
@@ -60,7 +60,7 @@ public class FriendsManager : MonoBehaviourPun
                 if (!photonView.IsMine)
                 {
                     photonView.TransferOwnership(myPlayer);
-                    Debug.Log("Fortune ownership to master : " + photonView.Owner.NickName);
+       
                 }
                 string fortune = PlayerPrefs.GetFloat(FORTUNE).ToString();
                 photonView.RPC("UpdateAllFortune", RpcTarget.AllBuffered, fortune);
@@ -72,7 +72,6 @@ public class FriendsManager : MonoBehaviourPun
     public void SetFriendInstance(FriendItem instance)
     {
         myPlayerItem = instance;
-        Debug.Log("instance set for " + PhotonNetwork.LocalPlayer.NickName);
     }
     public void AddInstanceToList(FriendItem instance)
     {
@@ -101,13 +100,13 @@ public class FriendsManager : MonoBehaviourPun
     {
         if(!myPlayer.NickName.Equals(name))
         {
-            Debug.Log("In if update other player");
+       
             foreach(FriendItem f in playerItems)
             {
-                Debug.Log(f.NameLabel.text + " in foreach vs name : "+ name);
+         
                 if(f.NameLabel.text.Equals(name))
                 {
-                    Debug.Log($"im {PhotonNetwork.LocalPlayer.NickName} and i update {name}");
+
                     f.FortuneLabel.text = fortune;
                 }
             }

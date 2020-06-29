@@ -94,18 +94,20 @@ public class MovementManager : MonoBehaviourPun
     {
         int oldPosition = myPositionIndex;
         int newPositionIndex = oldPosition + value;
-        Debug.Log($"NEW :{newPositionIndex} OLD: {oldPosition}");
+        
         int overlap = -1;
 
-   
+        Debug.Log("OLD VS NEW : " + oldPosition + " vs " + newPositionIndex);
+
         if (newPositionIndex > TARGET_AMOUNT)
         {
             int temp = newPositionIndex - TARGET_AMOUNT;
             overlap = temp - 1;
-            newTurn = true;
+            newTurn = true;//new turn mechanic gets instantiated from there
         }
         Transform finalTarget;
         Transform newTurnTarget;
+        Debug.Log("OLD VS NEW after modif: "+oldPosition + " vs " + newPositionIndex+" overlap : "+ overlap);
         if (overlap >= 0)
         {
             finalTarget = Targets[0];
@@ -204,6 +206,15 @@ public class MovementManager : MonoBehaviourPun
                     movementIndex = 1;
                     movementMode = 1;
                 }
+                else if(backWards)
+                    {
+                        if(newPositionIndex==21)
+                        {
+                            movementIndex = 1;
+                            movementMode = 1;
+                        }
+                    }
+                
 
 
             }
@@ -251,8 +262,10 @@ public class MovementManager : MonoBehaviourPun
                     movementMode = 3;
                 }
             }
-
+           
             myPositionIndex = overlap;
+            Debug.Log("New turn move " + PhotonNetwork.LocalPlayer.NickName + " and new pos index: " + myPositionIndex+" and backwards :"+ backWards);
+            Debug.Log(newTurnTarget.name + " and mode: " + movementMode);
             Movement(newTurnTarget, movementMode);
             
 
@@ -271,6 +284,7 @@ public class MovementManager : MonoBehaviourPun
 
                 while (!doneMoving)
                 {
+                    Debug.Log("in while case1");
                     var theOffSet = GetOffset(endPoint, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(endPoint);
@@ -279,7 +293,7 @@ public class MovementManager : MonoBehaviourPun
                     if (Vector3.Distance(endPoint.position, transformToMove.position) < 2f)
                     {
 
-                        Debug.Log("I have arrived!");
+
                         doneMoving = true;
                     }
                 }
@@ -305,6 +319,7 @@ public class MovementManager : MonoBehaviourPun
 
                 while (!step1Complete)
                 {
+                    Debug.Log("in while step1 case 2");
                     Vector3 theOffSet = GetOffset(halfwayTarget1, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(halfwayTarget1);
@@ -312,11 +327,12 @@ public class MovementManager : MonoBehaviourPun
                     if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < .5f)
                     {
                         step1Complete = true;
-                        Debug.Log("I have arrived!");
+
                     }
                 }
                 while (!doneMoving)
                 {
+                    Debug.Log("in while step2 case 2");
                     Vector3 theOffSet = GetOffset(endPoint, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(endPoint);
@@ -326,7 +342,7 @@ public class MovementManager : MonoBehaviourPun
                     {
                         step1Complete = false;
                         doneMoving = true;
-                        Debug.Log("I have arrived!");
+
                     }
                 }
 
@@ -341,38 +357,37 @@ public class MovementManager : MonoBehaviourPun
                         halfwayTarget2 = Targets[CORNER_2];
                         break;
                     case 5:
-
                         halfwayTarget1 = Targets[CORNER_2];
                         halfwayTarget2 = Targets[CORNER_3];
                         break;
                     case 7:
-
                         halfwayTarget1 = Targets[CORNER_3];
                         halfwayTarget2 = Targets[CORNER_4];
                         break;
                     case 9:
-
                         halfwayTarget1 = Targets[CORNER_4];
+                        Debug.Log(halfwayTarget1.name);
                         halfwayTarget2 = Targets[CORNER_1];
+                        Debug.Log(halfwayTarget2.name);
                         break;
                 }
 
-
                 while (!step1Complete)
                 {
+                    Debug.Log("in while step1 case 3 :"+ Vector3.Distance(halfwayTarget1.position, transformToMove.position));
                     Vector3 theOffSet = GetOffset(halfwayTarget1, transformToMove);
-                    transformToMove.LookAt(halfwayTarget1);
                     theOffSet = theOffSet.normalized * SPEED;
+                    transformToMove.LookAt(halfwayTarget1);
                     controller.Move(theOffSet * Time.deltaTime);
-
-                    if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < .5f)
+                    Debug.Log("Halfway1 pos:" + halfwayTarget1.position + " transform pos:" + transformToMove.position);
+                    if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < 1.25f)
                     {
                         step1Complete = true;
-
                     }
                 }
                 while (!step2Complete)
                 {
+                    Debug.Log("in while step2 case 1");
                     Vector3 theOffSet = GetOffset(halfwayTarget2, transformToMove);
                     transformToMove.LookAt(halfwayTarget2);
                     theOffSet = theOffSet.normalized * SPEED;
@@ -385,6 +400,7 @@ public class MovementManager : MonoBehaviourPun
                 }
                 while (!doneMoving)
                 {
+                    Debug.Log("in while step3 case 3");
                     Vector3 theOffSet = GetOffset(endPoint, transformToMove);
                     transformToMove.LookAt(endPoint);
                     theOffSet = theOffSet.normalized * SPEED;
@@ -400,25 +416,23 @@ public class MovementManager : MonoBehaviourPun
                 break;
         }
         PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, myPositionIndex);
+        doneMoving = false;
         if (!backWards)
         {
+            
+           BoardManager.SetPosition(myPositionIndex, newTurn);
             if (newTurn)
             {
-                newTurn = false;
-                BoardManager.SetPositionNewTurn(myPositionIndex);
-            }
-            else
-            {
-
-                BoardManager.SetPosition(myPositionIndex);
+                Debug.Log("Starting new turn in movement manager at "+ Time.deltaTime +" by " + PhotonNetwork.LocalPlayer.NickName);
+                newTurn = false;    
             }
         }
         else
         {
             backWards = false;
-            Debug.Log("Have to call board manager function "+ PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
+
         }
-        doneMoving = false;
+        
 
     }
 }

@@ -131,7 +131,7 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 		{
 
 			PlayerList[i]=PhotonNetwork.PlayerList[i].NickName;
-			Debug.Log("Populated :" + i + " " + PlayerList[i]);
+
 			
 		}
 	}

@@ -35,6 +35,7 @@ public class TaxesManager : MonoBehaviour
     public static int status;
     private int dice1, dice2;
     public static List<int> values = new List<int>();
+    public GameObject subPanel;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +56,7 @@ public class TaxesManager : MonoBehaviour
             status = 0;
             dice1 = values[0];
             dice2 = values[1];
-            Debug.Log("HERE bitch"+ dice1 +" and "+dice2);
+         
             if (dice1 != dice2)
             {
                 MoveBack();
@@ -64,10 +65,10 @@ public class TaxesManager : MonoBehaviour
             }
             else
             {
-                BoardManager.NextTurn();//double done so can keep playing.
+                Done();//double done so can keep playing.
                 //add some effects here.
             }
-
+            
         }
     }
     private void Initialise()
@@ -78,7 +79,7 @@ public class TaxesManager : MonoBehaviour
         generalDollars = GetGeneralPrices(priceD, playerD);
         generalPounds = GetGeneralPrices(priceP, playerP);
         generalYens = GetGeneralPrices(priceY, playerY);
-        Debug.Log($"GENERAL E {generalEuros} D {generalDollars} P {generalPounds} Y {generalYens}");
+
         if (playerFortune <= 10000)
         {
             taxesPercent = .05f;
@@ -92,7 +93,7 @@ public class TaxesManager : MonoBehaviour
             taxesPercent = .15f;
         }
         float percent = taxesPercent * 100;
-        Debug.Log("PERCENT " + percent);
+     
         double total = Math.Round(playerFortune * taxesPercent, 2);
         content.text = $"The Police is here! You haven't paid your taxes in a long time. " +
             $"Pay {total.ToString()} Gold or roll the dices to get a chance to escape. " +
@@ -116,7 +117,7 @@ public class TaxesManager : MonoBehaviour
     public void SubstractTaxes()
     {
         float toRemove = 1-(taxesPercent / TOTAL_MONEY_TYPE); // EITHER 1% 2% 3% per currencies.
-        Debug.Log("TO REMOVE :" + toRemove);
+    
         float oldD = generalDollars;
         float oldE = generalEuros;
         float oldG = playerG;
@@ -129,11 +130,11 @@ public class TaxesManager : MonoBehaviour
         {
             generalDollars = generalDollars * toRemove;
             removedD = oldD - generalDollars;
-            Debug.Log($"D {generalDollars}");
+
         }
         else
         {
-            Debug.Log("There was not enough dollars for taxes");
+   
             removedD = 0;
             playerG *= toRemove;
         }
@@ -142,11 +143,11 @@ public class TaxesManager : MonoBehaviour
 
             generalEuros *= toRemove;
             removedE = oldE - generalEuros;
-            Debug.Log($"E {generalEuros}");
+   
         }
         else
         {
-            Debug.Log("There was not enough euros for taxes");
+   
             removedE = 0;
             playerG = playerG * toRemove;
         }
@@ -154,11 +155,11 @@ public class TaxesManager : MonoBehaviour
         {
             generalPounds *= toRemove;
             removedP = oldP - generalPounds;
-            Debug.Log($"P {generalPounds}");
+    
         }
         else
         {
-            Debug.Log("There was not enough pounds for taxes");
+        
             removedP = 0;
             playerG = playerG * toRemove;
         }
@@ -167,11 +168,11 @@ public class TaxesManager : MonoBehaviour
            
             generalYens *= toRemove;
             removedY = oldY - generalYens;
-            Debug.Log($"Y {generalYens}");
+      
         }
         else
         {
-            Debug.Log("There was not enough yens for taxes");
+      
             removedY = 0;
             playerG *= toRemove;
         }
@@ -179,8 +180,6 @@ public class TaxesManager : MonoBehaviour
         
         removedG = oldG - playerG;
         
-
-
 
         generalDollars = (float)(Math.Round(generalDollars,1));
         generalEuros= (float)(Math.Round(generalEuros, 1));
@@ -198,28 +197,35 @@ public class TaxesManager : MonoBehaviour
     //here we call gamemanager roll with taxes roll set to true
     public void MoveBack()
     {
-        Debug.Log(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
+        Debug.Log("moving back: " + PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
+
             //set pref dice to minus
             if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==18)
             {
                 PlayerPrefs.SetInt(PREFDICE, BACK_POS_1);
-                Debug.Log("moving back of " + PlayerPrefs.GetInt(PREFDICE));
-            MovementManager.backWards = true;
+           
+                MovementManager.backWards = true;
                 MovementManager.moveMe = true;
             }
             else if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==27)
             {
                 PlayerPrefs.SetInt(PREFDICE, BACK_POS_2);
-                Debug.Log("moving back of " + PlayerPrefs.GetInt(PREFDICE));
+          
                 MovementManager.backWards = true;
                 MovementManager.moveMe = true;
             }
-            //go backwards
-            //if index == 27 -> go to 21
-            //if index == 18 -> go to 14
-        
+        //go backwards
+        //if index == 27 -> go to 21
+        //if index == 18 -> go to 14
+        Done();
     }
-    
+    public void Done()
+    {
+       
+        BoardManager.NextTurn();
+        gameObject.SetActive(false);
+        subPanel.SetActive(true);
+    }
     //converting currencies back to 1 on 1 proportion.
     private float GetGeneralPrices(float price, float value)
     {
@@ -250,7 +256,7 @@ public class TaxesManager : MonoBehaviour
     private void GetPrefs()
     {
         playerFortune = PlayerPrefs.GetFloat(FORTUNE);
-        Debug.Log("TAXES FORTUNE : " + playerFortune);
+    
         playerE = PlayerPrefs.GetFloat(PLAYER_EUROS);
         playerD = PlayerPrefs.GetFloat(PLAYER_DOLLARS);
         playerP = PlayerPrefs.GetFloat(PLAYER_POUNDS);
