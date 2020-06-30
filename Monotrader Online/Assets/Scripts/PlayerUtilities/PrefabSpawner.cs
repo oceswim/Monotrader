@@ -6,7 +6,7 @@ public class PrefabSpawner : MonoBehaviourPun
 {
     public MovementManager movementScript;
     private const string PLAYER_NAME_PREF = "myName";
-    [SerializeField] private GameObject playerPrefab,bankManagerPrefab;
+    [SerializeField] private GameObject playerPrefab;
     public Transform[] Spawners;
     private Transform Spawn;
     private int[] otherNumbers;
@@ -53,9 +53,6 @@ public class PrefabSpawner : MonoBehaviourPun
         PlayerPrefs.SetString(PLAYER_NAME_PREF, myPlayer.name);
         myPlayer.transform.SetParent(Spawn);
         movementScript.enabled = true;
-
-    
-        
     }
 
     //depending on the index chosen the corresponding model is spawned

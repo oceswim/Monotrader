@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 
 
+
 /*
  * Allows to handle the in game chat so that the players can communicate together
  */
@@ -421,34 +422,9 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 		{
 			this.chatClient.PublishMessage(channel, "is online."); // you don't HAVE to send a msg on join but you could.
 
-			/*if (this.ChannelToggleToInstantiate != null)
-			{
-				this.InstantiateChannelButton(channel);
-
-			}*/
 		}
 
 		Debug.Log("OnSubscribed: " + string.Join(", ", channels));
-
-		/*
-        // select first subscribed channel in alphabetical order
-        if (this.chatClient.PublicChannels.Count > 0)
-        {
-            var l = new List<string>(this.chatClient.PublicChannels.Keys);
-            l.Sort();
-            string selected = l[0];
-            if (this.channelToggles.ContainsKey(selected))
-            {
-                ShowChannel(selected);
-                foreach (var c in this.channelToggles)
-                {
-                    c.Value.isOn = false;
-                }
-                this.channelToggles[selected].isOn = true;
-                AddMessageToSelectedChannel(WelcomeText);
-            }
-        }
-        */
 
 		// Switch to the first newly created channel
 		this.ShowChannel(channels[0]);
@@ -461,33 +437,27 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 			Debug.Log("Skipping creation for an existing channel toggle.");
 			return;
 		}
-
-		/*Toggle cbtn = (Toggle)Instantiate(this.ChannelToggleToInstantiate);
-		cbtn.gameObject.SetActive(true);
-		cbtn.GetComponentInChildren<ChannelSelector>().SetChannel(channelName);
-		cbtn.transform.SetParent(this.ChannelToggleToInstantiate.transform.parent, false);
-
-		this.channelToggles.Add(channelName, cbtn);*/
 	}
 
 	private void InstantiateFriendButton(string friendId,bool myItem)
 	{
 		GameObject fbtn = (GameObject)Instantiate(this.FriendListUiItemtoInstantiate);
-		
 		fbtn.gameObject.SetActive(true);
 		FriendItem _friendItem = fbtn.GetComponent<FriendItem>();
 
 		_friendItem.FriendId = friendId;
+		
 		_friendItem.FortuneLabel.text = PlayerPrefs.GetFloat(FORTUNE).ToString();
 		fbtn.transform.SetParent(itemParent, false);
 		this.friendListItemLUT[friendId] = _friendItem;
 		if(myItem)
 		{
 			FriendsManager.instance.SetFriendInstance(_friendItem);
+
 		}
 		FriendsManager.instance.AddInstanceToList(_friendItem);
+		
 	}
-
 
 	public void OnUnsubscribed(string[] channels)
 	{

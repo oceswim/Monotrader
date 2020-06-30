@@ -121,6 +121,7 @@ public class CharSelectionScript : MonoBehaviour
             mainCamera.SetActive(true);
             playerUI.SetActive(true);
             GameManager.instance.OnConfirmation();
+
         }
 
 

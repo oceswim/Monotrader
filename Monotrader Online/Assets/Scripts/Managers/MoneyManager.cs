@@ -139,6 +139,7 @@ public class MoneyManager : MonoBehaviourPun
                     sectionsManagerObject.SetActive(true);
                     FriendsManager.initialFortune = true;
                     
+                    
                 }
             }
 

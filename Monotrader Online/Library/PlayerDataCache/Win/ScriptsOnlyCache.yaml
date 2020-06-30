@@ -1234,7 +1234,7 @@ ScriptsOnlyBuild:
     className: TextContainer
   - hash:
       serializedVersion: 2
-      Hash: 0f07263edc4251f856a9e9fb0c32bb28
+      Hash: 1df803cf72c89ce779d08cc278a7242f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PrefabSpawner
