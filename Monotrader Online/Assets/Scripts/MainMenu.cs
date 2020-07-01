@@ -16,13 +16,15 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
+    private string REDPLAYERPPT;
+    private string GREENPLAYERPPT;
+    private string BLUEPLAYERPPT;
     private const int maxPlayerPerRoom =2;
 
     private void Awake()
     {
         PlayerPrefs.DeleteAll();//TO DELLLLLL
         PhotonNetwork.AutomaticallySyncScene = false;
-
     }
 
     public void FindOponents()
@@ -64,6 +66,8 @@ public class MainMenu : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()//this is for the player trying to join a party
     {
         Debug.Log("Client successfully joined the room");
+        SetKeys();
+        SetColor(PhotonNetwork.CurrentRoom);
         int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         if(playerCount != maxPlayerPerRoom)
         {
@@ -80,7 +84,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)//this shows to the player already in the room
     {
-        if(PhotonNetwork.CurrentRoom.PlayerCount == maxPlayerPerRoom)
+        if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayerPerRoom)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false; //stops new player from joining
             Debug.Log("Match ready to begin - room full");
@@ -92,7 +96,40 @@ public class MainMenu : MonoBehaviourPunCallbacks
  
         }
     }
-   
+    private void SetKeys()
+    {
+        REDPLAYERPPT = PhotonNetwork.NickName + "RedVal";
+        GREENPLAYERPPT = PhotonNetwork.NickName + "GreenVal";
+        BLUEPLAYERPPT = PhotonNetwork.NickName + "BlueVal";
+    }
+    private void SetColor(Room theRoom)
+    {
+        int r = UnityEngine.Random.Range(0, 256);
+        int g = UnityEngine.Random.Range(0, 256);
+        int b = UnityEngine.Random.Range(0, 256);
+        PlayerPrefs.SetInt(REDPLAYERPPT, r);
+        PlayerPrefs.SetInt(GREENPLAYERPPT, g);
+        PlayerPrefs.SetInt(BLUEPLAYERPPT, b);
+        SetRoomProperty(theRoom,REDPLAYERPPT, r);
+        SetRoomProperty(theRoom,GREENPLAYERPPT, g);
+        SetRoomProperty(theRoom,BLUEPLAYERPPT, b);
+
+    }
+    private void SetRoomProperty(Room theRoom,string hashKey, int value)//general room properties
+    {
+        if (theRoom.CustomProperties[hashKey] == null)
+        {
+            theRoom.CustomProperties.Add(hashKey, value);
+        }
+        else
+        {
+
+            theRoom.CustomProperties[hashKey] = value;
+
+        }
+        theRoom.SetCustomProperties(theRoom.CustomProperties);
+
+    }
     public void ExitGame()
     {
 #if UNITY_EDITOR

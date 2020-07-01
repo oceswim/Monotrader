@@ -332,7 +332,7 @@ public class MovementManager : MonoBehaviourPun
                 }
                 while (!doneMoving)
                 {
-                    Debug.Log("in while step2 case 2");
+
                     Vector3 theOffSet = GetOffset(endPoint, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(endPoint);
@@ -366,20 +366,16 @@ public class MovementManager : MonoBehaviourPun
                         break;
                     case 9:
                         halfwayTarget1 = Targets[CORNER_4];
-                        Debug.Log(halfwayTarget1.name);
                         halfwayTarget2 = Targets[CORNER_1];
-                        Debug.Log(halfwayTarget2.name);
                         break;
                 }
 
                 while (!step1Complete)
                 {
-                    Debug.Log("in while step1 case 3 :"+ Vector3.Distance(halfwayTarget1.position, transformToMove.position));
                     Vector3 theOffSet = GetOffset(halfwayTarget1, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(halfwayTarget1);
                     controller.Move(theOffSet * Time.deltaTime);
-                    Debug.Log("Halfway1 pos:" + halfwayTarget1.position + " transform pos:" + transformToMove.position);
                     if (Vector3.Distance(halfwayTarget1.position, transformToMove.position) < 1.25f)
                     {
                         step1Complete = true;
@@ -387,7 +383,6 @@ public class MovementManager : MonoBehaviourPun
                 }
                 while (!step2Complete)
                 {
-                    Debug.Log("in while step2 case 1");
                     Vector3 theOffSet = GetOffset(halfwayTarget2, transformToMove);
                     transformToMove.LookAt(halfwayTarget2);
                     theOffSet = theOffSet.normalized * SPEED;
@@ -400,7 +395,6 @@ public class MovementManager : MonoBehaviourPun
                 }
                 while (!doneMoving)
                 {
-                    Debug.Log("in while step3 case 3");
                     Vector3 theOffSet = GetOffset(endPoint, transformToMove);
                     transformToMove.LookAt(endPoint);
                     theOffSet = theOffSet.normalized * SPEED;
@@ -423,7 +417,6 @@ public class MovementManager : MonoBehaviourPun
            BoardManager.SetPosition(myPositionIndex, newTurn);
             if (newTurn)
             {
-                Debug.Log("Starting new turn in movement manager at "+ Time.deltaTime +" by " + PhotonNetwork.LocalPlayer.NickName);
                 newTurn = false;    
             }
         }

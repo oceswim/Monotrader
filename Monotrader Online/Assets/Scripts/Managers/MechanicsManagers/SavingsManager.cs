@@ -58,7 +58,7 @@ public class SavingsManager : MonoBehaviour
         totalSavings.text = PlayerPrefs.GetFloat(MY_SAVINGS).ToString()+ " G";
         float newGold = myGold - (float)percentage;
         PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-        MoneyManager.updateFortune = true;
+        MoneyManager.instance.UpdateFortuneInGame();
         
     }
     public void Done()

@@ -188,7 +188,7 @@ public class TaxesManager : MonoBehaviour
         playerG = (float)(Math.Round(playerG, 1));
 
         SetPrefs(generalDollars, generalEuros, generalPounds, generalYens, playerG);
-        MoneyManager.updateFortune = true;
+        MoneyManager.instance.UpdateFortuneInGame();
         BankManager.instance.TaxIncome(removedG, removedD, removedE, removedP, removedY);
         
 

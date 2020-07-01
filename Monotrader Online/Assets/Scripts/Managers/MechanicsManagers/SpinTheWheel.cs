@@ -56,13 +56,17 @@ public class SpinTheWheel : MonoBehaviour
     }
     public void Confirm()
     {
-        SetRoomProperty(TRIGGER_UPDATE, 1);
-        if(mode1)
+        Debug.Log(mode1 + " mode1");
+        if (mode1)
         {
             mode1 = false;
-            MoneyManager.updateFortune = true;
+            BankManager.Trigger = true;
+            MoneyManager.instance.UpdateFortuneInGame();
         }
-        BoardManager.NextTurn();
+        else
+        {
+            BoardManager.NextTurn();
+        }
     }
     public void Spin()
     {        
@@ -88,12 +92,11 @@ public class SpinTheWheel : MonoBehaviour
 
         if(value>=0 && value<=96)
         {
-           
+            mode1 = true;
             float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 500;
             BankManager.instance.UpdateGold(-500);
             PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-
-            mode1 = true;
+           
         }
         else if(value >= 96.1 && value <=190)
         {
@@ -108,6 +111,7 @@ public class SpinTheWheel : MonoBehaviour
          
             //use player pref here.
             PlayerPrefs.SetInt(MALUS, 1);
+ 
         }
         else if(value >= 190.1 && value <= 274)
         {

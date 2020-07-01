@@ -174,7 +174,9 @@ public class BankManager : MonoBehaviourPun
                 goldB.amount = (int)myRoom.CustomProperties[GOLD_BANK];
             }
         }
+        Debug.Log(goldB.amount + " before");
         goldB.UpdateAmount(val);
+        Debug.Log(goldB.amount + " after");
         SetRoomProperty(GOLD_BANK, goldB.amount);
         SetRoomProperty(GOLD_UPDATE, 1);
         goldText.text = goldB.amount.ToString() + GOLD_SYMBOL;

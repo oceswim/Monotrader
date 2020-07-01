@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviourPun
     private const string DICE_2_HASHKEY = "Dice2Name";
     private const string TURN_COUNT = "TurnCount";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
-    private const string NEW_TURN_ACTIVE = "NewTurnActive";
+
     private string PLAYER_GOLD;
 
     //private variables
@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviourPun
         
         moveVal   = diceStatus= 0 ;
         turnCounter = 1;
+        PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
         gameCanStart =dicesRolling= false;
         myPlayer = PhotonNetwork.LocalPlayer;
         allPlayers = PhotonNetwork.PlayerList;
@@ -133,7 +134,8 @@ public class GameManager : MonoBehaviourPun
         myPlayer.CustomProperties = _myCustomProperty;   
         myPlayer.SetCustomProperties(myPlayer.CustomProperties);
 
-        }
+        
+    }
 
 
     //sets the room property when players are ready to play.
@@ -272,6 +274,7 @@ public class GameManager : MonoBehaviourPun
     public void TurnManager()
     {
         turnCounter++;
+        PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
         SetRoomPlayersNewTurn(1);
         int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
         Debug.Log("Turn manager at " + Time.deltaTime + " by " + PhotonNetwork.LocalPlayer.NickName+" and playersturn updated :"+playersTurnUpdated);
@@ -279,19 +282,11 @@ public class GameManager : MonoBehaviourPun
         NewTurnMechanic();
         if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
-           
             SetRoomPlayersNewTurn(0);
             Debug.Log("New turn for both players by " + PhotonNetwork.LocalPlayer.NickName + " and playersturn updated :" + (int)myRoom.CustomProperties[PLAYERS_NEW_TURN]);
             UpdateTurnCount();//overall turn gets increased
-            if (!photonView.IsMine)
-            {
-                photonView.TransferOwnership(myPlayer);
-             
-            }
-            photonView.RPC("TurnMechanic", RpcTarget.AllBuffered);//allows money manager to do the new turn 
-
+            MoneyManager.newTurnFortune = true;
         }
-       
 
     }
 
@@ -300,14 +295,15 @@ public class GameManager : MonoBehaviourPun
      *  update the amount text
      *  update fortune in game
      */
-    private void NewTurnMechanic()
+    private void NewTurnMechanic()//one player cross new turn
     {
+        MoneyManager.instance.NewTurnFunction();
         PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
         float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 2000;
         BankManager.instance.UpdateGold(-2000);
         BankManager.Trigger = true;
         PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-        MoneyManager.updateFortune = true;
+        MoneyManager.instance.UpdateFortuneInGame();
 
     }
     //updates the room player new turn property
@@ -375,7 +371,7 @@ public class GameManager : MonoBehaviourPun
                     photonView.TransferOwnership(myPlayer);
       
                 }
-                photonView.RPC("TrendsUpdates", RpcTarget.AllBuffered);
+                photonView.RPC("TrendsUpdates", RpcTarget.AllBuffered,true);
             }
         }
     }

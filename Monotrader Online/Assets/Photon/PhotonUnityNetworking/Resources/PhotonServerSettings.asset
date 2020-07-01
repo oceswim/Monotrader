@@ -51,6 +51,8 @@ MonoBehaviour:
   - TurnMechanic
   - UpdateOtherPlayerColor
   - UpdateOtherColor
+  - TrendListUpdate
+  - SetTheHistoryTrends
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

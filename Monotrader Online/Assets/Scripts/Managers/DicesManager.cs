@@ -37,9 +37,7 @@ public class DicesManager : MonoBehaviourPun
         if (roll)
         {
              dirX = UnityEngine.Random.Range(0, 500);
-
              dirY = UnityEngine.Random.Range(0, 500);
-
              dirZ = UnityEngine.Random.Range(0, 500);
             goodToRoll = true;
             roll = false;
@@ -127,7 +125,7 @@ public class DicesManager : MonoBehaviourPun
         Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
         if (!taxesRoll)
         {
-           
+            
             GameManager.instance.SetDicePrefs(diceVal);
             
         }
