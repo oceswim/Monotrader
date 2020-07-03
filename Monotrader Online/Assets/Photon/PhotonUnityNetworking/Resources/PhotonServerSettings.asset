@@ -53,6 +53,9 @@ MonoBehaviour:
   - UpdateOtherColor
   - TrendListUpdate
   - SetTheHistoryTrends
+  - GoToCharSelect
+  - ActivateGameMode
+  - WinnerPanelActivation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

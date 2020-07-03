@@ -26,20 +26,21 @@ public class GameManager : MonoBehaviourPun
     private Player myPlayer;
     private Player[] allPlayers;
     private List<DicesManager> inGameDices = new List<DicesManager>();
-    private bool myTurn, gameCanStart, dicesRolling;
+    private bool myTurn, dicesRolling;
     //private int moveVal, diceStatus, turnCounter;
     private int moveVal, turnCounter;
     
     public int diceStatus;//TEMP
+
     //public static variables
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     public static GameManager instance = null;
     public static Room myRoom;
 
     //public variables
-    public GameObject DiceUI;
-    public GameObject Dice;
-    public TMP_Text PlayerTurn,turnCountText;
+    public bool gameCanStart;
+    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther;
+    public TMP_Text turnCountText;
 
     private void Awake()
     {
@@ -54,7 +55,15 @@ public class GameManager : MonoBehaviourPun
 
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
-        
+        myPlayer = PhotonNetwork.LocalPlayer;
+        if (myPlayer.IsMasterClient)
+        {
+            gameModeMaster.SetActive(true);
+        }
+        else
+        {
+            gameModeOther.SetActive(true);
+        }
     }
     void Start()
     {
@@ -63,7 +72,7 @@ public class GameManager : MonoBehaviourPun
         turnCounter = 1;
         PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
         gameCanStart =dicesRolling= false;
-        myPlayer = PhotonNetwork.LocalPlayer;
+
         allPlayers = PhotonNetwork.PlayerList;
         myRoom = PhotonNetwork.CurrentRoom;
         SetRoomProperty(TURN_COUNT, 1);
@@ -208,13 +217,7 @@ public class GameManager : MonoBehaviourPun
         if (myIndex == playerToPlay)
         {
             isItMyTurn = true;
-            PlayerTurn.text = "Your turn";
         }
-        else
-        {
-            PlayerTurn.text = PhotonNetwork.PlayerList[playerToPlay].NickName+"'s turn";
-        }
-        
         return isItMyTurn;
     }
 

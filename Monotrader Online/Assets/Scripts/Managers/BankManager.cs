@@ -8,8 +8,8 @@ using Photon.Pun;
 public class BankManager : MonoBehaviourPun
 {
     //private variable
-    private const int INITIAL_GOLD = 5000;
-    private const int INITIAL_CURRENCIES = 2500;
+    private const int INITIAL_GOLD = 10000;
+    private const int INITIAL_CURRENCIES = 5000;
     private GameObject GoldBank, DollarsBank, EurosBank, PoundsBank, YensBank;
     private BankScript goldB, dollarsB, eurosB, poundsB, yensB;
     private Room myRoom;

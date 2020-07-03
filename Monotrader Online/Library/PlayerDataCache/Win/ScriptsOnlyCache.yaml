@@ -13,6 +13,7 @@ ScriptsOnlyBuild:
     - FriendsManager
     - GameChatClient
     - GameManager
+    - GameModeManager
     - IgnoreUiRaycastWhenInactive
     - MainMenu
     - MechanicsManager
@@ -79,6 +80,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Shadow
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
+    - UnityEngine.UI.Toggle
     - UnityEngine.UI.ToggleGroup
     - UnityEngine.UI.VerticalLayoutGroup
   sceneClasses:
@@ -202,6 +204,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12052}
     - Class: 114
+      Script: {instanceID: 12066}
+    - Class: 114
       Script: {instanceID: 12074}
     - Class: 114
       Script: {instanceID: 12076}
@@ -209,6 +213,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 12096}
     - Class: 114
       Script: {instanceID: 12114}
+    - Class: 114
+      Script: {instanceID: 25640}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1336,7 +1342,7 @@ ScriptsOnlyBuild:
     className: TMP_ExampleScript_01
   - hash:
       serializedVersion: 2
-      Hash: 5964da0abd8eb63837a9432643ca7a48
+      Hash: 48727ec712bc13d62bde9e9dc8c50700
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -2108,6 +2114,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 5be89f071330291784bf7202e95cb9c9
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: GameModeManager
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainMenu.unity

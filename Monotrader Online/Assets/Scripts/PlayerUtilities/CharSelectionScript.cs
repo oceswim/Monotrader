@@ -112,7 +112,7 @@ public class CharSelectionScript : MonoBehaviour
         //confirmation = true;
         int theIndex = PlayerPrefs.GetInt("CharIndex");
         SetCustomPpties(theIndex);
-       if (CheckSelectedAvailability())
+        if (CheckSelectedAvailability())
         {
             PrefabSpawner.spawn = true;
             //hide charselection menu

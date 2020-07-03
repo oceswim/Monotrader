@@ -51,6 +51,8 @@ public class MoneyManager : MonoBehaviourPun
     private string PLAYER_EUROS;
     private string PLAYER_YENS;
     private string PLAYER_POUNDS;
+    private string PLAYER_FORTUNE;
+
     private float myGold, myDollars, myEuros, myYens, myPounds;
 
     private Player myPlayer;
@@ -285,6 +287,7 @@ public class MoneyManager : MonoBehaviourPun
     //the different hashkeys for each players
     private void InitialiseHashKeys()
     {
+        PLAYER_FORTUNE = "Player" + actorNumber + "Fortune";
         PLAYER_GOLD = "Player" + actorNumber + "Gold";
         PlayerPrefs.SetString("MYGOLD", PLAYER_GOLD);
         PLAYER_DOLLARS = "Player" + actorNumber + "Dollars";
@@ -689,7 +692,7 @@ public class MoneyManager : MonoBehaviourPun
         {
             FriendsManager.changeFortune = true;
         }
-       
+        CheckFortune((float)totalFortune);
 
 
     }
@@ -710,7 +713,7 @@ public class MoneyManager : MonoBehaviourPun
         SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
         UpdateAmountText();
         FriendsManager.changeFortune = true;
-
+        CheckFortune((float)totalFortune);
     }
     //simple wait function allowing to synchronise every room properties when needed
     private void Wait(float limit)
@@ -850,7 +853,12 @@ public class MoneyManager : MonoBehaviourPun
     }
 
     //allows to update the amount of money owned by the player displayed
+    private void CheckFortune(float fortune)
+    {
+        SetRoomProperty(PLAYER_FORTUNE, fortune);
+        GameModeManager.checkFortune = true;
 
+    }
 
     private void UpdateAmountText()
     {
