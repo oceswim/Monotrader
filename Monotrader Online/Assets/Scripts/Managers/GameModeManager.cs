@@ -66,6 +66,7 @@ public class GameModeManager : MonoBehaviourPun
         theStateManager.enabled = true;
         if(PhotonNetwork.LocalPlayer.IsMasterClient)
         {
+            PhotonNetwork.CurrentRoom.IsOpen = false;//we close the room to anyone else trying to join it when master client chose the game mode.
             MasterPanel.SetActive(false);
         }
         else

@@ -102,70 +102,72 @@ public class MoneyManager : MonoBehaviourPun
     void Update()
     {
         //if all the players are in the room
-        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.PlayerCount)
+        if (PhotonNetwork.PlayerList != null && PhotonNetwork.CurrentRoom !=null)
         {
-            if (myRoom.CustomProperties[GAME_STATE_HASHKEY] == null)
+            if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.PlayerCount)
             {
-                string waitingText = "Waiting for ";
-                foreach (Player p in PhotonNetwork.PlayerListOthers)
+                if (myRoom.CustomProperties[GAME_STATE_HASHKEY] == null)
                 {
-
-                    if (p.CustomProperties[CHAR_SELECTION].Equals("-1"))
+                    string waitingText = "Waiting for ";
+                    foreach (Player p in PhotonNetwork.PlayerListOthers)
                     {
 
-                        if (!notReadyPlayers.Contains(p))
+                        if (p.CustomProperties[CHAR_SELECTION].Equals("-1"))
                         {
-                            notReadyPlayers.Add(p);
 
-                        }
-                        if (notReadyPlayers.IndexOf(p).Equals(notReadyPlayers.Count - 1))
-                        {
-                            waitingText += p.NickName + "....";
+                            if (!notReadyPlayers.Contains(p))
+                            {
+                                notReadyPlayers.Add(p);
+
+                            }
+                            if (notReadyPlayers.IndexOf(p).Equals(notReadyPlayers.Count - 1))
+                            {
+                                waitingText += p.NickName + "....";
+                            }
+                            else
+                            {
+                                waitingText += p.NickName + ", ";
+                            }
                         }
                         else
                         {
-                            waitingText += p.NickName + ", ";
+                            if (notReadyPlayers.Contains(p))
+                            {
+                                notReadyPlayers.Remove(p);
+                            }
+
                         }
                     }
-                    else
+
+                    if (!waitingForText.text.Equals(waitingText))
                     {
-                        if (notReadyPlayers.Contains(p))
+                        waitingForText.text = waitingText;
+                    }
+
+                }
+                else if (myRoom.CustomProperties[GAME_STATE_HASHKEY] != null && !playersReady)
+                {
+                    waitingForText.text = "Game is about to start!";
+                    if ((int)myRoom.CustomProperties[GAME_STATE_HASHKEY] == 1)
+                    {
+                        playersReady = true;
+                        waitingForObject.SetActive(false);
+                        SetInitialAmounts(myPlayer.IsMasterClient);
+                        //set setctions object to true
+                        sectionsManagerObject.SetActive(true);
+                        FriendsManager.initialFortune = true;
+
+
+                    }
+                }
+
+                if (myRoom.CustomProperties[HISTORY_STATUS] != null)
+                {
+
+                    if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1)
+                    {
+                        if ((int)myPlayer.CustomProperties[PLAYER_STATE] == 0 && !setUpOnceTrend)
                         {
-                            notReadyPlayers.Remove(p);
-                        }
-
-                    }
-                }
-
-                if (!waitingForText.text.Equals(waitingText))
-                {
-                    waitingForText.text = waitingText;
-                }
-
-            }
-            else if (myRoom.CustomProperties[GAME_STATE_HASHKEY] != null && !playersReady)
-            {
-                waitingForText.text = "Game is about to start!";
-                if ((int)myRoom.CustomProperties[GAME_STATE_HASHKEY] == 1)
-                {
-                    playersReady = true;
-                    waitingForObject.SetActive(false);
-                    SetInitialAmounts(myPlayer.IsMasterClient);
-                    //set setctions object to true
-                    sectionsManagerObject.SetActive(true);
-                    FriendsManager.initialFortune = true;
-                    
-                    
-                }
-            }
-
-            if (myRoom.CustomProperties[HISTORY_STATUS] != null)
-            {
-
-                if ((int)myRoom.CustomProperties[HISTORY_STATUS] == 1)
-                {
-                    if ((int)myPlayer.CustomProperties[PLAYER_STATE] == 0 && !setUpOnceTrend)
-                    {
                             setUpOnceTrend = true;
                             SetCustomsPPT(PLAYER_STATE, 1);
                             Wait(2);
@@ -175,100 +177,101 @@ public class MoneyManager : MonoBehaviourPun
                                 updateOnceFortune = false;
 
                             }
-                          
+
 
                             UpdateTrendDisplay();
                             UpdateHistoryGUI();
-                        
 
-                    }
-                     if ((int)myPlayer.CustomProperties[PLAYER_STATE] == 1 && setUpOnceTrend)
-                    {
 
-                        if (myPlayer.IsMasterClient)
+                        }
+                        if ((int)myPlayer.CustomProperties[PLAYER_STATE] == 1 && setUpOnceTrend)
                         {
-                            bool allReady = true;
-                            foreach (Player p in PhotonNetwork.PlayerListOthers)
+
+                            if (myPlayer.IsMasterClient)
                             {
-                                if ((int)p.CustomProperties[PLAYER_STATE] != 1)
-                                {
-                                    allReady = false;
-                                }
-                            }
-                            if (allReady)
-                            {
-                                setUpOnceTrend = false;
-                                SetRoomHistoryStatus(0);
-                                SetCustomsPPT(PLAYER_STATE, 0);
+                                bool allReady = true;
                                 foreach (Player p in PhotonNetwork.PlayerListOthers)
                                 {
-                                    SetCustomsPPT(PLAYER_STATE, 0, p);
+                                    if ((int)p.CustomProperties[PLAYER_STATE] != 1)
+                                    {
+                                        allReady = false;
+                                    }
                                 }
-                             
-                            }
-                        }
-
-            
-                    }
-                }
-                   
-                
-            }
-
-               
-            if(newTurnFortune)
-            {
-                newTurnFortune = false;
-                UpdateFortune();
-               
-            }
-                
-            if(myRoom.CustomProperties[HISTORY_UPDATE] != null)
-            {
-                if((int)myRoom.CustomProperties[HISTORY_UPDATE]==1 && !updateOnceGUI)
-                { 
-                    if (!updateOnceGUI)
-                    {
-                        SetCustomsPPT(UPDATE_DONE, 1);
-                        UpdateHistoryGUI();
-                        updateOnceGUI = true;
-                    }
-                    if(myPlayer.IsMasterClient)
-                    {
-                        bool done = true;
-                        foreach(Player p in PhotonNetwork.PlayerList)
-                        {
-                            if(p.CustomProperties[UPDATE_DONE] !=null)
-                            {
-                                if ((int)p.CustomProperties[UPDATE_DONE] != 1)
+                                if (allReady)
                                 {
-                                   done = false;
+                                    setUpOnceTrend = false;
+                                    SetRoomHistoryStatus(0);
+                                    SetCustomsPPT(PLAYER_STATE, 0);
+                                    foreach (Player p in PhotonNetwork.PlayerListOthers)
+                                    {
+                                        SetCustomsPPT(PLAYER_STATE, 0, p);
+                                    }
+
                                 }
                             }
-                            else
+
+
+                        }
+                    }
+
+
+                }
+
+
+                if (newTurnFortune)
+                {
+                    newTurnFortune = false;
+                    UpdateFortune();
+
+                }
+
+                if (myRoom.CustomProperties[HISTORY_UPDATE] != null)
+                {
+                    if ((int)myRoom.CustomProperties[HISTORY_UPDATE] == 1 && !updateOnceGUI)
+                    {
+                        if (!updateOnceGUI)
+                        {
+                            SetCustomsPPT(UPDATE_DONE, 1);
+                            UpdateHistoryGUI();
+                            updateOnceGUI = true;
+                        }
+                        if (myPlayer.IsMasterClient)
+                        {
+                            bool done = true;
+                            foreach (Player p in PhotonNetwork.PlayerList)
                             {
-                                done = false;
+                                if (p.CustomProperties[UPDATE_DONE] != null)
+                                {
+                                    if ((int)p.CustomProperties[UPDATE_DONE] != 1)
+                                    {
+                                        done = false;
+                                    }
+                                }
+                                else
+                                {
+                                    done = false;
+                                }
+                            }
+                            if (done)
+                            {
+                                SetRoomProperty(HISTORY_UPDATE, 0);
                             }
                         }
-                        if(done)
+
+
+                    }
+                    else
+                    {
+                        if (updateOnceGUI)
                         {
-                            SetRoomProperty(HISTORY_UPDATE, 0);
+
+                            SetCustomsPPT(UPDATE_DONE, 0);
+                            updateOnceGUI = false;
                         }
                     }
-
-
                 }
-                else
-                {
-                    if(updateOnceGUI)
-                    {
-                  
-                        SetCustomsPPT(UPDATE_DONE, 0);
-                        updateOnceGUI = false;
-                    }
-                }
+
             }
-
         }
     }
 

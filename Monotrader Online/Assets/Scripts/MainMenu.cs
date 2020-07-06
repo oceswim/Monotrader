@@ -19,11 +19,13 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private string REDPLAYERPPT;
     private string GREENPLAYERPPT;
     private string BLUEPLAYERPPT;
-    private const int maxPlayerPerRoom =2;
-
+    private const int maxPlayerPerRoom =4;
+    private const int minPlayerPerRoom =1;
+    private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
         PlayerPrefs.DeleteAll();//TO DELLLLLL
+        PlayerPrefs.SetInt(MIN_PLAYER_KEY, minPlayerPerRoom);
         PhotonNetwork.AutomaticallySyncScene = false;
     }
 
@@ -61,7 +63,8 @@ public class MainMenu : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("No clients are waiting for oponent, creating new room");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayerPerRoom });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayerPerRoom, IsOpen=true });
+        
     }
     public override void OnJoinedRoom()//this is for the player trying to join a party
     {
@@ -69,16 +72,16 @@ public class MainMenu : MonoBehaviourPunCallbacks
         SetKeys();
         SetColor(PhotonNetwork.CurrentRoom);
         int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
-        if(playerCount != maxPlayerPerRoom)
+        Debug.Log(PhotonNetwork.CurrentRoom.Name + " and p count : " + playerCount);
+        if(playerCount < minPlayerPerRoom)
         {
             waitingStatusText.text = "Waiting for oponent";
             Debug.Log("Client waiting for an opponent");
         }
         else
         {
-            waitingStatusText.text = "Oponent found!-1";
+            Debug.Log("Oponent found!-1");
             Debug.Log("Match ready to begin");
-            //PhotonNetwork.LoadLevel("Test");
             PhotonNetwork.LoadLevel("Game");
         }
     }
@@ -88,12 +91,9 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.CurrentRoom.IsOpen = false; //stops new player from joining
             Debug.Log("Match ready to begin - room full");
-            waitingStatusText.text = "Opponent found-2";
+            Debug.Log("Opponent found-2");
 
             PhotonNetwork.LoadLevel("Game");
-            //PhotonNetwork.LoadLevel("Test");
-
- 
         }
     }
     private void SetKeys()

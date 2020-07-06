@@ -105,6 +105,15 @@ public class FriendsManager : MonoBehaviourPun
         PlayerPrefs.SetString(FRIENDTOCHANGE, nameOfFriend);
         colorSet = true;
 
+    }  
+    public bool CallRPCFriendLeaving(string theName)
+    {
+        if (!photonView.IsMine)
+        {
+            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+        }
+        photonView.RPC("SomeoneLeft", RpcTarget.AllBuffered,theName);
+        return true;
     }
     private void InitialiseColor()
     {
@@ -136,6 +145,25 @@ public class FriendsManager : MonoBehaviourPun
 
     }
 
+    [PunRPC]
+    public bool SomeoneLeft(string name)
+    {
+        Debug.Log(name + " left the room");
+        FriendItem theItem = null;
+        foreach (FriendItem f in playerItems)
+        {
+            Debug.Log("Removing foreach " + f.NameLabel.text +" vs "+ name);
+            if (name.Equals(f.NameLabel.text))
+            {
+                theItem = f;
+                Destroy(theItem.gameObject);
+                playerItems.Remove(theItem);
+                return true;
+            }
+        }
+        return false;
+
+    }
     [PunRPC]
     private void UpdateAllFortune(string fortune)
     {
