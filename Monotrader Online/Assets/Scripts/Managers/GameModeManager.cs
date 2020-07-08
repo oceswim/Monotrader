@@ -15,7 +15,7 @@ public class GameModeManager : MonoBehaviourPun
     public const string SCORE_TOGGLE_NAME = "ScoreReach";
     private const int TIME_LIMIT = 1;
     private const int AMOUNT_REACH = 2;
-    private const float AMOUNT_LIMIT = 50000;
+    private const float AMOUNT_LIMIT = 30000;
     private float TIMER_LIMIT = 900; //15 mins = 60 * 15
     private string winnerName;
     private int mode;
@@ -24,7 +24,7 @@ public class GameModeManager : MonoBehaviourPun
     private Player myPlayer;
 
     public Toggle timeLimit, scoreLimit;
-    public GameObject MasterPanel, OtherPanel,display,charSelectionPanel,winPanel,losePanel;
+    public GameObject MasterPanel, OtherPanel,display,charSelectionPanel,winPanel,losePanel,diceRollButton;
     public StatePresetManager theStateManager;
     public TMP_Text gameModeText,lostText,wonText;
 
@@ -36,6 +36,7 @@ public class GameModeManager : MonoBehaviourPun
 
     private void Start()
     {
+
         myPlayer = PhotonNetwork.LocalPlayer;
         myRoom = GameManager.myRoom;
         started = false;
@@ -105,6 +106,7 @@ public class GameModeManager : MonoBehaviourPun
                 else
                 {
                     Debug.Log("timer done");
+                    DeactivateRollButton();
                     gameModeText.text = "Done!";
                     if (myPlayer.IsMasterClient)
                     {
@@ -155,10 +157,12 @@ public class GameModeManager : MonoBehaviourPun
         {
 
             string key = "Player" + p.ActorNumber + "Fortune";
+            Debug.Log(myRoom.CustomProperties[key] + " fortune vs winner fortune:" + winnerFortune);
             if((float)myRoom.CustomProperties[key]>winnerFortune)
             {
                 winnerFortune = (float)myRoom.CustomProperties[key];
                 winnerName = p.NickName;
+                Debug.Log("New winner :"+ winnerName);
             }
         }
         if (!photonView.IsMine)
@@ -186,6 +190,7 @@ public class GameModeManager : MonoBehaviourPun
     [PunRPC]
     private void WinnerPanelActivation(string name)
     {
+        DeactivateRollButton();
         if(name.Equals(myPlayer.NickName))
         {
             Debug.Log("YOU WON");
@@ -196,15 +201,24 @@ public class GameModeManager : MonoBehaviourPun
             DisplayLosePannel(name);
         }
     }
+    private void DeactivateRollButton()
+    {
+        Debug.Log("Roll dice button name : " + diceRollButton.name);
+        Debug.Log("Roll dice button activated-2?  " + diceRollButton.activeSelf);
+        if (diceRollButton.activeSelf)
+        {
+            diceRollButton.SetActive(false);
+        }
+    }
     private void DisplayWinPannel()
     {
         winPanel.SetActive(true);
         wonText.text = WIN_MESSAGE;
     }    
-    private void DisplayLosePannel(string WinnerName)
+    private void DisplayLosePannel(string theWinner)
     {
         losePanel.SetActive(true);
-        lostText.text = $"Sorry but {winnerName} won this game... Your time will come soon!";
+        lostText.text = $"Sorry but {theWinner} won this game... Your time will come soon!";
     }
     private void SetRoomProperty(string hashKey, float value)
     {

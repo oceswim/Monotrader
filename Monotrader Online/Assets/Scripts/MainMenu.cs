@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private string GREENPLAYERPPT;
     private string BLUEPLAYERPPT;
     private const int maxPlayerPerRoom =4;
-    private const int minPlayerPerRoom =1;
+    private const int minPlayerPerRoom =2;
     private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
@@ -90,9 +90,10 @@ public class MainMenu : MonoBehaviourPunCallbacks
         if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayerPerRoom)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false; //stops new player from joining
-            Debug.Log("Match ready to begin - room full");
-            Debug.Log("Opponent found-2");
-
+            PhotonNetwork.LoadLevel("Game");
+        }
+        else if(PhotonNetwork.CurrentRoom.PlayerCount >= minPlayerPerRoom && PhotonNetwork.CurrentRoom.PlayerCount <maxPlayerPerRoom)
+        {
             PhotonNetwork.LoadLevel("Game");
         }
     }
