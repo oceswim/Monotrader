@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 
 
 /*
@@ -14,13 +15,14 @@ public class MainMenu : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject waitingStatusPanel = null;
     [SerializeField] private TextMeshProUGUI waitingStatusText = null;
 
+    public AudioSource GameStarting;
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
     private string REDPLAYERPPT;
     private string GREENPLAYERPPT;
     private string BLUEPLAYERPPT;
     private const int maxPlayerPerRoom =4;
-    private const int minPlayerPerRoom =2;
+    private const int minPlayerPerRoom =1;
     private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
@@ -80,22 +82,28 @@ public class MainMenu : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log("Oponent found!-1");
-            Debug.Log("Match ready to begin");
-            PhotonNetwork.LoadLevel("Game");
+            StartCoroutine("LoadLevel");
         }
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)//this shows to the player already in the room
     {
+       
         if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayerPerRoom)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false; //stops new player from joining
-            PhotonNetwork.LoadLevel("Game");
+            StartCoroutine("LoadLevel");
         }
         else if(PhotonNetwork.CurrentRoom.PlayerCount >= minPlayerPerRoom && PhotonNetwork.CurrentRoom.PlayerCount <maxPlayerPerRoom)
         {
-            PhotonNetwork.LoadLevel("Game");
+            StartCoroutine("LoadLevel");
         }
+    }
+    private IEnumerator LoadLevel()
+    {
+        waitingStatusText.text = "Starting!";
+        GameStarting.Play();
+        yield return new WaitForSeconds(1);
+        PhotonNetwork.LoadLevel("Game");
     }
     private void SetKeys()
     {

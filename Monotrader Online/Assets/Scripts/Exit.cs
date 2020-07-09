@@ -10,25 +10,34 @@ public class Exit : MonoBehaviourPunCallbacks
     private const string MENU_EXIT = "menu";
     private const string GAME_EXIT = "game";
     private const string MIN_PLAYER_KEY = "MinPlayers";
+    public AudioSource exitSound;
     public void ExitGame(string mode)
     {
         switch (mode)
         {
             case MENU_EXIT:
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#endif
-                Application.Quit();
+                StartCoroutine("QuitApplication");
                 break;
             case GAME_EXIT:
                 if (FriendsManager.instance.CallRPCFriendLeaving(PhotonNetwork.LocalPlayer.NickName))
                 {
                     PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+                    exitSound.Play();
                     PhotonNetwork.LeaveRoom();
                 }
                 break;
         }
 
+    }
+    private IEnumerator QuitApplication()
+    {
+
+        exitSound.Play();
+        yield return new WaitForSeconds(1);
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {

@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviourPun
     public static Room myRoom;
 
     //public variables
+    public AudioSource mainTheme;
+    public AudioSource secondaryTheme;
     public bool gameCanStart;
     public GameObject DiceUI,Dice, gameModeMaster,gameModeOther;
     public TMP_Text turnCountText;
@@ -90,7 +92,9 @@ public class GameManager : MonoBehaviourPun
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
                 if (playerReadyCount == allPlayers.Length)
                 {
+                    secondaryTheme.Stop();
                     PlayersReady();//sets the game state for everyone
+                    mainTheme.Play();
                 }
             }
 
