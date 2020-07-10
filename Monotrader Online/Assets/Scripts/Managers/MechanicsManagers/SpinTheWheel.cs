@@ -20,6 +20,7 @@ public class SpinTheWheel : MonoBehaviour
     public GameObject theWheel,confirmButton;
     private bool spin;
     private float rotSpeed;
+    public AudioSource spinningSound;
     public static bool BeginProcess;
     private bool mode1;
     private Room myRoom;
@@ -69,7 +70,8 @@ public class SpinTheWheel : MonoBehaviour
         }
     }
     public void Spin()
-    {        
+    {
+        spinningSound.Play();
         spin = true;
         rotSpeed = UnityEngine.Random.Range(50, 76);
     }

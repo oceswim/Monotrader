@@ -165,3 +165,4 @@ MonoBehaviour:
   roll: 0
   goodToRoll: 0
   taxesRoll: 0
+  switchOwner: 0

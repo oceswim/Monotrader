@@ -26,11 +26,12 @@ public class GameManager : MonoBehaviourPun
     private Player myPlayer;
     private Player[] allPlayers;
     private List<DicesManager> inGameDices = new List<DicesManager>();
-    private bool myTurn, dicesRolling;
+    private bool dicesRolling;
     //private int moveVal, diceStatus, turnCounter;
     private int moveVal, turnCounter;
     
     public int diceStatus;//TEMP
+
 
     //public static variables
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviourPun
     //public variables
     public AudioSource mainTheme;
     public AudioSource secondaryTheme;
-    public bool gameCanStart;
+    public bool gameCanStart,myTurn;
     public GameObject DiceUI,Dice, gameModeMaster,gameModeOther;
     public TMP_Text turnCountText;
 
@@ -233,14 +234,17 @@ public class GameManager : MonoBehaviourPun
         for (int i = 0; i < 2; i++)
         {
             GameObject prefab = PhotonNetwork.InstantiateSceneObject(Dice.name, new Vector3(xVal, 2, 0), Quaternion.identity);
+           
             int prefabViewID = prefab.GetComponent<PhotonView>().ViewID;
             if(i==0)
             {
+                prefab.name = "Dice1";
                 SetRoomProperty(DICE_1_HASHKEY, prefabViewID);
  
             }
             else if (i == 1)
             {
+                prefab.name = "Dice2";
                 SetRoomProperty(DICE_2_HASHKEY, prefabViewID);
 
             }
@@ -256,7 +260,7 @@ public class GameManager : MonoBehaviourPun
     public void SwitchTurn()
     {
         int index = PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY);
-    
+        
         myTurn = false;
         if (index ==(allPlayers.Length-1))
         {
@@ -268,6 +272,7 @@ public class GameManager : MonoBehaviourPun
             index += 1;
 
         }
+        Debug.Log("IT'S" + allPlayers[index].NickName + " TURN");
         if (!photonView.IsMine)
         {
             photonView.TransferOwnership(myPlayer);

@@ -22,7 +22,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private string GREENPLAYERPPT;
     private string BLUEPLAYERPPT;
     private const int maxPlayerPerRoom =4;
-    private const int minPlayerPerRoom =1;
+    private const int minPlayerPerRoom =2;
     private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
@@ -58,8 +58,14 @@ public class MainMenu : MonoBehaviourPunCallbacks
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
-        waitingStatusPanel.SetActive(false);
-        findOponnentPanel.SetActive(true);
+        if (waitingStatusPanel != null)
+        {
+            waitingStatusPanel.SetActive(false);
+        }
+        if (findOponnentPanel != null)
+        {
+            findOponnentPanel.SetActive(true);
+        }
         Debug.Log($"Disconnected due to : {cause }");
     }
     public override void OnJoinRandomFailed(short returnCode, string message)

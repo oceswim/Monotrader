@@ -24,6 +24,7 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 	public string UserName { get; set; }
 
 	private string selectedChannelName; // mainly used for GUI/input
+	private bool sender;
 
 	public ChatClient chatClient;
 
@@ -37,6 +38,7 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 	public GameObject ConnectingLabel;
 	public GameObject connectingPanel;
 	public RectTransform ChatPanel;     // set in inspector (to enable/disable panel)
+	public AudioSource notification;
 	//public GameObject UserIdFormPanel;
 	public TMP_InputField InputFieldChat;   // set in inspector
 	public TMP_Text CurrentChannelText;     // set in inspector
@@ -492,6 +494,21 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 
 	public void OnGetMessages(string channelName, string[] senders, object[] messages)
 	{
+		foreach(string s in senders)
+		{
+			if(s.Equals(myUserName))
+			{
+				sender = true;
+			}
+			if(!sender)
+			{
+				notification.Play();
+			}
+			else
+			{
+				sender = false;
+			}
+		}
 		if (channelName.Equals(this.selectedChannelName))
 		{
 			// update text

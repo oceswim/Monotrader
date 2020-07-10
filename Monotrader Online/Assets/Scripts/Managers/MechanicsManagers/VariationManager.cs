@@ -23,6 +23,7 @@ public class VariationManager : MonoBehaviour
     public static bool worldVar,nationalVar;
     public TMP_Text nationalText, worldText;
     public GameObject theWheel, confirmButton,panelNational,wheelPanel;
+    public AudioSource wheelSpinningSound;
     private bool spin;
     private float rotSpeed;
     public static bool BeginProcess;
@@ -121,6 +122,7 @@ public class VariationManager : MonoBehaviour
     //national variation section
     public void SpinWheel()
     {
+        wheelSpinningSound.Play();
         spin = true;
         rotSpeed = UnityEngine.Random.Range(50, 76);
     }

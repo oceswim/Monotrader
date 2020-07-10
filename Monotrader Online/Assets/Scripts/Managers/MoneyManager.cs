@@ -138,16 +138,18 @@ public class MoneyManager : MonoBehaviourPun
 
                         }
                     }
-
                     if (!waitingForText.text.Equals(waitingText))
                     {
                         waitingForText.text = waitingText;
+                    }
+                    if(notReadyPlayers.Count<1)
+                    {
+                        waitingForObject.SetActive(false);
                     }
 
                 }
                 else if (myRoom.CustomProperties[GAME_STATE_HASHKEY] != null && !playersReady)
                 {
-                    waitingForText.text = "Game is about to start!";
                     if ((int)myRoom.CustomProperties[GAME_STATE_HASHKEY] == 1)
                     {
                         playersReady = true;

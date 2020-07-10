@@ -115,6 +115,7 @@ public class FriendsManager : MonoBehaviourPun
         photonView.RPC("SomeoneLeft", RpcTarget.AllBuffered,theName);
         return true;
     }
+    
     private void InitialiseColor()
     {
         r = PlayerPrefs.GetInt(REDPREF);
@@ -164,6 +165,7 @@ public class FriendsManager : MonoBehaviourPun
         return false;
 
     }
+
     [PunRPC]
     private void UpdateAllFortune(string fortune)
     {

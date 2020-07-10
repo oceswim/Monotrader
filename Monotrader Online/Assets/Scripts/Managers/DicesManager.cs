@@ -12,7 +12,7 @@ public class DicesManager : MonoBehaviourPun
     private Vector3 noVelocity = Vector3.zero;
     private bool canGuess;
     public bool roll,goodToRoll;
-    public bool taxesRoll;
+    public bool taxesRoll,switchOwner;
     private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
     private static float dirX, dirY, dirZ;
     public void Start()
@@ -63,6 +63,11 @@ public class DicesManager : MonoBehaviourPun
         {
             canGuess = false;
             WhichDiceValue();
+        }
+        if(switchOwner)
+        {
+            switchOwner = false;
+            SwitchViewOwner();
         }
 
     }
@@ -140,7 +145,6 @@ public class DicesManager : MonoBehaviourPun
     }
     private void SetRoomProperty(string hashKey, int value)//general room properties
     {
-
         if (myRoom.CustomProperties[hashKey] == null)
         {
             myRoom.CustomProperties.Add(hashKey, value);
@@ -163,4 +167,13 @@ public class DicesManager : MonoBehaviourPun
         myRoom.SetCustomProperties(myRoom.CustomProperties);
     }
    
+    private void SwitchViewOwner()
+    {
+        if (photonView.IsMine)
+        {
+            photonView.TransferOwnership(PhotonNetwork.PlayerListOthers[0]);
+           
+            Debug.Log(transform.name +" transfered ownership to " + photonView.Owner.NickName);
+        }
+    }
 }
