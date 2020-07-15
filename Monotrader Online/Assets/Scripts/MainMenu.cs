@@ -4,6 +4,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using UnityEngine.UI;
 
 
 /*
@@ -16,19 +17,24 @@ public class MainMenu : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI waitingStatusText = null;
 
     public AudioSource GameStarting;
+    public TMP_Text gameMode;
+    private int index;
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
+    private const string MULTIPLAYER_MODE = "Multiplayer";
+    private const string SOLO_MODE = "Solo";
     private string REDPLAYERPPT;
     private string GREENPLAYERPPT;
     private string BLUEPLAYERPPT;
     private const int maxPlayerPerRoom =4;
-    private const int minPlayerPerRoom =2;
+    private int minPlayerPerRoom;
     private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
         PlayerPrefs.DeleteAll();//TO DELLLLLL
-        PlayerPrefs.SetInt(MIN_PLAYER_KEY, minPlayerPerRoom);
         PhotonNetwork.AutomaticallySyncScene = false;
+        index = minPlayerPerRoom = 1;
+        gameMode.text = MULTIPLAYER_MODE;
     }
 
     public void FindOponents()
@@ -151,5 +157,46 @@ public class MainMenu : MonoBehaviourPunCallbacks
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+    public void SwitchModes(int i)
+    {
+        index += i;
+        if(index>1)
+        {
+            index = 0;
+        }
+        else if(index <0)
+        {
+            index = 1;
+        }
+        switch(index)
+        {
+            case 0:
+                gameMode.text = SOLO_MODE;
+                break;
+            case 1:
+                gameMode.text = MULTIPLAYER_MODE;
+                break;
+        }
+    }
+    public void ConfirmMode()
+    {
+        Debug.Log("index is :" + index);
+        switch (index)
+        {
+            case 0:
+                minPlayerPerRoom = 1;
+                break;
+            case 1:
+                minPlayerPerRoom = 2;
+                break;
+        }
+        PlayerPrefs.SetInt(MIN_PLAYER_KEY, minPlayerPerRoom);
+    }
+    public void ResetButton(Button theButton)
+    {
+        theButton.enabled = false;
+        theButton.enabled = true;
     }
 }

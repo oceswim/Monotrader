@@ -93,9 +93,13 @@ public class GameManager : MonoBehaviourPun
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
                 if (playerReadyCount == allPlayers.Length)
                 {
-                    secondaryTheme.Stop();
+                    
                     PlayersReady();//sets the game state for everyone
-                    mainTheme.Play();
+                    if(!photonView.IsMine)
+                    {
+                        photonView.TransferOwnership(myPlayer);
+                    }
+                    photonView.RPC("StartMainTheme", RpcTarget.AllBuffered);
                 }
             }
 
@@ -260,7 +264,7 @@ public class GameManager : MonoBehaviourPun
     public void SwitchTurn()
     {
         int index = PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY);
-        
+        //have to operate a change in index here when switch turn after a player leaves
         myTurn = false;
         if (index ==(allPlayers.Length-1))
         {
@@ -418,7 +422,12 @@ public class GameManager : MonoBehaviourPun
         PlayerPrefs.SetInt(PLAYER_IN_ACTION_HASHKEY, index);
         Debug.Log("player pref in action set to :" + index + " by " + myPlayer.NickName) ;
     }
-
+    [PunRPC]
+    private void StartMainTheme()
+    {
+        secondaryTheme.Stop();
+        mainTheme.Play();
+    }
     private void WaitOut(float seconds)
     {
         float start = 0;

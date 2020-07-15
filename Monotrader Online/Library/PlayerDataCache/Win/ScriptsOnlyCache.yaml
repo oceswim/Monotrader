@@ -42,6 +42,8 @@ ScriptsOnlyBuild:
     - Photon.Pun.Demo.PunBasics.PlayerUI
     - Photon.Pun.Demo.SlotRacer.PlayerControl
     - Photon.Pun.Demo.SlotRacer.Utils.SplineWalker
+    PhotonUnityNetworking.Editor.dll:
+    - Photon.Pun.PunSceneSettings
     PhotonUnityNetworking.dll:
     - Photon.Pun.PhotonAnimatorView
     - Photon.Pun.PhotonRigidbodyView
@@ -1507,7 +1509,7 @@ ScriptsOnlyBuild:
     className: PunTurnManager
   - hash:
       serializedVersion: 2
-      Hash: 581fd69d8bb7ab4805a9ab133e2b8931
+      Hash: 624575aeb592a44fca9d9858ece7bcd0
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MainMenu
@@ -1789,7 +1791,7 @@ ScriptsOnlyBuild:
     className: IsConnectedAndReadyProperty
   - hash:
       serializedVersion: 2
-      Hash: 20a151333ec0833adc24a2383dee02f8
+      Hash: 9efba1b8d6a27e44d3697f3e00fb1e09
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Exit

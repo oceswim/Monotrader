@@ -14,7 +14,6 @@ using TMPro;
 public class GameChatClient : MonoBehaviourPun, IChatClientListener
 {
 	private const string FORTUNE = "myFortune";
-
 	public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.
 
 	private string[] PlayerList;
@@ -95,13 +94,8 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 	public void Start()
 	{
 		DontDestroyOnLoad(this.gameObject);
-
-
 		this.StateText.text = "";
 		this.StateText.gameObject.SetActive(true);
-
-		//this.Title.SetActive(true);
-		//this.ChatPanel.gameObject.SetActive(false);
 		this.ConnectingLabel.SetActive(false);
 		myUserName = PhotonNetwork.LocalPlayer.NickName;
 		this.UserName = myUserName;
@@ -612,7 +606,7 @@ public class GameChatClient : MonoBehaviourPun, IChatClientListener
 		Application.OpenURL("https://dashboard.photonengine.com");
 	}
 
-
+	
 
 
 }

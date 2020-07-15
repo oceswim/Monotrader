@@ -11,7 +11,9 @@ public class Exit : MonoBehaviourPunCallbacks
     private const string GAME_EXIT = "game";
     private const string MIN_PLAYER_KEY = "MinPlayers";
     public AudioSource exitSound;
+    public GameObject onePlayerLeft;
     private GameObject Dice1, Dice2;
+
     public void ExitGame(string mode)
     {
         switch (mode)
@@ -65,10 +67,14 @@ public class Exit : MonoBehaviourPunCallbacks
         
         if (FriendsManager.instance.playerItems.Count < PlayerPrefs.GetInt(MIN_PLAYER_KEY))
         {
-            ExitGame(GAME_EXIT);
+                
+            onePlayerLeft.SetActive(true);
+            
+            
         }
 
     }
+
     public override void OnLeftRoom()
     {
 
