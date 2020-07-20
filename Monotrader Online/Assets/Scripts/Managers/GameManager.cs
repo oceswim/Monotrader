@@ -24,9 +24,9 @@ public class GameManager : MonoBehaviourPun
 
     //private variables
     private Player myPlayer;
-    private Player[] allPlayers;
     private List<DicesManager> inGameDices = new List<DicesManager>();
     private bool dicesRolling;
+  
     //private int moveVal, diceStatus, turnCounter;
     private int moveVal, turnCounter;
     
@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviourPun
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     public static GameManager instance = null;
     public static Room myRoom;
+    public static int playerIndexToPlay;
 
     //public variables
     public AudioSource mainTheme;
@@ -71,12 +72,10 @@ public class GameManager : MonoBehaviourPun
     void Start()
     {
         
-        moveVal   = diceStatus= 0 ;
+        moveVal = diceStatus= 0 ;
         turnCounter = 1;
         PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
         gameCanStart =dicesRolling= false;
-
-        allPlayers = PhotonNetwork.PlayerList;
         myRoom = PhotonNetwork.CurrentRoom;
         SetRoomProperty(TURN_COUNT, 1);
         turnCountText.text = "Turn #"+turnCounter.ToString();
@@ -91,7 +90,7 @@ public class GameManager : MonoBehaviourPun
             if (myPlayer.IsMasterClient && myRoom.CustomProperties[PLAYER_READY_HASHKEY] != null)
             {
                 int playerReadyCount = (int)myRoom.CustomProperties[PLAYER_READY_HASHKEY];
-                if (playerReadyCount == allPlayers.Length)
+                if (playerReadyCount == PhotonNetwork.PlayerList.Length)
                 {
                     
                     PlayersReady();//sets the game state for everyone
@@ -221,11 +220,15 @@ public class GameManager : MonoBehaviourPun
     private bool CheckIfMyTurn()
     {
         bool isItMyTurn = false;
-        int myIndex = myPlayer.ActorNumber - 1;
-        int playerToPlay = PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY);
-        if (myIndex == playerToPlay)
+        Debug.Log("Player list length: " + PhotonNetwork.PlayerList.Length + " vs playerindexTolPLay " + playerIndexToPlay);
+        if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
         {
-            isItMyTurn = true;
+            Player playerToplay = PhotonNetwork.PlayerList[playerIndexToPlay];
+
+            if (playerToplay.Equals(myPlayer))
+            {
+                isItMyTurn = true;
+            }
         }
         return isItMyTurn;
     }
@@ -255,7 +258,7 @@ public class GameManager : MonoBehaviourPun
 
             xVal += 3;//seperates the second dice from the first one
         }
-        int starterIndex = UnityEngine.Random.Range(0, allPlayers.Length);
+        int starterIndex = UnityEngine.Random.Range(1, PhotonNetwork.PlayerList.Length+1);
         SetRoomProperty(PLAYER_IN_ACTION_HASHKEY, starterIndex);
         SetRoomProperty(GAME_STATE_HASHKEY, 1);
     }
@@ -263,26 +266,26 @@ public class GameManager : MonoBehaviourPun
     //allows to give each player the property of the dices
     public void SwitchTurn()
     {
-        int index = PlayerPrefs.GetInt(PLAYER_IN_ACTION_HASHKEY);
+        int index;
         //have to operate a change in index here when switch turn after a player leaves
         myTurn = false;
-        if (index ==(allPlayers.Length-1))
+        if (playerIndexToPlay ==(PhotonNetwork.PlayerList.Length-1))
         {
             index = 0;
   
         }
         else
         {
-            index += 1;
+            playerIndexToPlay += 1;
+            index = playerIndexToPlay;
 
         }
-        Debug.Log("IT'S" + allPlayers[index].NickName + " TURN");
         if (!photonView.IsMine)
         {
             photonView.TransferOwnership(myPlayer);
       
         }
-        photonView.RPC("SetPlayerTurnPref", RpcTarget.AllBuffered, index);
+        photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, index);
 
     }
 
@@ -427,6 +430,11 @@ public class GameManager : MonoBehaviourPun
     {
         secondaryTheme.Stop();
         mainTheme.Play();
+    }
+    [PunRPC]
+    private void SetIndPlayerToPlay(int ind)
+    {
+        playerIndexToPlay = ind;
     }
     private void WaitOut(float seconds)
     {

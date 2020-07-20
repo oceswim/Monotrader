@@ -94,7 +94,7 @@ public class MoneyManager : MonoBehaviourPun
         playersReady =setUpOnceTrend=changeTurn= false;
         myRoom = GameManager.myRoom;
         InitialiseHashKeys();
-
+        InitialiseHistoryPrefs();
 
     }
 
@@ -305,7 +305,12 @@ public class MoneyManager : MonoBehaviourPun
         PlayerPrefs.SetString("MYPOUNDS", PLAYER_POUNDS);
     }
 
-
+    private void InitialiseHistoryPrefs()
+    {
+        PlayerPrefs.SetString(HISTORY_TURN_M3, "D/1/0_E/1/0_P/1/0_Y/1/0");
+        PlayerPrefs.SetString(HISTORY_TURN_M2, "D/1/0_E/1/0_P/1/0_Y/1/0");
+        PlayerPrefs.SetString(HISTORY_TURN_M1, "D/1/0_E/1/0_P/1/0_Y/1/0");
+    }
     //the initial prices of each currency at the beginning of the game
     private void SetInitialAmounts(bool masterClient)
     {

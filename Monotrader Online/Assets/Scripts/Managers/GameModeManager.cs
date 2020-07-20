@@ -24,11 +24,11 @@ public class GameModeManager : MonoBehaviourPun
     private Player myPlayer;
 
     public Toggle timeLimit, scoreLimit;
-    public GameObject MasterPanel, OtherPanel,display,charSelectionPanel,winPanel,losePanel,diceRollButton;
+    public GameObject MasterPanel, OtherPanel, display, charSelectionPanel, winPanel, losePanel, diceRollButton, bankManager;
     public StatePresetManager theStateManager;
     public TMP_Text gameModeText,lostText,wonText;
 
-    public static bool checkFortune;
+    public static bool checkFortune, playerNameTagOn;
 
 
     // Start is called before the first frame update
@@ -39,8 +39,9 @@ public class GameModeManager : MonoBehaviourPun
 
         myPlayer = PhotonNetwork.LocalPlayer;
         myRoom = GameManager.myRoom;
-        started = false;
+        started =playerNameTagOn= false;
     }
+    //this is for master player only
     public void ConfirmGameMode()
     {
        if(timeLimit.isOn)
@@ -58,7 +59,8 @@ public class GameModeManager : MonoBehaviourPun
             photonView.TransferOwnership(myPlayer);
         }
         photonView.RPC("GoToCharSelect", RpcTarget.AllBuffered);
-
+        int temp = UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length);
+        photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, temp);
     }
 
     [PunRPC]
@@ -69,13 +71,17 @@ public class GameModeManager : MonoBehaviourPun
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;//we close the room to anyone else trying to join it when master client chose the game mode.
             MasterPanel.SetActive(false);
+
         }
         else
         {
             OtherPanel.SetActive(false);
         }
+
         charSelectionPanel.SetActive(true);
         display.SetActive(true);
+        bankManager.SetActive(true);
+        playerNameTagOn = true;
     }
     private void Update()
     {
@@ -183,7 +189,7 @@ public class GameModeManager : MonoBehaviourPun
                 break;
             case AMOUNT_REACH:
                 amountGoal = true;
-                gameModeText.text = "Get a fortune of 50,000 to win!";
+                gameModeText.text = "Get a fortune of 30,000 to win!";
                 break;
         }
     }

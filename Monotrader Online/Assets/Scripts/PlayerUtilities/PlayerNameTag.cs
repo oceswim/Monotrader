@@ -11,6 +11,7 @@ public class PlayerNameTag : MonoBehaviourPun
     [SerializeField] private TextMeshProUGUI nameText;
     private Room myRoom;
     private Player myPlayer;
+    private bool notStarted;
     void Start()
     {
         myRoom = GameManager.myRoom;
@@ -19,11 +20,25 @@ public class PlayerNameTag : MonoBehaviourPun
         {
             return;
         }
-        WaitOut(1);
-        SetName();
+        notStarted = true;
 
     }
-    
+    private void Update()
+    {
+        if(notStarted && GameModeManager.playerNameTagOn)
+        {
+            notStarted = false;
+            LateStart();
+        }
+    }
+    void LateStart()
+    {
+     
+        if (myPlayer.IsMasterClient)
+        {
+            SetName();
+        }
+    }
 
     //sets the text of the billboard to the corresponding player name
     private void SetName()

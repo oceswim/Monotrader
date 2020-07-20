@@ -24,11 +24,7 @@ public class Exit : MonoBehaviourPunCallbacks
             case GAME_EXIT:
                 if (FriendsManager.instance.CallRPCFriendLeaving(PhotonNetwork.LocalPlayer.NickName))
                 {
-                    if (PhotonNetwork.PlayerListOthers.Length > 0)
-                    {
-                        GameManager.instance.SwitchTurn();
-                        //SwitchOwnerShipDice();
-                    }
+                    
                     PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
                     exitSound.Play();
                     PhotonNetwork.LeaveRoom();
@@ -66,15 +62,26 @@ public class Exit : MonoBehaviourPunCallbacks
 
         
         if (FriendsManager.instance.playerItems.Count < PlayerPrefs.GetInt(MIN_PLAYER_KEY))
-        {
-                
+        {    
             onePlayerLeft.SetActive(true);
-            
-            
+        }
+        else if(PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            int temp = Random.Range(0, PhotonNetwork.PlayerList.Length);
+            if (!photonView.IsMine)
+            {
+                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+            photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, temp);
         }
 
     }
-
+    public void ContinueAlone()
+    {
+       
+        GameManager.playerIndexToPlay = 0;
+        
+    }
     public override void OnLeftRoom()
     {
 

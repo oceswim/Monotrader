@@ -111,9 +111,9 @@ public class CharSelectionScript : MonoBehaviour
     {
         //confirmation = true;
         int theIndex = PlayerPrefs.GetInt("CharIndex");
-        SetCustomPpties(theIndex);
-        if (CheckSelectedAvailability())
+        if (CheckSelectedAvailability(theIndex))
         {
+            SetCustomPpties(theIndex);
             PrefabSpawner.spawn = true;
             //hide charselection menu
             CharSelectionObject.SetActive(false);
@@ -141,9 +141,9 @@ public class CharSelectionScript : MonoBehaviour
   
 
     //checks the availablity of a prefab based on player's custom properties
-    private bool CheckSelectedAvailability()
+    private bool CheckSelectedAvailability(int theNum)
     {
-        string localProperty = PhotonNetwork.LocalPlayer.CustomProperties[hashKeyIndex].ToString();
+        string localProperty = theNum.ToString();
         bool isAvailable = true;
         foreach (Player p in PhotonNetwork.PlayerListOthers)
         {
