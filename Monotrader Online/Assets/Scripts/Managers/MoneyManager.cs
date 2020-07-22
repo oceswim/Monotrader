@@ -35,16 +35,11 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     private const string POUNDS_TREND_IND = "Pounds_Trend_Ind";
     private const string YEN_TREND_IND = "Yen_Trend_Ind";
 
-    private int[] TRENDS_VALUES;
+    private float[] TRENDS_VALUES;
 
     private const string GAME_STATE_HASHKEY = "gameState";
 
-    //private string PLAYER_GOLD;
-    //private string PLAYER_DOLLARS;
-    //private string PLAYER_EUROS;
-    //private string PLAYER_YENS;
-    //private string PLAYER_POUNDS;
-    //private string PLAYER_FORTUNE;
+
     private const string HISTORY_TURN_ACTUAL = "History_Turn_Actual";
     private string HISTORY_TURN_M1 = "History_Turn_Minus1";
     private string HISTORY_TURN_M2 = "History_Turn_Minus2";
@@ -69,6 +64,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     public static float PLAYER_YENS;
     public static float PLAYER_POUNDS;
     public static float PLAYER_FORTUNE;
+    public static float PLAYER_SAVINGS;
 
 
     public static bool newTurnFortune;
@@ -99,7 +95,6 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         actorNumber = myPlayer.ActorNumber.ToString();
         playersReady =setUpOnceTrend=changeTurn= false;
         myRoom = GameManager.myRoom;
-        //InitialiseHashKeys();
         InitialiseHistoryPrefs();
 
     }
@@ -283,33 +278,22 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         }
     }
 
-    //the trends list for each currency, from -10 to +10 %
+    //the trends list for each currency, from .9 to 1.1 value
     private void PopulateTrendsList()
     {
-        TRENDS_VALUES = new int[21];
-        for (int i = -10; i < 11; i++)
+        TRENDS_VALUES = new float[21];
+        double i = .9;
+        int index = 0;
+        while(i<1.1)
         {
-            int index = i + 10;
-            TRENDS_VALUES[index] = i;
+            TRENDS_VALUES[index] = (float)(Math.Round(i,2));
+            Debug.Log($"i: {TRENDS_VALUES[index]} and index: {index}");
+            i += .01f;
+            index++;
+            
         }
+      
     }
-
-
-    //the different hashkeys for each players
-    /*private void InitialiseHashKeys()
-    {
-        PLAYER_FORTUNE = "Player" + actorNumber + "Fortune";
-        PLAYER_GOLD = "Player" + actorNumber + "Gold";
-        PlayerPrefs.SetString("MYGOLD", PLAYER_GOLD);
-        PLAYER_DOLLARS = "Player" + actorNumber + "Dollars";
-        PlayerPrefs.SetString("MYDOLLARS", PLAYER_DOLLARS);
-        PLAYER_EUROS = "Player" + actorNumber + "Euros";
-        PlayerPrefs.SetString("MYEUROS", PLAYER_EUROS);
-        PLAYER_YENS = "Player" + actorNumber + "Yens";
-        PlayerPrefs.SetString("MYYENS", PLAYER_YENS);
-        PLAYER_POUNDS = "Player" + actorNumber + "Pounds";
-        PlayerPrefs.SetString("MYPOUNDS", PLAYER_POUNDS);
-    }*/
 
     private void InitialiseHistoryPrefs()
     {
@@ -320,6 +304,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //the initial prices of each currency at the beginning of the game
     private void SetInitialAmounts(bool masterClient)
     {
+        PLAYER_SAVINGS = 0;
         myGold = INITIAL_GOLD;
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
         PLAYER_GOLD= myGold;
@@ -367,6 +352,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //allows to set each currencies prices to the room properties
     private void SetRoomPrices(float dol, float eur, float pou, float yen)
     {
+        Debug.Log($"EUROS:{eur} D:{dol} P:{pou} Y:{yen}");
         SetRoomProperty(EUROS_PRICE, eur);
         SetRoomProperty(DOLLARS_PRICE, dol);
         SetRoomProperty(POUNDS_PRICE, pou);
@@ -376,6 +362,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //allows to set each currencies trends variation to the room properties
     private void SetRoomTrends(float d, float e, float p, float y)
     {
+        Debug.Log($"EUROS:{e} D:{d} P:{p} Y:{y}");
         SetRoomProperty(DOLLARS_TREND, d);
         SetRoomProperty(EUROS_TREND, e);
         SetRoomProperty(POUNDS_TREND, p);
@@ -480,13 +467,6 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //allows to set the trends based on the newly created indexes in preparetrends()
     private void SetTrends()
     {
-        //get the increase or decrease value
-        float dolPrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
-        float eurPrice = (float)myRoom.CustomProperties[EUROS_PRICE];
-        float pouPrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
-        float yenPrice = (float)myRoom.CustomProperties[YEN_PRICE];
-
-
         //we have values from -.1 to +.1 = a variation in %
         //if -10% : price * .9f
         //if +10% : price * 1.1f
@@ -496,14 +476,9 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         float pouTrend = (float)myRoom.CustomProperties[POUNDS_TREND];
         float yenTrend = (float)myRoom.CustomProperties[YEN_TREND];
 
-        double newDolPrice = CalculateNewPrice(dolPrice, dolTrend);
-        double newEurPrice = CalculateNewPrice(eurPrice, eurTrend);
-        double newPouPrice = CalculateNewPrice(pouPrice, pouTrend);
-        double newYenPrice = CalculateNewPrice(yenPrice, yenTrend);
 
-
-        SetRoomPrices((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
-        UpdateHistory((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice,false);
+        SetRoomPrices((float)dolTrend, (float)eurTrend, (float)pouTrend, (float)yenTrend);
+        UpdateHistory((float)dolTrend, (float)eurTrend, (float)pouTrend, (float)yenTrend,false);
 
     } 
 
@@ -534,10 +509,10 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         int randIndPou = (int)myRoom.CustomProperties[POUNDS_TREND_IND];
         int randIndYen = (int)myRoom.CustomProperties[YEN_TREND_IND];
 
-        float dolTrend = (float)TRENDS_VALUES[randIndDol] / 10;
-        float eurTrend = (float)TRENDS_VALUES[randIndEur] / 10;
-        float pouTrend = (float)TRENDS_VALUES[randIndPou] / 10;
-        float yenTrend = (float)TRENDS_VALUES[randIndYen] / 10;
+        float dolTrend = TRENDS_VALUES[randIndDol];
+        float eurTrend = TRENDS_VALUES[randIndEur];
+        float pouTrend = TRENDS_VALUES[randIndPou];
+        float yenTrend = TRENDS_VALUES[randIndYen];
 
         SetRoomTrends(dolTrend, eurTrend, pouTrend, yenTrend);
 
@@ -545,37 +520,21 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     }
     private void UpdateTrendListWithDice(float dollars, float euros, float pound, float yen)
     {
-        float dolPrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
-        float eurPrice = (float)myRoom.CustomProperties[EUROS_PRICE];
-        float pouPrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
-        float yenPrice = (float)myRoom.CustomProperties[YEN_PRICE];
 
         int randIndDol = (int)myRoom.CustomProperties[DOLLARS_TREND_IND];
         int randIndEur = (int)myRoom.CustomProperties[EUROS_TREND_IND];
         int randIndPou = (int)myRoom.CustomProperties[POUNDS_TREND_IND];
         int randIndYen = (int)myRoom.CustomProperties[YEN_TREND_IND];
 
-        float dolTrend = (float)TRENDS_VALUES[randIndDol] / 10 + dollars;//the final trends
-        float eurTrend = (float)TRENDS_VALUES[randIndEur] / 10 + euros;
-        float pouTrend = (float)TRENDS_VALUES[randIndPou] / 10 + pound;
-        float yenTrend = (float)TRENDS_VALUES[randIndYen] / 10 + yen;
-
-        float dolNew = (float)TRENDS_VALUES[randIndDol];//the new trends just initiated
-        float eurNew = (float)TRENDS_VALUES[randIndEur];
-        float pouNew = (float)TRENDS_VALUES[randIndPou];
-        float yenNew = (float)TRENDS_VALUES[randIndYen];
-
+        float dolTrend = (float)TRENDS_VALUES[randIndDol];//the final trends
+        float eurTrend = (float)TRENDS_VALUES[randIndEur];
+        float pouTrend = (float)TRENDS_VALUES[randIndPou];
+        float yenTrend = (float)TRENDS_VALUES[randIndYen];
 
         SetRoomTrends(dolTrend, eurTrend, pouTrend, yenTrend);
 
-        double newDolPrice = CalculateNewPrice(dolPrice, dolNew/10);
-        double newEurPrice = CalculateNewPrice(eurPrice, eurNew/10);
-        double newPouPrice = CalculateNewPrice(pouPrice, pouNew/10);
-        double newYenPrice = CalculateNewPrice(yenPrice, yenNew/10);
-
-
-        SetRoomPrices((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice);
-        UpdateHistory((float)newDolPrice, (float)newEurPrice, (float)newPouPrice, (float)newYenPrice, true);
+        SetRoomPrices(dolTrend, eurTrend, pouTrend, yenTrend);
+        UpdateHistory(dolTrend, eurTrend, pouTrend, yenTrend, true);
 
 
     }
@@ -585,10 +544,17 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     {
         //depending on turn count, history gets updated
         int turnCount = GameManager.TURN_COUNT_VALUE;
-        double dTrend = Math.Round((float)myRoom.CustomProperties[DOLLARS_TREND] * 10, 2);
-        double eTrend = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] * 10, 2);
-        double pTrend = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] * 10, 2);
-        double yTrend = Math.Round((float)myRoom.CustomProperties[YEN_TREND] * 10, 2);
+        float dPercent = ((float)myRoom.CustomProperties[DOLLARS_TREND] - 1) * 100;
+        float ePercent = ((float)myRoom.CustomProperties[EUROS_TREND] - 1) * 100;
+        float pPercent = ((float)myRoom.CustomProperties[POUNDS_TREND] - 1) * 100;
+        float yPercent = ((float)myRoom.CustomProperties[YEN_TREND] - 1) * 100;
+
+        double dTrend = Math.Round(dPercent, 2);
+        double eTrend = Math.Round(ePercent, 2);
+        double pTrend = Math.Round(pPercent, 2);
+        double yTrend = Math.Round(yPercent, 2);
+
+        
 
         string newHistoryVal = $"D/{dollars.ToString()}/{dTrend.ToString()}_E/{euros.ToString()}/{eTrend.ToString()}_P/{pound.ToString()}/{pTrend.ToString()}_Y/{yen.ToString()}/{yTrend.ToString()}";
         if (!inGame)
@@ -634,10 +600,16 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     {
         //depending on turn count, history gets updated
         int turnCount = GameManager.TURN_COUNT_VALUE;
-        double dTrend = Math.Round((float)myRoom.CustomProperties[DOLLARS_TREND] * 10, 2);
-        double eTrend = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] * 10, 2);
-        double pTrend = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] * 10, 2);
-        double yTrend = Math.Round((float)myRoom.CustomProperties[YEN_TREND] * 10, 2);
+        float dPercent = ((float)myRoom.CustomProperties[DOLLARS_TREND] - 1) * 100;
+        float ePercent = ((float)myRoom.CustomProperties[EUROS_TREND] - 1) * 100;
+        float pPercent = ((float)myRoom.CustomProperties[POUNDS_TREND] - 1) * 100;
+        float yPercent = ((float)myRoom.CustomProperties[YEN_TREND] - 1) * 100;
+
+        double dTrend = Math.Round(dPercent, 2);
+        double eTrend = Math.Round(ePercent, 2);
+        double pTrend = Math.Round(pPercent, 2);
+        double yTrend = Math.Round(yPercent, 2);
+
 
         string newHistoryVal = $"D/{dollars.ToString()}/{dTrend.ToString()}_E/{euros.ToString()}/{eTrend.ToString()}_P/{pound.ToString()}/{pTrend.ToString()}_Y/{yen.ToString()}/{yTrend.ToString()}";
 

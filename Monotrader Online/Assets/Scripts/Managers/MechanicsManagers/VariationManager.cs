@@ -93,12 +93,12 @@ public class VariationManager : MonoBehaviour
             case 0://less value
                 delta = LESS_VALUE;
                 mode = "less";
-                trendDelta = -.5f;
+                trendDelta = -.05f;
                 break;
             case 1://more value
                 delta = MORE_VALUE;
                 mode = "more";
-                trendDelta = .5f;
+                trendDelta = .05f;
                 break;
         }
         euros *= delta;
@@ -157,7 +157,6 @@ public class VariationManager : MonoBehaviour
         {
            
             NationalVariation(4);
-            //use player pref here.
         }
         else if (value >= 190.1 && value <= 274)
         {
@@ -179,12 +178,12 @@ public class VariationManager : MonoBehaviour
         {
             case 0://less value
                 delta = LESS_VALUE;
-                trendDelta = -.5f;
+                trendDelta = -.05f;
                 mode = "less";
                 break;
             case 1://more value
                 delta = MORE_VALUE;
-                trendDelta = .5f;
+                trendDelta = .05f;
                 mode = "more";
                 break;
         }

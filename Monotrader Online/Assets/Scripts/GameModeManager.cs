@@ -97,7 +97,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                         if (checkFortune)
                         {
                             checkFortune = false;
-                            if (MoneyManager.PLAYER_FORTUNE > AMOUNT_LIMIT)
+                            if ((MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS) > AMOUNT_LIMIT)
                             {
                                 amountGoal = false;
                                 if (!photonView.IsMine)

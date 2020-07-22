@@ -6,27 +6,20 @@ using UnityEngine.UI;
 //focused on 1 player
 public class SavingsManager : MonoBehaviour
 {
-    private const string FORTUNE = "myFortune";
-    private const string MY_SAVINGS = "mySavings";
     private double percentage;
     private float myGold,myFortune;
     public TMP_Text savingsText,totalSavings;
-    private string PLAYER_GOLD;
     public Button yesButton, noButton;
     public static bool BeginProcess;
+    
     // Start is called before the first frame update
-    void Start()
-    {
-        PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD"); 
-        
-    }
   
     private void Update()
     {
         if(BeginProcess)
         {
-            myGold = PlayerPrefs.GetFloat(PLAYER_GOLD);
-            myFortune = PlayerPrefs.GetFloat(FORTUNE);
+            myGold = MoneyManager.PLAYER_GOLD;
+            myFortune = MoneyManager.PLAYER_FORTUNE;
             SetSavingsText();
             BeginProcess = false;
         }
@@ -43,21 +36,21 @@ public class SavingsManager : MonoBehaviour
     }
     public void Accept()
     {
-        if (PlayerPrefs.HasKey(MY_SAVINGS))
+        if (MoneyManager.PLAYER_SAVINGS==0)
         {
-          float oldPercentage =  PlayerPrefs.GetFloat(MY_SAVINGS);
+          float oldPercentage = MoneyManager.PLAYER_SAVINGS;
           float newPercentage = oldPercentage + (float)percentage;
-          PlayerPrefs.SetFloat(MY_SAVINGS, newPercentage);
+          MoneyManager.PLAYER_SAVINGS =newPercentage;
           
         }
         else
         {
-            PlayerPrefs.SetFloat(MY_SAVINGS, (float)percentage);
+            MoneyManager.PLAYER_SAVINGS=(float)percentage;
            
         }
-        totalSavings.text = PlayerPrefs.GetFloat(MY_SAVINGS).ToString()+ " G";
+        totalSavings.text = MoneyManager.PLAYER_SAVINGS.ToString()+ " G";
         float newGold = myGold - (float)percentage;
-        PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
+        MoneyManager.PLAYER_GOLD= newGold;
         MoneyManager.instance.UpdateFortuneInGame();
         
     }
