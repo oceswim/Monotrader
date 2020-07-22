@@ -6,13 +6,13 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MoneyManager : MonoBehaviourPun
+public class MoneyManager : MonoBehaviourPunCallBacks
 {
 
     private const float INITIAL_GOLD = 5000;
     private const float INITIAL_CURRENCIES = 2500;
     private const string FORTUNE = "myFortune";
-    private const string TURN_COUNT = "TurnCount";
+
     private const string EUROS_PRICE = "Euros_Price";
     private const string DOLLARS_PRICE = "Dollars_Price";
     private const string POUNDS_PRICE = "Pounds_Price";
@@ -24,13 +24,6 @@ public class MoneyManager : MonoBehaviourPun
     private const string HISTORY_STATUS = "History_Status";
     private const string PLAYER_STATE = "My_State";
     private const string CHAR_SELECTION = "CharSelected";
-
-
-
-    private const string HISTORY_TURN_ACTUAL = "History_Turn_Actual";
-    private const string HISTORY_TURN_M1 = "History_Turn_Minus1";
-    private const string HISTORY_TURN_M2 = "History_Turn_Minus2";
-    private const string HISTORY_TURN_M3 = "History_Turn_Minus3";
 
     private const string EUROS_TREND = "Euros_Trend";
     private const string DOLLARS_TREND = "Dollars_Trend";
@@ -46,12 +39,16 @@ public class MoneyManager : MonoBehaviourPun
 
     private const string GAME_STATE_HASHKEY = "gameState";
 
-    private string PLAYER_GOLD;
-    private string PLAYER_DOLLARS;
-    private string PLAYER_EUROS;
-    private string PLAYER_YENS;
-    private string PLAYER_POUNDS;
-    private string PLAYER_FORTUNE;
+    //private string PLAYER_GOLD;
+    //private string PLAYER_DOLLARS;
+    //private string PLAYER_EUROS;
+    //private string PLAYER_YENS;
+    //private string PLAYER_POUNDS;
+    //private string PLAYER_FORTUNE;
+    private const string HISTORY_TURN_ACTUAL = "History_Turn_Actual";
+    private string HISTORY_TURN_M1 = "History_Turn_Minus1";
+    private string HISTORY_TURN_M2 = "History_Turn_Minus2";
+    private string HISTORY_TURN_M3 = "History_Turn_Minus3";
 
     private float myGold, myDollars, myEuros, myYens, myPounds;
 
@@ -65,6 +62,15 @@ public class MoneyManager : MonoBehaviourPun
     public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText, totalFortuneText;
     public GameObject waitingForObject,sectionsManagerObject;
     public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
+
+    public static float PLAYER_GOLD;
+    public static float PLAYER_DOLLARS;
+    public static float PLAYER_EUROS;
+    public static float PLAYER_YENS;
+    public static float PLAYER_POUNDS;
+    public static float PLAYER_FORTUNE;
+
+
     public static bool newTurnFortune;
     public static MoneyManager instance = null;
     // Start is called before the first frame update
@@ -93,7 +99,7 @@ public class MoneyManager : MonoBehaviourPun
         actorNumber = myPlayer.ActorNumber.ToString();
         playersReady =setUpOnceTrend=changeTurn= false;
         myRoom = GameManager.myRoom;
-        InitialiseHashKeys();
+        //InitialiseHashKeys();
         InitialiseHistoryPrefs();
 
     }
@@ -290,7 +296,7 @@ public class MoneyManager : MonoBehaviourPun
 
 
     //the different hashkeys for each players
-    private void InitialiseHashKeys()
+    /*private void InitialiseHashKeys()
     {
         PLAYER_FORTUNE = "Player" + actorNumber + "Fortune";
         PLAYER_GOLD = "Player" + actorNumber + "Gold";
@@ -303,25 +309,25 @@ public class MoneyManager : MonoBehaviourPun
         PlayerPrefs.SetString("MYYENS", PLAYER_YENS);
         PLAYER_POUNDS = "Player" + actorNumber + "Pounds";
         PlayerPrefs.SetString("MYPOUNDS", PLAYER_POUNDS);
-    }
+    }*/
 
     private void InitialiseHistoryPrefs()
     {
-        PlayerPrefs.SetString(HISTORY_TURN_M3, "D/1/0_E/1/0_P/1/0_Y/1/0");
-        PlayerPrefs.SetString(HISTORY_TURN_M2, "D/1/0_E/1/0_P/1/0_Y/1/0");
-        PlayerPrefs.SetString(HISTORY_TURN_M1, "D/1/0_E/1/0_P/1/0_Y/1/0");
+        HISTORY_TURN_M3= "D/1/0_E/1/0_P/1/0_Y/1/0";
+        HISTORY_TURN_M2= "D/1/0_E/1/0_P/1/0_Y/1/0";
+        HISTORY_TURN_M1= "D/1/0_E/1/0_P/1/0_Y/1/0";
     }
     //the initial prices of each currency at the beginning of the game
     private void SetInitialAmounts(bool masterClient)
     {
         myGold = INITIAL_GOLD;
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
-        PlayerPrefs.SetFloat(PLAYER_GOLD, myGold);
-        PlayerPrefs.SetFloat(PLAYER_DOLLARS, myDollars);
-        PlayerPrefs.SetFloat(PLAYER_EUROS, myEuros);
-        PlayerPrefs.SetFloat(PLAYER_POUNDS, myPounds);
-        PlayerPrefs.SetFloat(PLAYER_YENS, myYens);
-        Debug.Log(PlayerPrefs.GetFloat(PLAYER_GOLD) + " " + myPlayer.NickName);
+        PLAYER_GOLD= myGold;
+        PLAYER_DOLLARS= myDollars;
+        PLAYER_EUROS= myEuros;
+        PLAYER_POUNDS= myPounds;
+        PLAYER_YENS= myYens;
+
         float initD;
         float initE;
         float initP;
@@ -345,7 +351,7 @@ public class MoneyManager : MonoBehaviourPun
     }
 
     //allows to set each currencies amount each player owns to the room properties
-    private void SetRoomAmounts(float g, float d, float e, float p, float y)
+  /*  private void SetRoomAmounts(float g, float d, float e, float p, float y)
     {
 
         SetRoomProperty(PLAYER_GOLD, g);
@@ -356,7 +362,7 @@ public class MoneyManager : MonoBehaviourPun
 
 
 
-    }
+    }*/
 
     //allows to set each currencies prices to the room properties
     private void SetRoomPrices(float dol, float eur, float pou, float yen)
@@ -461,9 +467,9 @@ public class MoneyManager : MonoBehaviourPun
 
             }
             photonView.RPC("SetTheHistoryTrends", RpcTarget.AllBuffered, 
-                PlayerPrefs.GetString(HISTORY_TURN_M3),
-                PlayerPrefs.GetString(HISTORY_TURN_M2),
-                PlayerPrefs.GetString(HISTORY_TURN_M1));//we update current price with new variation
+                HISTORY_TURN_M3,
+                HISTORY_TURN_M2,
+                HISTORY_TURN_M1);//we update current price with new variation
 
         }
 
@@ -578,7 +584,7 @@ public class MoneyManager : MonoBehaviourPun
     private void UpdateHistory(float dollars, float euros, float pound, float yen, bool inGame)
     {
         //depending on turn count, history gets updated
-        int turnCount = PlayerPrefs.GetInt(TURN_COUNT);
+        int turnCount = GameManager.TURN_COUNT_VALUE;
         double dTrend = Math.Round((float)myRoom.CustomProperties[DOLLARS_TREND] * 10, 2);
         double eTrend = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] * 10, 2);
         double pTrend = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] * 10, 2);
@@ -590,26 +596,24 @@ public class MoneyManager : MonoBehaviourPun
             switch (turnCount)
         {
             case 1:
-                PlayerPrefs.SetString(HISTORY_TURN_M3,"D/1/0_E/1/0_P/1/0_Y/1/0");
-                PlayerPrefs.SetString(HISTORY_TURN_M2, "D/1/0_E/1/0_P/1/0_Y/1/0");
-                PlayerPrefs.SetString(HISTORY_TURN_M1, "D/1/0_E/1/0_P/1/0_Y/1/0");
+                HISTORY_TURN_M3="D/1/0_E/1/0_P/1/0_Y/1/0";
+                HISTORY_TURN_M2= "D/1/0_E/1/0_P/1/0_Y/1/0";
+                HISTORY_TURN_M1= "D/1/0_E/1/0_P/1/0_Y/1/0";
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 2:
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 3:
-                PlayerPrefs.SetString(HISTORY_TURN_M2, PlayerPrefs.GetString(HISTORY_TURN_M1));
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
-               
+                HISTORY_TURN_M2= HISTORY_TURN_M1;
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             default:
-                PlayerPrefs.SetString(HISTORY_TURN_M3, PlayerPrefs.GetString(HISTORY_TURN_M2));
-                PlayerPrefs.SetString(HISTORY_TURN_M2, PlayerPrefs.GetString(HISTORY_TURN_M1));
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
-
+                HISTORY_TURN_M3= HISTORY_TURN_M2;
+                HISTORY_TURN_M2= HISTORY_TURN_M1;
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
 
@@ -629,37 +633,35 @@ public class MoneyManager : MonoBehaviourPun
     private void UpdateHistoryNewTurn(float dollars, float euros, float pound, float yen)
     {
         //depending on turn count, history gets updated
-        int turnCount = PlayerPrefs.GetInt(TURN_COUNT);
+        int turnCount = GameManager.TURN_COUNT_VALUE;
         double dTrend = Math.Round((float)myRoom.CustomProperties[DOLLARS_TREND] * 10, 2);
         double eTrend = Math.Round((float)myRoom.CustomProperties[EUROS_TREND] * 10, 2);
         double pTrend = Math.Round((float)myRoom.CustomProperties[POUNDS_TREND] * 10, 2);
         double yTrend = Math.Round((float)myRoom.CustomProperties[YEN_TREND] * 10, 2);
 
         string newHistoryVal = $"D/{dollars.ToString()}/{dTrend.ToString()}_E/{euros.ToString()}/{eTrend.ToString()}_P/{pound.ToString()}/{pTrend.ToString()}_Y/{yen.ToString()}/{yTrend.ToString()}";
-       
+
             switch (turnCount)
         {
             case 1:
-                PlayerPrefs.SetString(HISTORY_TURN_M3,"D/1/0_E/1/0_P/1/0_Y/1/0");
-                PlayerPrefs.SetString(HISTORY_TURN_M2, "D/1/0_E/1/0_P/1/0_Y/1/0");
-                PlayerPrefs.SetString(HISTORY_TURN_M1, "D/1/0_E/1/0_P/1/0_Y/1/0");
+                HISTORY_TURN_M3="D/1/0_E/1/0_P/1/0_Y/1/0";
+                HISTORY_TURN_M2= "D/1/0_E/1/0_P/1/0_Y/1/0";
+                HISTORY_TURN_M1= "D/1/0_E/1/0_P/1/0_Y/1/0";
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 2:
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             case 3:
-                PlayerPrefs.SetString(HISTORY_TURN_M2, PlayerPrefs.GetString(HISTORY_TURN_M1));
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
-               
+                HISTORY_TURN_M2= HISTORY_TURN_M1;
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
             default:
-                PlayerPrefs.SetString(HISTORY_TURN_M3, PlayerPrefs.GetString(HISTORY_TURN_M2));
-                PlayerPrefs.SetString(HISTORY_TURN_M2, PlayerPrefs.GetString(HISTORY_TURN_M1));
-                PlayerPrefs.SetString(HISTORY_TURN_M1, (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL]);
-
+                HISTORY_TURN_M3= HISTORY_TURN_M2;
+                HISTORY_TURN_M2= HISTORY_TURN_M1;
+                HISTORY_TURN_M1= (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
                 myRoom.CustomProperties[HISTORY_TURN_ACTUAL] = newHistoryVal;
                 break;
 
@@ -676,14 +678,11 @@ public class MoneyManager : MonoBehaviourPun
 
     private void UpdateFortune()
     {
-
-      
-        float euros = (float)myRoom.CustomProperties[EUROS_PRICE] * PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
-        
-        float dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE] * PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
-        float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
-        float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold
-        float gold = PlayerPrefs.GetFloat(PLAYER_GOLD);
+        float euros = (float)myRoom.CustomProperties[EUROS_PRICE] * PLAYER_EUROS;//we get the value of x euros in gold
+        float dollars = (float)myRoom.CustomProperties[DOLLARS_PRICE] * PLAYER_DOLLARS;//we get the value of x euros in gold
+        float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PLAYER_POUNDS;//we get the value of x euros in gold
+        float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PLAYER_YENS;//we get the value of x euros in gold
+        float gold = PLAYER_GOLD;
 
 
        
@@ -691,11 +690,11 @@ public class MoneyManager : MonoBehaviourPun
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
         totalFortuneText.text = totalFortune.ToString();
 
-        SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
-        PlayerPrefs.SetFloat(PLAYER_EUROS, euros);
-        PlayerPrefs.SetFloat(PLAYER_DOLLARS, dollars);
-        PlayerPrefs.SetFloat(PLAYER_POUNDS, pounds);
-        PlayerPrefs.SetFloat(PLAYER_YENS, yens);
+        //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
+        PLAYER_EUROS= euros;
+        PLAYER_DOLLARS= dollars;
+        PLAYER_POUNDS= pounds;
+        PLAYER_YENS= yens;
 
         UpdateAmountText();
         if (!updateOnceFortune)
@@ -708,19 +707,17 @@ public class MoneyManager : MonoBehaviourPun
     }
     public void UpdateFortuneInGame()
     {
-        float euros = PlayerPrefs.GetFloat(PLAYER_EUROS);//we get the value of x euros in gold
-        float dollars = PlayerPrefs.GetFloat(PLAYER_DOLLARS);//we get the value of x euros in gold
-        float pounds =PlayerPrefs.GetFloat(PLAYER_POUNDS);//we get the value of x euros in gold
-        float yens = PlayerPrefs.GetFloat(PLAYER_YENS);//we get the value of x euros in gold
-        float gold = PlayerPrefs.GetFloat(PLAYER_GOLD);
+        
+        float euros = PLAYER_EUROS;//we get the value of x euros in gold
+        float dollars = PLAYER_DOLLARS;//we get the value of x euros in gold
+        float pounds =PLAYER_POUNDS;//we get the value of x euros in gold
+        float yens =PLAYER_YENS;//we get the value of x euros in gold
+        float gold =PLAYER_GOLD;
 
-        Debug.Log($"new euros:{euros} new dollars:{dollars} new pounds:{pounds} new yens:{yens} new gold:{gold}");
-    
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
         totalFortuneText.text = totalFortune.ToString();
-
-        SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
+        //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
         UpdateAmountText();
         FriendsManager.changeFortune = true;
         CheckFortune((float)totalFortune);
@@ -740,9 +737,10 @@ public class MoneyManager : MonoBehaviourPun
     private void UpdateHistoryGUI()
     {
 
-        string M3 = PlayerPrefs.GetString(HISTORY_TURN_M3);
-        string M2 = PlayerPrefs.GetString(HISTORY_TURN_M2);
-        string M1 = PlayerPrefs.GetString(HISTORY_TURN_M1);
+        string M3 = HISTORY_TURN_M3;
+        string M2 = HISTORY_TURN_M2;
+        string M1 = HISTORY_TURN_M1;
+        Debug.Log($"M3:{M3} M2: {M2} M1:{M1} ");
         string Actual = (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
 
         string[] m3 = M3.Split('_');
@@ -843,7 +841,7 @@ public class MoneyManager : MonoBehaviourPun
         }
         PhotonNetwork.LocalPlayer.CustomProperties = GameManager._myCustomProperty;
         PhotonNetwork.LocalPlayer.SetCustomProperties(PhotonNetwork.LocalPlayer.CustomProperties);
-        //Debug.Log($"Setting {myPlayer.NickName} {hashKeyIndex} to {ind} : {PhotonNetwork.LocalPlayer.CustomProperties[hashKeyIndex]}");
+
     }
 
     //allows to set a new or existing room property with an int for each players by the master player.
@@ -862,25 +860,25 @@ public class MoneyManager : MonoBehaviourPun
         p.SetCustomProperties(p.CustomProperties);
     }
 
-    //allows to update the amount of money owned by the player displayed
+
     private void CheckFortune(float fortune)
     {
-        SetRoomProperty(PLAYER_FORTUNE, fortune);
+        PLAYER_FORTUNE= fortune;
         GameModeManager.checkFortune = true;
 
     }
-
+    //allows to update the amount of money owned by the player displayed
     private void UpdateAmountText()
     {
-        goldAmount.text = PlayerPrefs.GetFloat(PLAYER_GOLD).ToString();
-        dollarsAmount.text = PlayerPrefs.GetFloat(PLAYER_DOLLARS).ToString();
-        eurosAmount.text = PlayerPrefs.GetFloat(PLAYER_EUROS).ToString();
-        poundsAmount.text = PlayerPrefs.GetFloat(PLAYER_POUNDS).ToString();
-        yenAmount.text = PlayerPrefs.GetFloat(PLAYER_YENS).ToString();
+        goldAmount.text = PLAYER_GOLD.ToString();
+        dollarsAmount.text = PLAYER_DOLLARS.ToString();
+        eurosAmount.text = PLAYER_EUROS.ToString();
+        poundsAmount.text = PLAYER_POUNDS.ToString();
+        yenAmount.text = PLAYER_YENS.ToString();
     }
 
     [PunRPC]
-    private void TrendsUpdates(bool roll)
+    private void TrendsUpdates(bool roll)//roll determines if the trend updates comes from when all players rolled the dices
     {
         if(myPlayer.IsMasterClient)
         {
@@ -910,9 +908,11 @@ public class MoneyManager : MonoBehaviourPun
 
         if (!myPlayer.IsMasterClient)
         {
-            PlayerPrefs.SetString(HISTORY_TURN_M3, m3);
-            PlayerPrefs.SetString(HISTORY_TURN_M2, m2);
-            PlayerPrefs.SetString(HISTORY_TURN_M1, m1);
+            HISTORY_TURN_M3 = m3;
+            HISTORY_TURN_M2 = m2;
+            HISTORY_TURN_M1 = m1;
+
+            Debug.Log("Changing m3,m2,m1 to :" + HISTORY_TURN_M3 + "" + HISTORY_TURN_M2 + " " + HISTORY_TURN_M1);
         }
     }
 }

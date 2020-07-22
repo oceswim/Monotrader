@@ -11,7 +11,7 @@ using TMPro;
 /*
  * Allows to handle the in game chat so that the players can communicate together
  */
-public class GameChatClient : MonoBehaviourPun, IChatClientListener
+public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 {
 	private const string FORTUNE = "myFortune";
 	public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.

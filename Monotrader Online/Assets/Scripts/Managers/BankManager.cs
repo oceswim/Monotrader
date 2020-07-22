@@ -5,7 +5,7 @@ using Photon.Realtime;
 using System;
 using Photon.Pun;
 
-public class BankManager : MonoBehaviourPun
+public class BankManager : MonoBehaviourPunCallBacks
 {
     //private variable
     private const int INITIAL_GOLD = 10000;
@@ -174,9 +174,9 @@ public class BankManager : MonoBehaviourPun
                 goldB.amount = (int)myRoom.CustomProperties[GOLD_BANK];
             }
         }
-        Debug.Log(goldB.amount + " before");
+        
         goldB.UpdateAmount(val);
-        Debug.Log(goldB.amount + " after");
+       
         SetRoomProperty(GOLD_BANK, goldB.amount);
         SetRoomProperty(GOLD_UPDATE, 1);
         goldText.text = goldB.amount.ToString() + GOLD_SYMBOL;
@@ -340,22 +340,6 @@ public class BankManager : MonoBehaviourPun
         myRoom.SetCustomProperties(myRoom.CustomProperties);
 
     }
-    private void SetCustomsPPT(string hashKeyIndex, int ind)
-    {
-        int playerIndex = ind;
-        if (GameManager._myCustomProperty[hashKeyIndex] != null)
-        {
-            GameManager._myCustomProperty[hashKeyIndex] = playerIndex;
-        }
-        else
-        {
-            GameManager._myCustomProperty.Add(hashKeyIndex, playerIndex);
-        }
-        PhotonNetwork.LocalPlayer.CustomProperties = GameManager._myCustomProperty;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(PhotonNetwork.LocalPlayer.CustomProperties);
-
-    }
-
     [PunRPC]
     private void SetBankText(string goldT,string dollarsT,string eurosT,string poundsT,string yensT)
     {

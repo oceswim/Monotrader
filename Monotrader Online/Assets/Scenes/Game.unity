@@ -12283,6 +12283,7 @@ MonoBehaviour:
   losePanel: {fileID: 712570781}
   diceRollButton: {fileID: 453586193}
   bankManager: {fileID: 5044555807920874385}
+  thePrefabSpawner: {fileID: 1405783204}
   theStateManager: {fileID: 418712194}
   gameModeText: {fileID: 434148613}
   lostText: {fileID: 1155689675}
@@ -12541,7 +12542,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Get a fortune of 50,000 to win !
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: b246c4190f4e46ec9352fe15a7b09ce0, type: 2}
@@ -12569,7 +12570,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 12
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12610,13 +12611,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 434148613}
-    characterCount: 32
+    characterCount: 0
     spriteCount: 0
-    spaceCount: 7
-    wordCount: 8
+    spaceCount: 0
+    wordCount: 0
     linkCount: 0
-    lineCount: 1
-    pageCount: 1
+    lineCount: 0
+    pageCount: 0
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -14739,7 +14740,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 108.2, y: -337.70166}
+  m_AnchoredPosition: {x: 108.2, y: -370.97638}
   m_SizeDelta: {x: 191.81, y: 116.79}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &507663262
@@ -17946,7 +17947,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: The value needs to be superior to 250.
+  m_text: The value needs to be superior to 0.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
@@ -40537,12 +40538,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1405783202}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d8be3889cf49e544b69477c86f414b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementScript: {fileID: 1405783205}
   playerPrefab: {fileID: 3511044656307863805, guid: c346dcf5e9c603a4b9327e3e4bc0b043,
     type: 3}
   Spawners:
@@ -40555,6 +40555,7 @@ MonoBehaviour:
   - {fileID: 1740958014233404160, guid: 835e0de66e35fc74282731236d56a367, type: 3}
   - {fileID: 7755314626316209624, guid: bbe516f8e05a4574bae93f6eb9a978ae, type: 3}
   - {fileID: 7576613070947553303, guid: 5e5d6ef6870c2de4f9ac64c6bd60a2ad, type: 3}
+  theMovementManager: {fileID: 1405783205}
 --- !u!114 &1405783205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59830,7 +59831,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2006782328
 Transform:
   m_ObjectHideFlags: 0
@@ -65031,7 +65032,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 108.2, y: -224.25333}
+  m_AnchoredPosition: {x: 108.2, y: -240.89069}
   m_SizeDelta: {x: 241, y: 117.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3064955557006822432

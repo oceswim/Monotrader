@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 
-public class FriendsManager : MonoBehaviourPun
+public class FriendsManager : MonoBehaviourPunCallBacks
 {
     //keeps track of the friend item instances.
     //when can update -> request ownership of the view and update the values on change.
@@ -45,7 +45,6 @@ public class FriendsManager : MonoBehaviourPun
         SetKeys();
         changeFortune = colorSet = false;
         InitialiseColor();
-        Debug.Log($"my color:{r}-{g}-{b}/{myPlayer.NickName}");
     }
     private void SetKeys()
     {
@@ -101,7 +100,7 @@ public class FriendsManager : MonoBehaviourPun
 
     public static void UpdateColors(string nameOfFriend)
     {
-        Debug.Log("In update other function of :" + PhotonNetwork.LocalPlayer.NickName + " friend to update: " + nameOfFriend);
+
         PlayerPrefs.SetString(FRIENDTOCHANGE, nameOfFriend);
         colorSet = true;
 
@@ -140,7 +139,7 @@ public class FriendsManager : MonoBehaviourPun
         playerItems.Add(instance);
         if (instance.NameLabel.Equals("You"))
         {
-            Debug.Log(myPlayer.NickName + " set his item instance");
+
             myPlayerItem = instance;
         }
 
@@ -149,11 +148,10 @@ public class FriendsManager : MonoBehaviourPun
     [PunRPC]
     public bool SomeoneLeft(string name)
     {
-        Debug.Log(name + " left the room");
+
         FriendItem theItem = null;
         foreach (FriendItem f in playerItems)
         {
-            Debug.Log("Removing foreach " + f.NameLabel.text +" vs "+ name);
             if (name.Equals(f.NameLabel.text))
             {
                 theItem = f;
@@ -229,12 +227,12 @@ public class FriendsManager : MonoBehaviourPun
                 var newColorBlock = f.GetComponent<Button>().colors;
                 newColorBlock.disabledColor = color;
                 f.GetComponent<Button>().colors = newColorBlock;
-                Debug.Log($"I'm {myPlayer.NickName} and i update {f.NameLabel.text} color with : {red}-{green}-{blue}");
+
             }
             else
             {
                 string name = f.NameLabel.text;
-                Debug.Log(name + " vs " + myPlayer.NickName);
+
                 string rPpt = name + "RedVal";
                 string gPpt = name + "GreenVal";
                 string bPpt = name + "BlueVal";
@@ -247,7 +245,7 @@ public class FriendsManager : MonoBehaviourPun
                 var newColorBlock = f.GetComponent<Button>().colors;
                 newColorBlock.disabledColor = color;
                 f.GetComponent<Button>().colors = newColorBlock;
-                Debug.Log($"I'm {myPlayer.NickName} and i update {f.NameLabel.text} color with : {red}-{green}-{blue}");
+
             }
         }
 

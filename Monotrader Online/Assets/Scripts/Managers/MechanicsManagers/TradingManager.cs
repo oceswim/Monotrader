@@ -14,11 +14,6 @@ public class TradingManager : MonoBehaviour
     private const string POUNDS_PRICE = "Pounds_Price";
     private const string YEN_PRICE = "Yen_Price";
 
-    private string PLAYER_GOLD;
-    private string PLAYER_DOLLARS;
-    private string PLAYER_EUROS;
-    private string PLAYER_YENS;
-    private string PLAYER_POUNDS;
     private Room myRoom;
 
     public Button confirmButton;
@@ -31,7 +26,8 @@ public class TradingManager : MonoBehaviour
     public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading;
     private float currencyPriceInGold;
     private double latestValue;
-    private string currencyModeText, currencyToChange;
+    private string currencyModeText;
+    private float currencyToChange;
     public static bool BeginProcess;
     // Start is called before the first frame update
     void Start()
@@ -47,12 +43,11 @@ public class TradingManager : MonoBehaviour
         {
             tradingMode = 0;//set to buy intially.
             UpdateText(tradingMode);
-            GetPrefs();
             BeginProcess = false;
         }
         if (eurosTrading)
         {
-            currencyToChange = PLAYER_EUROS;
+            currencyToChange = MoneyManager.PLAYER_EUROS;
             eurosTrading = false;
             myTitles[1].SetActive(true);
             currencyModeText = "€";
@@ -61,7 +56,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (dollarsTrading)
         {
-            currencyToChange = PLAYER_DOLLARS;
+            currencyToChange = MoneyManager.PLAYER_DOLLARS;
             dollarsTrading = false;
             myTitles[0].SetActive(true);
             currencyModeText = "$";
@@ -70,7 +65,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (poundsTrading)
         {
-            currencyToChange = PLAYER_POUNDS;
+            currencyToChange = MoneyManager.PLAYER_POUNDS;
             poundsTrading = false;
             myTitles[2].SetActive(true);
             currencyModeText = "£";
@@ -79,7 +74,7 @@ public class TradingManager : MonoBehaviour
         }
         else if (yensTrading)
         {
-            currencyToChange = PLAYER_YENS;
+            currencyToChange = MoneyManager.PLAYER_YENS;
             yensTrading = false;
             myTitles[3].SetActive(true);
             currencyModeText = "¥";
@@ -89,15 +84,7 @@ public class TradingManager : MonoBehaviour
   
     }
 
-    private void GetPrefs()
-    {
-        PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
-        PLAYER_DOLLARS = PlayerPrefs.GetString("MYDOLLARS");
-        PLAYER_EUROS = PlayerPrefs.GetString("MYEUROS");
-        PLAYER_YENS = PlayerPrefs.GetString("MYYENS");
-        PLAYER_POUNDS = PlayerPrefs.GetString("MYPOUNDS");
-        Debug.Log("malus value :" + PlayerPrefs.GetInt(MALUS));
-    }
+
     public void UpdateTextValue(string value) // check here if the value is less than what's in the bank + is less than what player has. otherwise need to put less.
     {
         if (PlayerPrefs.HasKey(MALUS))
@@ -132,7 +119,7 @@ public class TradingManager : MonoBehaviour
                     //currency -> gold
                     break;
             }
-            if (Int32.Parse(value) >= 250)
+            if (Int32.Parse(value) > 0)
             {
                 if (valueMinimumText.activeSelf)
                 {
@@ -218,36 +205,25 @@ public class TradingManager : MonoBehaviour
                     PlayerPrefs.SetInt(MALUS, 0);
                 }
             }
-            float newCurr;
-            float newGold;
+            float newCurr=0;
             switch (tradingMode)
             {
                 case 0://buy
                     //remove thevalue of gold
-                    newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - theValue;
-                    Debug.Log("BEFORE : " + PlayerPrefs.GetFloat(currencyToChange));
-                    newCurr = PlayerPrefs.GetFloat(currencyToChange) + (float)latestValue;
-                    PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-                    PlayerPrefs.SetFloat(currencyToChange, newCurr);
-                    Debug.Log("AFTER : " + PlayerPrefs.GetFloat(currencyToChange));
-                    MoneyManager.instance.UpdateFortuneInGame();
+                    MoneyManager.PLAYER_GOLD -= theValue;
+                    newCurr = currencyToChange + (float)latestValue;
                     //increase the value of currency
                     //gold -> currency
                     break;
                 case 1:
-                    newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + (float)latestValue;
-                    Debug.Log("BEFORE : " + PlayerPrefs.GetFloat(currencyToChange));
-                    newCurr = PlayerPrefs.GetFloat(currencyToChange) - theValue;
-                    PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-                    PlayerPrefs.SetFloat(currencyToChange, newCurr);
-                    Debug.Log("After : " + PlayerPrefs.GetFloat(currencyToChange));
-                    MoneyManager.instance.UpdateFortuneInGame();
+                    MoneyManager.PLAYER_GOLD += (float)latestValue;
+                    newCurr = currencyToChange - theValue;
                     //remove the value of currency
                     //increase value of gold
                     //currency -> gold
                     break;
             }
-           
+            UpdateMoneyManagerAmounts(currencyMode, newCurr);
             UpdateBankings(theValue, (int)Math.Round(latestValue, 0), currencyMode, tradingMode);
             myInputField.text = string.Empty;
             mySlider.value = mySlider.minValue;
@@ -269,10 +245,34 @@ public class TradingManager : MonoBehaviour
                 myTitles[3].SetActive(false);
             }
         }
+
+    }
+    private void UpdateMoneyManagerAmounts(int mode, float value)
+    {
+        //1 dollars
+        //2 euros
+        //3 pounds
+        //4 yens
+        switch(mode)
+        {
+            case 1:
+                MoneyManager.PLAYER_DOLLARS = value;
+                break;
+            case 2:
+                MoneyManager.PLAYER_EUROS = value;
+                break;
+            case 3:
+                MoneyManager.PLAYER_POUNDS = value;
+                break;
+            case 4:
+                MoneyManager.PLAYER_YENS = value;
+                break;
+        }
+        MoneyManager.instance.UpdateFortuneInGame();
     }
     private void UpdateBankings(int toAdd, int toRemove, int currency, int tradeMode)
     {
-        Debug.Log("TO ADD CURR :" + toAdd + " " + currency + " to remove :" + toRemove);
+      
         switch (currency)
         {
             case 1://dollars

@@ -3,7 +3,7 @@ using Photon.Realtime;
 using System;
 using UnityEngine;
 
-public class DicesManager : MonoBehaviourPun
+public class DicesManager : MonoBehaviourPunCallBacks
 {
     private Rigidbody myBody;
     private Room myRoom;
@@ -76,7 +76,7 @@ public class DicesManager : MonoBehaviourPun
         float start = 0;
         while (start < seconds)
         {
-            //Debug.Log("Waiting " + start);
+
             start += Time.deltaTime;
         }
     }
@@ -95,39 +95,38 @@ public class DicesManager : MonoBehaviourPun
         {
             zRot = zRot - 360;
         }
-        Debug.Log("X : " + xRot + " Z:" + zRot);
+
         if (xRot == 90 && zRot == 0)
         {
-            Debug.Log(transform.name+" it's a 1");
+
             diceVal = 1;
         }
         else if(xRot == 0 && zRot == 0)
         {
-            Debug.Log(transform.name + " it's a 2");
+    
             diceVal = 2;
         }
         else if (xRot == 0 && zRot == 90)
         {
-            Debug.Log(transform.name + " it's a 3");
+
             diceVal = 3;
         }
         else if (xRot == 0 && zRot == -90)
         {
-            Debug.Log(transform.name + " it's a 4");
+  
             diceVal = 4;
         }
         else if (xRot == 0 && zRot == 180)
         {
-            Debug.Log(transform.name + " it's a 5");
+ 
             diceVal = 5;
         }
         else if (xRot == -90 && zRot == 0)
         {
-            Debug.Log(transform.name + " it's a 6");
+
             diceVal = 6;
         }
 
-        Debug.Log("Dice"+this.gameObject.name+" set to :" + diceVal.ToString());
         if (!taxesRoll)
         {
             
@@ -137,7 +136,6 @@ public class DicesManager : MonoBehaviourPun
         else
         {
             taxesRoll = false;
-            Debug.Log("HERE " + Time.deltaTime);
             TaxesManager.values.Add(diceVal);
             TaxesManager.status++;
         }
@@ -173,7 +171,6 @@ public class DicesManager : MonoBehaviourPun
         {
             photonView.TransferOwnership(PhotonNetwork.PlayerListOthers[0]);
            
-            Debug.Log(transform.name +" transfered ownership to " + photonView.Owner.NickName);
         }
     }
 }

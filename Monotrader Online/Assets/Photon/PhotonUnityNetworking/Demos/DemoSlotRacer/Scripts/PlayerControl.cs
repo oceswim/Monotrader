@@ -23,7 +23,7 @@ namespace Photon.Pun.Demo.SlotRacer
     /// Handle the Car instance 
     /// </summary>
     [RequireComponent(typeof(SplineWalker))]
-    public class PlayerControl : MonoBehaviourPun, IPunObservable
+    public class PlayerControl : MonoBehaviourPunCallBacks, IPunObservable
     {
         /// <summary>
         /// The car prefabs to pick depending on the grid position.

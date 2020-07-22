@@ -9,7 +9,7 @@ using Photon.Realtime;
 /// It aims at showing how to share health for a friend that plays on a different room than you for example.
 /// But of course the message can be anything and a lot more complex.
 /// </summary>
-public class FriendItem : MonoBehaviourPun {
+public class FriendItem : MonoBehaviourPunCallBacks {
 
 
 	[HideInInspector]

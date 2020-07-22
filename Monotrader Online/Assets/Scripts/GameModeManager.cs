@@ -1,34 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
-using System;
 using Photon.Realtime;
 
-public class GameModeManager : MonoBehaviourPun
+public class GameModeManager : MonoBehaviourPunCallbacks
 {
     private const string FORTUNE = "myFortune";
     private const string WIN_MESSAGE = "Congrats ! You won the game!";
     public const string TIMER_TOGGLE_NAME = "Timer";
     public const string SCORE_TOGGLE_NAME = "ScoreReach";
+    public const string STARTED_ALREADY = "startedAlready";
     private const int TIME_LIMIT = 1;
     private const int AMOUNT_REACH = 2;
     private const float AMOUNT_LIMIT = 30000;
     private float TIMER_LIMIT = 900; //15 mins = 60 * 15
     private string winnerName;
-    private int mode;
+    private int mode,playerAmount;
     private bool timerOn, started,amountGoal;
     private Room myRoom;
     private Player myPlayer;
 
     public Toggle timeLimit, scoreLimit;
     public GameObject MasterPanel, OtherPanel, display, charSelectionPanel, winPanel, losePanel, diceRollButton, bankManager;
+    public PrefabSpawner thePrefabSpawner;
     public StatePresetManager theStateManager;
     public TMP_Text gameModeText,lostText,wonText;
 
-    public static bool checkFortune, playerNameTagOn;
+    public static bool checkFortune, playerNameTagOn, arrivedLate;
 
 
     // Start is called before the first frame update
@@ -39,19 +38,92 @@ public class GameModeManager : MonoBehaviourPun
 
         myPlayer = PhotonNetwork.LocalPlayer;
         myRoom = GameManager.myRoom;
-        started =playerNameTagOn= false;
+        playerAmount = myRoom.PlayerCount;
+        started =playerNameTagOn=arrivedLate= false;
+        if (myRoom.CustomProperties[STARTED_ALREADY] != null)
+        {
+            if ((int)myRoom.CustomProperties[STARTED_ALREADY] == 1)
+            {
+                Debug.Log("Oh no i'm late");
+                LateSetUp();
+            }
+        }
+    }
+    private void Update()
+    {
+       
+            if (GameManager.instance.gameCanStart && !started)
+            {
+                started = true;
+                if (myPlayer.IsMasterClient)
+                {
+                    if (!photonView.IsMine)
+                    {
+                        photonView.TransferOwnership(myPlayer);
+                    }
+                    photonView.RPC("ActivateGameMode", RpcTarget.AllBuffered, mode);
+
+                }
+            }
+            else
+            {
+                if (timerOn)
+                {
+                    if (TIMER_LIMIT > 0)
+                    {
+                        TIMER_LIMIT -= Time.deltaTime;
+                        DisplayTime(TIMER_LIMIT);
+                    }
+                    else
+                    {
+
+                        DeactivateRollButton();
+                        gameModeText.text = "Done!";
+                        if (myPlayer.IsMasterClient)
+                        {
+                            CheckWinner();
+                        }
+                        else
+                        {
+                            //display a "and the winner is..." panel
+                        }
+                        timerOn = false;
+                    }
+                }
+                else
+                {
+                    if (amountGoal)
+                    {
+                        if (checkFortune)
+                        {
+                            checkFortune = false;
+                            if (MoneyManager.PLAYER_FORTUNE > AMOUNT_LIMIT)
+                            {
+                                amountGoal = false;
+                                if (!photonView.IsMine)
+                                {
+                                    photonView.TransferOwnership(myPlayer);
+                                }
+                                winnerName = myPlayer.NickName;
+                                photonView.RPC("WinnerPanelActivation", RpcTarget.AllBuffered, winnerName);
+                                //you won the game
+                            }
+                        }
+                    }
+                }
+            }
+        
     }
     //this is for master player only
     public void ConfirmGameMode()
     {
+        SetRoomProperty(STARTED_ALREADY, 1);
        if(timeLimit.isOn)
         {
-            Debug.Log("time limit");
             mode = TIME_LIMIT;
         }
        else if(scoreLimit.isOn)
         {
-            Debug.Log("Score limit");
             mode = AMOUNT_REACH;
         }
         if(!photonView.IsMine)
@@ -66,7 +138,7 @@ public class GameModeManager : MonoBehaviourPun
     [PunRPC]
     private void GoToCharSelect()
     {
-        theStateManager.enabled = true;
+        Debug.Log("in go to charselect");
         if(PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;//we close the room to anyone else trying to join it when master client chose the game mode.
@@ -77,77 +149,32 @@ public class GameModeManager : MonoBehaviourPun
         {
             OtherPanel.SetActive(false);
         }
-
+        thePrefabSpawner.enabled = true;
+        theStateManager.enabled = true;
         charSelectionPanel.SetActive(true);
         display.SetActive(true);
         bankManager.SetActive(true);
         playerNameTagOn = true;
-    }
-    private void Update()
+    }    
+ 
+    public void LateSetUp()
     {
-        if (GameManager.instance.gameCanStart && !started)
+        if (!photonView.IsMine)
         {
-            started = true;
-            if (myPlayer.IsMasterClient)
-            {
-                if (!photonView.IsMine)
-                {
-                    photonView.TransferOwnership(myPlayer);
-                }
-                photonView.RPC("ActivateGameMode", RpcTarget.AllBuffered,mode);
-                
-            }
-            
-
+            photonView.TransferOwnership(myPlayer);
         }
-        else
-        {
-            if (timerOn)
-            {
-                if (TIMER_LIMIT > 0)
-                {
-                    TIMER_LIMIT -= Time.deltaTime;
-                    DisplayTime(TIMER_LIMIT);
-                }
-                else
-                {
-                    Debug.Log("timer done");
-                    DeactivateRollButton();
-                    gameModeText.text = "Done!";
-                    if (myPlayer.IsMasterClient)
-                    {
-                        CheckWinner();
-                    }
-                    else
-                    {
-                        //display a "and the winner is..." panel
-                    }
-                    timerOn = false;
-                }
-            }
-            else 
-            {
-                if (amountGoal)
-                {
-                    if (checkFortune)
-                    {
-                        checkFortune = false;
-                        if (PlayerPrefs.GetFloat(FORTUNE) > AMOUNT_LIMIT)
-                        {
-                            amountGoal = false;
-                            if (!photonView.IsMine)
-                            {
-                                photonView.TransferOwnership(myPlayer);
-                            }
-                            winnerName = myPlayer.NickName;
-                            photonView.RPC("WinnerPanelActivation", RpcTarget.AllBuffered, winnerName);
-                            //you won the game
-                        }
-                    }
-                }
-            }
-        }
+        photonView.RPC("GivePlayerIndToPlay", RpcTarget.AllBuffered);
+        Debug.Log("player ind to play :" + GameManager.playerIndexToPlay);
+        OtherPanel.SetActive(false);
+        thePrefabSpawner.enabled = true;
+        theStateManager.enabled = true;
+        charSelectionPanel.SetActive(true);
+        display.SetActive(true);
+        bankManager.SetActive(true);
+        playerNameTagOn = true;
+        
     }
+
     private void DisplayTime(float timeToDisplay)
     {
         float minutes = Mathf.FloorToInt(timeToDisplay / 60);
@@ -163,12 +190,12 @@ public class GameModeManager : MonoBehaviourPun
         {
 
             string key = "Player" + p.ActorNumber + "Fortune";
-            Debug.Log(myRoom.CustomProperties[key] + " fortune vs winner fortune:" + winnerFortune);
+
             if((float)myRoom.CustomProperties[key]>winnerFortune)
             {
                 winnerFortune = (float)myRoom.CustomProperties[key];
                 winnerName = p.NickName;
-                Debug.Log("New winner :"+ winnerName);
+
             }
         }
         if (!photonView.IsMine)
@@ -199,7 +226,7 @@ public class GameModeManager : MonoBehaviourPun
         DeactivateRollButton();
         if(name.Equals(myPlayer.NickName))
         {
-            Debug.Log("YOU WON");
+
             DisplayWinPannel();
         }
         else
@@ -209,8 +236,7 @@ public class GameModeManager : MonoBehaviourPun
     }
     private void DeactivateRollButton()
     {
-        Debug.Log("Roll dice button name : " + diceRollButton.name);
-        Debug.Log("Roll dice button activated-2?  " + diceRollButton.activeSelf);
+
         if (diceRollButton.activeSelf)
         {
             diceRollButton.SetActive(false);
@@ -226,7 +252,8 @@ public class GameModeManager : MonoBehaviourPun
         losePanel.SetActive(true);
         lostText.text = $"Sorry but {theWinner} won this game... Your time will come soon!";
     }
-    private void SetRoomProperty(string hashKey, float value)
+  
+    private void SetRoomProperty(string hashKey, int value)//general room properties
     {
         if (myRoom.CustomProperties[hashKey] == null)
         {

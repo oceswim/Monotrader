@@ -176,7 +176,7 @@ namespace Photon.Pun
     /// <summary>
     /// This class adds the property photonView, while logging a warning when your game still uses the networkView.
     /// </summary>
-    public class MonoBehaviourPun : MonoBehaviour
+    public class MonoBehaviourPunCallBacks : MonoBehaviour
     {
         /// <summary>Cache field for the PhotonView on this GameObject.</summary>
         private PhotonView pvCache;
@@ -214,11 +214,11 @@ namespace Photon.Pun
     /// Visual Studio and MonoDevelop should provide the list of methods when you begin typing "override".
     /// <b>Your implementation does not have to call "base.method()".</b>
     ///
-    /// This class implements all callback interfaces and extends <see cref="Photon.Pun.MonoBehaviourPun"/>.
+    /// This class implements all callback interfaces and extends <see cref="Photon.Pun.MonoBehaviourPunCallBacks"/>.
     /// </remarks>
     /// \ingroup callbacks
     // the documentation for the interface methods becomes inherited when Doxygen builds it.
-    public class MonoBehaviourPunCallbacks : MonoBehaviourPun, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks, IWebRpcCallback, IErrorInfoCallback
+    public class MonoBehaviourPunCallbacks : MonoBehaviourPunCallBacks, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks, IWebRpcCallback, IErrorInfoCallback
     {
         public virtual void OnEnable()
         {

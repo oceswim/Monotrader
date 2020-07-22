@@ -24,7 +24,7 @@ public class Exit : MonoBehaviourPunCallbacks
             case GAME_EXIT:
                 if (FriendsManager.instance.CallRPCFriendLeaving(PhotonNetwork.LocalPlayer.NickName))
                 {
-                    
+
                     PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
                     exitSound.Play();
                     PhotonNetwork.LeaveRoom();
@@ -34,17 +34,6 @@ public class Exit : MonoBehaviourPunCallbacks
                 break;
         }
 
-    }
-    private void SwitchOwnerShipDice()
-    {
-        Dice1 = GameObject.Find("Dice1");
-        Dice2 = GameObject.Find("Dice2");
-
-        DicesManager dice1 = Dice1.GetComponent<DicesManager>();
-        DicesManager dice2 = Dice2.GetComponent<DicesManager>();
-
-        dice1.switchOwner = true;
-        dice2.switchOwner = true;
     }
     private IEnumerator QuitApplication()
     {
@@ -58,23 +47,37 @@ public class Exit : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Debug.Log(PhotonNetwork.MasterClient.NickName + " is now master client");
+        if(GameManager.instance.myTurn)
+        {
+            Debug.Log("Im " + PhotonNetwork.LocalPlayer + " and it's my turn");
+            int temp = GetIndex();
+            if(!photonView.IsMine)
+            {
+                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
 
-        
+            }
+            photonView.RPC("SetIndPlayerToPlay",RpcTarget.AllBuffered,temp);
+        }
+        GameManager.diceRollCount = 0;//resets the dice roll count to make sure its value matches the new player count    
         if (FriendsManager.instance.playerItems.Count < PlayerPrefs.GetInt(MIN_PLAYER_KEY))
         {    
             onePlayerLeft.SetActive(true);
         }
-        else if(PhotonNetwork.LocalPlayer.IsMasterClient)
-        {
-            int temp = Random.Range(0, PhotonNetwork.PlayerList.Length);
-            if (!photonView.IsMine)
-            {
-                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-            }
-            photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, temp);
-        }
 
+
+    }
+    private int GetIndex()
+    {
+        int index = 0;
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if(PhotonNetwork.PlayerList[i].Equals(PhotonNetwork.LocalPlayer))
+            {
+                index = i;
+                continue;
+            }
+        }
+        return index;
     }
     public void ContinueAlone()
     {

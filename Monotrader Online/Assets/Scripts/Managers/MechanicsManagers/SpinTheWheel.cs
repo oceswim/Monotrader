@@ -11,11 +11,6 @@ public class SpinTheWheel : MonoBehaviour
     public const string POUNDS_UPDATE = "PoundsUpdate";
     public const string YENS_UPDATE = "YensUpdate";
 
-    private string PLAYER_GOLD;
-    private string PLAYER_DOLLARS;
-    private string PLAYER_EUROS;
-    private string PLAYER_YENS;
-    private string PLAYER_POUNDS;
     private const string MALUS = "myMalus";
     public GameObject theWheel,confirmButton;
     private bool spin;
@@ -40,7 +35,6 @@ public class SpinTheWheel : MonoBehaviour
         {
             rotSpeed = 0;
             theWheel.transform.eulerAngles = new Vector3(0, 0, 0);
-            GetPrefs();
             BeginProcess = false;
         }
         if(spin)
@@ -95,17 +89,15 @@ public class SpinTheWheel : MonoBehaviour
         if(value>=0 && value<=96)
         {
             mode1 = true;
-            float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 500;
+            float newGold = MoneyManager.PLAYER_GOLD + 500;
             BankManager.instance.UpdateGold(-500);
-            PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
-           
+
         }
         else if(value >= 96.1 && value <=190)
         {
             mode1 = true;
-            float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) - 250;
+            float newGold = MoneyManager.PLAYER_GOLD - 250;
             BankManager.instance.UpdateGold(250);
-            PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
 
         }
         else if(value >= 274.1 && value <= 360)
@@ -125,47 +117,35 @@ public class SpinTheWheel : MonoBehaviour
             switch(randomInt)
             {
                 case 0:
-                    key= PLAYER_DOLLARS;
+                    MoneyManager.PLAYER_DOLLARS+=500;
                     BankManager.instance.UpdateDollars(-500);
 
                     //dollars
                     break;
                 case 1:
-                    key =PLAYER_EUROS;
+                    MoneyManager.PLAYER_EUROS+=500;
                     BankManager.instance.UpdateEuros(-500);
 
                     //euros
                     break;
                 case 2:
-                    key=PLAYER_POUNDS;
+                    MoneyManager.PLAYER_POUNDS+=500;
                     BankManager.instance.UpdatePounds(-500);
 
                     //pounds
                     break;
                 case 3:
-                    key=PLAYER_YENS;
+                    MoneyManager.PLAYER_YENS+=500;
                     BankManager.instance.UpdateYens(-500);
 
                     //yen
                     break;
 
             }
-            float newFortune = PlayerPrefs.GetFloat(key) + 500;
-            PlayerPrefs.SetFloat(key, newFortune);
+
         }
         
         confirmButton.SetActive(true);
-    }
-
-    private void GetPrefs()
-    {
-      
-      PLAYER_GOLD =   PlayerPrefs.GetString("MYGOLD");
-      PLAYER_DOLLARS =   PlayerPrefs.GetString("MYDOLLARS");
-      PLAYER_EUROS =  PlayerPrefs.GetString("MYEUROS");
-      PLAYER_YENS =  PlayerPrefs.GetString("MYYENS");
-      PLAYER_POUNDS =  PlayerPrefs.GetString("MYPOUNDS");
-        
     }
     private void SetRoomProperty(string hashKey, int value)
     {

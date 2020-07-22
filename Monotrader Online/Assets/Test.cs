@@ -3,7 +3,7 @@ using TMPro;
 using Photon.Pun;
 
 
-public class Test : MonoBehaviourPun
+public class Test : MonoBehaviourPunCallBacks
 {
     public TMP_Text myText;
     // Start is called before the first frame update

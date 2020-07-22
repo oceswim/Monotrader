@@ -31,6 +31,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private const string MIN_PLAYER_KEY = "MinPlayers";
     private void Awake()
     {
+      
         PlayerPrefs.DeleteAll();//TO DELLLLLL
         PhotonNetwork.AutomaticallySyncScene = false;
         index = minPlayerPerRoom = 1;

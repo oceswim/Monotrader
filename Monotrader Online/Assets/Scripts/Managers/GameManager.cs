@@ -5,19 +5,18 @@ using TMPro;
 using Photon.Realtime;
 
 
-public class GameManager : MonoBehaviourPun
+public class GameManager : MonoBehaviourPunCallBacks
 {
     private const string PREFDICE = "DiceVal";
 
     //room property keys
-    private const string DICEROLLCOUNTER = "diceRollsCount";
     private const string PLAYER_STATE = "myState";
     private const string PLAYER_READY_HASHKEY = "playerReady";
     private const string PLAYER_IN_ACTION_HASHKEY = "playerPlaying";
     private const string GAME_STATE_HASHKEY = "gameState";
     private const string DICE_1_HASHKEY = "Dice1Name";
     private const string DICE_2_HASHKEY = "Dice2Name";
-    private const string TURN_COUNT = "TurnCount";
+    private const string TURN_COUNT = "turnCountOverall";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
 
     private string PLAYER_GOLD;
@@ -28,7 +27,7 @@ public class GameManager : MonoBehaviourPun
     private bool dicesRolling;
   
     //private int moveVal, diceStatus, turnCounter;
-    private int moveVal, turnCounter;
+    private int moveVal;
     
     public int diceStatus;//TEMP
 
@@ -37,7 +36,7 @@ public class GameManager : MonoBehaviourPun
     public static ExitGames.Client.Photon.Hashtable _myCustomProperty = new ExitGames.Client.Photon.Hashtable();
     public static GameManager instance = null;
     public static Room myRoom;
-    public static int playerIndexToPlay;
+    public static int playerIndexToPlay,diceRollCount,TURN_COUNT_VALUE;
 
     //public variables
     public AudioSource mainTheme;
@@ -73,12 +72,10 @@ public class GameManager : MonoBehaviourPun
     {
         
         moveVal = diceStatus= 0 ;
-        turnCounter = 1;
-        PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
+        TURN_COUNT_VALUE=1;
         gameCanStart =dicesRolling= false;
         myRoom = PhotonNetwork.CurrentRoom;
-        SetRoomProperty(TURN_COUNT, 1);
-        turnCountText.text = "Turn #"+turnCounter.ToString();
+        turnCountText.text = "Turn #"+TURN_COUNT_VALUE.ToString();
         SetRoomProperty(PLAYERS_NEW_TURN, 0);
     }
 
@@ -116,6 +113,15 @@ public class GameManager : MonoBehaviourPun
         }
         if (myTurn && gameCanStart)
         {
+            if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
+            {
+                Debug.Log(playerIndexToPlay + " it's the player ind to play it corresponds to " + PhotonNetwork.PlayerList[playerIndexToPlay].NickName);
+                if(!myPlayer.Equals(PhotonNetwork.PlayerList[playerIndexToPlay]))
+                {
+                    myTurn = false;
+                    DiceUI.SetActive(false);
+                }
+            }
             if (dicesRolling)
             {
 
@@ -123,13 +129,14 @@ public class GameManager : MonoBehaviourPun
                 {
                     diceStatus = 0;
                     dicesRolling = false;
-           
+
                     PlayerPrefs.SetInt(PREFDICE, moveVal);
                     moveVal = 0;
                     //activate movement
                     MovementManager.moveMe = true;
                 }
             }
+         
         }
         else if (!myTurn && gameCanStart)
         {
@@ -139,6 +146,7 @@ public class GameManager : MonoBehaviourPun
                 myTurn = true;
                 DiceUI.SetActive(true);
             }
+
         }
 
 
@@ -220,11 +228,10 @@ public class GameManager : MonoBehaviourPun
     private bool CheckIfMyTurn()
     {
         bool isItMyTurn = false;
-        Debug.Log("Player list length: " + PhotonNetwork.PlayerList.Length + " vs playerindexTolPLay " + playerIndexToPlay);
         if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
         {
             Player playerToplay = PhotonNetwork.PlayerList[playerIndexToPlay];
-
+            Debug.Log(" - Player to play is :" + playerToplay.NickName);
             if (playerToplay.Equals(myPlayer))
             {
                 isItMyTurn = true;
@@ -292,21 +299,20 @@ public class GameManager : MonoBehaviourPun
     //checks if every player went through 1 lap and gives the player who just completed one a fixed amount of money.
     public void TurnManager()
     {
-        turnCounter++;
-        PlayerPrefs.SetInt(TURN_COUNT, turnCounter);
+       
+        TURN_COUNT_VALUE++;
         SetRoomPlayersNewTurn(1);
         int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
-        Debug.Log("Turn manager at " + Time.deltaTime + " by " + PhotonNetwork.LocalPlayer.NickName+" and playersturn updated :"+playersTurnUpdated);
-        turnCountText.text = "Turn #"+turnCounter.ToString();
+        turnCountText.text = "Turn #"+TURN_COUNT_VALUE.ToString();
         NewTurnMechanic();
-        if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
+        /*if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
             SetRoomPlayersNewTurn(0);
-            Debug.Log("New turn for both players by " + PhotonNetwork.LocalPlayer.NickName + " and playersturn updated :" + (int)myRoom.CustomProperties[PLAYERS_NEW_TURN]);
             UpdateTurnCount();//overall turn gets increased
             MoneyManager.newTurnFortune = true;
-        }
-
+        }*/
+        
+        MoneyManager.newTurnFortune = true;//allows to update the current bankings value based on the new trends.
     }
 
     /*
@@ -317,11 +323,9 @@ public class GameManager : MonoBehaviourPun
     private void NewTurnMechanic()//one player cross new turn
     {
         MoneyManager.instance.NewTurnFunction();
-        PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
-        float newGold = PlayerPrefs.GetFloat(PLAYER_GOLD) + 2000;
+        PLAYER_GOLD += 2000;
         BankManager.instance.UpdateGold(-2000);
         BankManager.Trigger = true;
-        PlayerPrefs.SetFloat(PLAYER_GOLD, newGold);
         MoneyManager.instance.UpdateFortuneInGame();
 
     }
@@ -371,26 +375,31 @@ public class GameManager : MonoBehaviourPun
         if (!taxesRoll)
         {
             dicesRolling = true;
-
-            if (myRoom.CustomProperties[DICEROLLCOUNTER] != null)
+            if (!photonView.IsMine)
             {
-                int newCount = (int)myRoom.CustomProperties[DICEROLLCOUNTER] + 1;
-                SetRoomProperty(DICEROLLCOUNTER, newCount);
+                photonView.TransferOwnership(myPlayer);
+
+            }
+            if (diceRollCount>0)
+            {
+              
+                diceRollCount += 1;
+                photonView.RPC("SetDiceRollCount", RpcTarget.AllBuffered,diceRollCount);
+
             }
             else
             {
-                SetRoomProperty(DICEROLLCOUNTER, 1);
+             
+                diceRollCount = 1;
+                photonView.RPC("SetDiceRollCount", RpcTarget.AllBuffered, diceRollCount);
+
             }
-            if ((int)myRoom.CustomProperties[DICEROLLCOUNTER] == myRoom.PlayerCount)
+            if (diceRollCount == myRoom.PlayerCount)
             {
-                SetRoomProperty(DICEROLLCOUNTER, 0);
-       
-                if (!photonView.IsMine)
-                {
-                    photonView.TransferOwnership(myPlayer);
-      
-                }
-                photonView.RPC("TrendsUpdates", RpcTarget.AllBuffered,true);
+
+                diceRollCount = 0;
+                photonView.RPC("SetDiceRollCount", RpcTarget.AllBuffered, diceRollCount);
+                photonView.RPC("TrendsUpdates", RpcTarget.AllBuffered, true);
             }
         }
     }
@@ -399,13 +408,8 @@ public class GameManager : MonoBehaviourPun
     //updates the dices player prefs value
     public void SetDicePrefs(int val)
     {
-        Debug.Log("In dice prefs");
         moveVal += val;
-  
         diceStatus += 1;
-     
-
-
     }
 
     //allows to seperate each dice instantiated
@@ -423,7 +427,6 @@ public class GameManager : MonoBehaviourPun
     private void SetPlayerTurnPref(int index)
     {  
         PlayerPrefs.SetInt(PLAYER_IN_ACTION_HASHKEY, index);
-        Debug.Log("player pref in action set to :" + index + " by " + myPlayer.NickName) ;
     }
     [PunRPC]
     private void StartMainTheme()
@@ -434,14 +437,40 @@ public class GameManager : MonoBehaviourPun
     [PunRPC]
     private void SetIndPlayerToPlay(int ind)
     {
-        playerIndexToPlay = ind;
+        if (playerIndexToPlay != ind)
+        {
+            playerIndexToPlay = ind;
+        }
     }
+    [PunRPC]
+    private void GivePlayerIndToPlay()
+    {
+        if(myPlayer.IsMasterClient)
+        {
+            if (!photonView.IsMine)
+            {
+                photonView.TransferOwnership(myPlayer);
+            }
+            photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered,playerIndexToPlay);
+        }
+    }
+    [PunRPC]
+    private void SetDiceRollCount(int ind)
+    {
+        if (diceRollCount != ind)
+        {
+
+            diceRollCount = ind;
+
+        }
+    }
+
     private void WaitOut(float seconds)
     {
         float start = 0;
         while (start < seconds)
         {
-            //Debug.Log("Waiting " + start);
+
             start += Time.deltaTime;
         }
     }

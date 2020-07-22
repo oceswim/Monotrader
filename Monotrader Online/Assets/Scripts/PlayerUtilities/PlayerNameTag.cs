@@ -6,7 +6,7 @@ using Photon.Realtime;
 /*
  * Allows to show the other player names and hide the name if it's our name.
  */
-public class PlayerNameTag : MonoBehaviourPun
+public class PlayerNameTag : MonoBehaviourPunCallBacks
 {
     [SerializeField] private TextMeshProUGUI nameText;
     private Room myRoom;

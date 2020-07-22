@@ -2,17 +2,16 @@
 using Photon.Realtime;
 using UnityEngine;
 using TMPro;
-public class PrefabSpawner : MonoBehaviourPun
+public class PrefabSpawner : MonoBehaviourPunCallBacks
 {
-    public MovementManager movementScript;
-    private const string PLAYER_NAME_PREF = "myName";
+ 
     [SerializeField] private GameObject playerPrefab;
     public Transform[] Spawners;
     private Transform Spawn;
     private int[] otherNumbers;
     public GameObject[] inGamePrefabs = new GameObject[4];
     public static bool spawn;
-
+    public MovementManager theMovementManager;
     void Start()
     {
         spawn = false;
@@ -46,13 +45,11 @@ public class PrefabSpawner : MonoBehaviourPun
     //for each players present in the room one instance of the player prefab spawns
     private void SpawnMyPlayer(int i)
     {
-
         Spawn = Spawners[i];
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Spawn.position, Quaternion.identity, 0);
         myPlayer.name = "Player"+(i+1).ToString();
-        PlayerPrefs.SetString(PLAYER_NAME_PREF, myPlayer.name);
         myPlayer.transform.SetParent(Spawn);
-        movementScript.enabled = true;
+        theMovementManager.enabled = true;
     }
 
     //depending on the index chosen the corresponding model is spawned

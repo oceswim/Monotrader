@@ -1,7 +1,7 @@
 ﻿using Photon.Pun;
 using System.Collections;
 using UnityEngine;
-public class MovementManager : MonoBehaviourPun
+public class MovementManager : MonoBehaviourPunCallBacks
 {
     //the different hashkeys and constant private variables
     private const string PREFDICE = "DiceVal";
@@ -12,7 +12,6 @@ public class MovementManager : MonoBehaviourPun
     private const int CORNER_3 = 21;
     private const int CORNER_4 = 0;
     private const float SPEED = 5f;
-    private const string PLAYER_NAME_PREF_KEY = "myName";
     private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
     private Transform[] Targets;
     private Transform transformToMove, endPoint;
@@ -55,12 +54,12 @@ public class MovementManager : MonoBehaviourPun
     {
         Transform myTransf;
         myPositionIndex = PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY);
-        string myName = PlayerPrefs.GetString(PLAYER_NAME_PREF_KEY);
         myActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
+        //string myName = PlayerPrefs.GetString(PLAYER_NAME_PREF_KEY);
+        string myName = "Player" + myActorNum.ToString();
         string spawnPath = "StartP" + myActorNum.ToString();
         string fullPath = "BoardGame/Spawners/" + spawnPath + "/" + myName;
         myTransf = GameObject.Find(fullPath).transform;
-        //Debug.Log("HEY" + myTransf.name);
         return myTransf;
     }
    
@@ -97,8 +96,6 @@ public class MovementManager : MonoBehaviourPun
         
         int overlap = -1;
 
-        Debug.Log("OLD VS NEW : " + oldPosition + " vs " + newPositionIndex);
-
         if (newPositionIndex > TARGET_AMOUNT)
         {
             int temp = newPositionIndex - TARGET_AMOUNT;
@@ -107,7 +104,7 @@ public class MovementManager : MonoBehaviourPun
         }
         Transform finalTarget;
         Transform newTurnTarget;
-        Debug.Log("OLD VS NEW after modif: "+oldPosition + " vs " + newPositionIndex+" overlap : "+ overlap);
+
         if (overlap >= 0)
         {
             finalTarget = Targets[0];
@@ -224,7 +221,7 @@ public class MovementManager : MonoBehaviourPun
         }
         else//new turn
         {
-
+            
             if (oldPosition >= 14 && oldPosition < 21)
             {
                 if (overlap == 0)
@@ -264,8 +261,7 @@ public class MovementManager : MonoBehaviourPun
             }
            
             myPositionIndex = overlap;
-            Debug.Log("New turn move " + PhotonNetwork.LocalPlayer.NickName + " and new pos index: " + myPositionIndex+" and backwards :"+ backWards);
-            Debug.Log(newTurnTarget.name + " and mode: " + movementMode);
+            
             Movement(newTurnTarget, movementMode);
             
 
@@ -284,7 +280,6 @@ public class MovementManager : MonoBehaviourPun
 
                 while (!doneMoving)
                 {
-                    Debug.Log("in while case1");
                     var theOffSet = GetOffset(endPoint, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(endPoint);
@@ -319,7 +314,7 @@ public class MovementManager : MonoBehaviourPun
 
                 while (!step1Complete)
                 {
-                    Debug.Log("in while step1 case 2");
+
                     Vector3 theOffSet = GetOffset(halfwayTarget1, transformToMove);
                     theOffSet = theOffSet.normalized * SPEED;
                     transformToMove.LookAt(halfwayTarget1);
@@ -413,12 +408,12 @@ public class MovementManager : MonoBehaviourPun
         doneMoving = false;
         if (!backWards)
         {
-            
-           BoardManager.SetPosition(myPositionIndex, newTurn);
-            if (newTurn)
+            BoardManager.SetPosition(myPositionIndex, newTurn);
+            if(newTurn)
             {
-                newTurn = false;    
+                newTurn = false;
             }
+           
         }
         else
         {

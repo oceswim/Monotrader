@@ -12,11 +12,7 @@ public class TaxesManager : MonoBehaviour
     //fortune 10,001 - 20,000 = 10% = 2% each money gets decreased.
     //fortune 20,001 - 8 = 15% = 3% each money gets decreased.
     //if no more of one currency take on the gold.
-    private string PLAYER_GOLD;
-    private string PLAYER_DOLLARS;
-    private string PLAYER_EUROS;
-    private string PLAYER_YENS;
-    private string PLAYER_POUNDS;
+    
     private const int TOTAL_MONEY_TYPE = 5;
     private const string EUROS_PRICE = "Euros_Price";
     private const string DOLLARS_PRICE = "Dollars_Price";
@@ -41,7 +37,6 @@ public class TaxesManager : MonoBehaviour
     {
         myRoom = GameManager.myRoom;
         dice1 = dice2 = 0;
-        InitialiseHashKeys();
     }
     private void Update()
     {
@@ -101,15 +96,7 @@ public class TaxesManager : MonoBehaviour
         buttonContent.text = $"Pay {total.ToString()}";
 
     }
-    private void InitialiseHashKeys()
-    {
-        PLAYER_GOLD = PlayerPrefs.GetString("MYGOLD");
-        PLAYER_DOLLARS = PlayerPrefs.GetString("MYDOLLARS");
-        PLAYER_EUROS = PlayerPrefs.GetString("MYEUROS");
-        PLAYER_YENS = PlayerPrefs.GetString("MYYENS");
-        PLAYER_POUNDS = PlayerPrefs.GetString("MYPOUNDS");
-    }
-    // Update is called once per frame
+
 
     //to properly substract taxes : we need to bring every currencies back to a 1 on 1 proportion.
     //once it's done, then we substract the tax. then we call update fortune on moneymanager which will update the player's fortune
@@ -255,22 +242,22 @@ public class TaxesManager : MonoBehaviour
     }
     private void GetPrefs()
     {
-        playerFortune = PlayerPrefs.GetFloat(FORTUNE);
+        playerFortune = MoneyManager.PLAYER_FORTUNE;
     
-        playerE = PlayerPrefs.GetFloat(PLAYER_EUROS);
-        playerD = PlayerPrefs.GetFloat(PLAYER_DOLLARS);
-        playerP = PlayerPrefs.GetFloat(PLAYER_POUNDS);
-        playerY = PlayerPrefs.GetFloat(PLAYER_YENS);
-        playerG = PlayerPrefs.GetFloat(PLAYER_GOLD);
+        playerE = MoneyManager.PLAYER_EUROS;
+        playerD = MoneyManager.PLAYER_DOLLARS;
+        playerP = MoneyManager.PLAYER_POUNDS;
+        playerY = MoneyManager.PLAYER_YENS;
+        playerG = MoneyManager.PLAYER_GOLD;
     }
     private void SetPrefs(float d, float e, float p, float y,float g)
     {
         Debug.Log($"TO SET : {d},{e},{p},{g}");
-        PlayerPrefs.SetFloat(PLAYER_EUROS, e);
-        PlayerPrefs.SetFloat(PLAYER_DOLLARS, d);
-        PlayerPrefs.SetFloat(PLAYER_YENS, y);
-        PlayerPrefs.SetFloat(PLAYER_POUNDS, p);
-        PlayerPrefs.SetFloat(PLAYER_GOLD, g);
+        MoneyManager.PLAYER_EUROS= e;
+        MoneyManager.PLAYER_DOLLARS= d;
+        MoneyManager.PLAYER_YENS= y;
+        MoneyManager.PLAYER_POUNDS= p;
+        MoneyManager.PLAYER_GOLD= g;
     }
  
     
