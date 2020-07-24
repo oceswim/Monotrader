@@ -20,7 +20,7 @@ public class CrisisManager : MonoBehaviour
     private const string YEN_TREND = "Yen_Trend";
 
     private const float CRISISAMOUNT = 1.15f;
-    private const float TRENDAMOUNT = 1.5f;
+    private const float TRENDAMOUNT = .15f;
     private string[] currencies = new string[4];
     private List<string> affectedCurrencies;
     private Room myRoom;
@@ -140,6 +140,7 @@ public class CrisisManager : MonoBehaviour
                 break;
 
         }
+        Debug.Log($"The which trend {whichTrend} and new trend {newTrend}");
         SetRoomProperty(whichTrend, newTrend);
         double newPrice = Math.Round((float)myRoom.CustomProperties[whichPrice] * CRISISAMOUNT,2);
         SetRoomProperty(whichPrice, (float)newPrice);

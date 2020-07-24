@@ -10,7 +10,7 @@ public class SavingsManager : MonoBehaviour
     private float myGold,myFortune;
     public TMP_Text savingsText,totalSavings;
     public Button yesButton, noButton;
-    public static bool BeginProcess;
+    public static bool BeginProcess,updateSavings;
     
     // Start is called before the first frame update
   
@@ -22,6 +22,11 @@ public class SavingsManager : MonoBehaviour
             myFortune = MoneyManager.PLAYER_FORTUNE;
             SetSavingsText();
             BeginProcess = false;
+        }
+        if(updateSavings)
+        {
+            updateSavings = false;
+            totalSavings.text = MoneyManager.PLAYER_SAVINGS.ToString() + " G";
         }
     }
     private void SetSavingsText()

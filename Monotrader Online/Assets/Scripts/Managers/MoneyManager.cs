@@ -2,6 +2,7 @@
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -65,6 +66,8 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     public static float PLAYER_POUNDS;
     public static float PLAYER_FORTUNE;
     public static float PLAYER_SAVINGS;
+    public static string PLAYER_HIGHEST_CURRENCY_NAME;
+    public static float PLAYER_HIGHEST_CURRENCY_VALUE;
 
 
     public static bool newTurnFortune;
@@ -304,7 +307,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //the initial prices of each currency at the beginning of the game
     private void SetInitialAmounts(bool masterClient)
     {
-        PLAYER_SAVINGS = 0;
+        PLAYER_SAVINGS = 0;//TO PUT TO 0 !
         myGold = INITIAL_GOLD;
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
         PLAYER_GOLD= myGold;
@@ -669,6 +672,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         PLAYER_YENS= yens;
 
         UpdateAmountText();
+        UpdateMaxCurrency();
         if (!updateOnceFortune)
         {
             FriendsManager.changeFortune = true;
@@ -691,6 +695,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         totalFortuneText.text = totalFortune.ToString();
         //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
         UpdateAmountText();
+        UpdateMaxCurrency();
         FriendsManager.changeFortune = true;
         CheckFortune((float)totalFortune);
     }
@@ -840,15 +845,43 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
     }
     //allows to update the amount of money owned by the player displayed
-    private void UpdateAmountText()
+    public void UpdateAmountText()
     {
+        
         goldAmount.text = PLAYER_GOLD.ToString();
+        PLAYER_HIGHEST_CURRENCY_NAME = "d";
         dollarsAmount.text = PLAYER_DOLLARS.ToString();
         eurosAmount.text = PLAYER_EUROS.ToString();
         poundsAmount.text = PLAYER_POUNDS.ToString();
         yenAmount.text = PLAYER_YENS.ToString();
     }
 
+    public void UpdateMaxCurrency()
+    {
+        var l = new List<float>() { PLAYER_DOLLARS, PLAYER_EUROS, PLAYER_POUNDS,PLAYER_YENS };
+        var max = l.Max();
+        if(max == PLAYER_DOLLARS)
+        {
+            PLAYER_HIGHEST_CURRENCY_NAME = "d";
+            PLAYER_HIGHEST_CURRENCY_VALUE = PLAYER_DOLLARS;
+        }
+        else if (max == PLAYER_EUROS)
+        {
+            PLAYER_HIGHEST_CURRENCY_NAME = "e";
+            PLAYER_HIGHEST_CURRENCY_VALUE = PLAYER_EUROS;
+        }
+        else if (max == PLAYER_POUNDS)
+        {
+            PLAYER_HIGHEST_CURRENCY_NAME = "p";
+            PLAYER_HIGHEST_CURRENCY_VALUE = PLAYER_POUNDS;
+        }
+        else if (max == PLAYER_YENS)
+        {
+            PLAYER_HIGHEST_CURRENCY_NAME = "y";
+            PLAYER_HIGHEST_CURRENCY_VALUE = PLAYER_YENS;
+        }
+        Debug.Log("Highest currency: " + PLAYER_HIGHEST_CURRENCY_NAME);
+    }
     [PunRPC]
     private void TrendsUpdates(bool roll)//roll determines if the trend updates comes from when all players rolled the dices
     {

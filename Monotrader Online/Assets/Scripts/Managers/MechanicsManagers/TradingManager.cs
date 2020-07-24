@@ -16,12 +16,12 @@ public class TradingManager : MonoBehaviour
 
     private Room myRoom;
 
-    public Button confirmButton;
+    public Button confirmButton,handleButton;
     public GameObject[] myTitles = new GameObject[4];
     public GameObject malusObject, valueMinimumText;
     public TMP_InputField myInputField;
     public Slider mySlider;
-    public TMP_Text currencyText, valueText, buyText, sellText;
+    public TMP_Text currencyText, valueText, buyText, sellText, notEnoughText,savingsText;
     private int tradingMode, currencyMode; // 0 is buy 1 is sell
     public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading;
     private float currencyPriceInGold;
@@ -43,6 +43,7 @@ public class TradingManager : MonoBehaviour
         {
             tradingMode = 0;//set to buy intially.
             UpdateText(tradingMode);
+            CheckMin();
             BeginProcess = false;
         }
         if (eurosTrading)
@@ -119,30 +120,123 @@ public class TradingManager : MonoBehaviour
                     //currency -> gold
                     break;
             }
-            if (Int32.Parse(value) > 0)
+            CheckForMinVal(value);
+            if(tradingMode ==0)
             {
-                if (valueMinimumText.activeSelf)
-                {
-                    valueMinimumText.SetActive(false);
-                }
-                confirmButton.interactable = true;
+                CheckForGold(value);
             }
-            else
+            else if(tradingMode ==1)
             {
-                if (!valueMinimumText.activeSelf)
-                {
-                    if (confirmButton.interactable)
-                    {
-                        confirmButton.interactable = false;
-                    }
-                    valueMinimumText.SetActive(true);
-
-                }
+                CheckForCurrency(value);
             }
+           
         }
         else
         {
             confirmButton.interactable = false;
+        }
+    }
+    private void CheckForMinVal(string val)
+    {
+        if (Int32.Parse(val) > 0)
+        {
+            if (valueMinimumText.activeSelf)
+            {
+                valueMinimumText.SetActive(false);
+            }
+            confirmButton.interactable = true;
+        }
+        else
+        {
+            if (!valueMinimumText.activeSelf)
+            {
+                if (confirmButton.interactable)
+                {
+                    confirmButton.interactable = false;
+                }
+                valueMinimumText.SetActive(true);
+
+            }
+        }
+    }
+    private void CheckForGold(string val)
+    {
+        if (Int32.Parse(val) > MoneyManager.PLAYER_GOLD)
+        {
+            if (!notEnoughText.enabled)
+            {
+                if (confirmButton.interactable)
+                {
+                    confirmButton.interactable = false;
+                }
+                notEnoughText.enabled = true;
+                notEnoughText.text=("You don't have enough Gold left!");
+            }
+        }
+        else
+        {
+            if (notEnoughText.enabled)
+            {
+                notEnoughText.enabled = false;
+            }
+            confirmButton.interactable = true;
+        }
+    }
+    private void CheckForCurrency(string val)
+    {
+        int theValue = Int32.Parse(val);
+        bool notEnough = false;
+        string theMessage="";
+        switch (currencyMode)
+        {
+            case 1://d
+                if(theValue>MoneyManager.PLAYER_DOLLARS)
+                {
+                    notEnough = true;
+                    theMessage = "You don't have enough dollars left!";
+                }
+                break;
+            case 2://e
+                if (theValue > MoneyManager.PLAYER_EUROS)
+                {
+                    notEnough = true;
+                    theMessage = "You don't have enough euros left!";
+                }
+                break;
+            case 3://p
+                if (theValue > MoneyManager.PLAYER_POUNDS)
+                {
+                    notEnough = true;
+                    theMessage = "You don't have enough pounds left!";
+                }
+                break;
+            case 4://y
+                if (theValue > MoneyManager.PLAYER_YENS)
+                {
+                    notEnough = true;
+                    theMessage = "You don't have enough yens left!";
+                }
+                break;
+        }
+        if (notEnough)
+        {
+            if (!notEnoughText.enabled)
+            {
+                if (confirmButton.interactable)
+                {
+                    confirmButton.interactable = false;
+                }
+                notEnoughText.enabled = true;
+                notEnoughText.text=(theMessage);
+            }
+        }
+        else
+        {
+            if (notEnoughText.enabled)
+            {
+                notEnoughText.enabled = false;
+            }
+            confirmButton.interactable = true;
         }
     }
     public void SwitchModes()
@@ -188,6 +282,105 @@ public class TradingManager : MonoBehaviour
         }
 
     }
+    private void CheckMin()
+    {
+        if (MoneyManager.PLAYER_GOLD == 0)
+        {
+            if (MoneyManager.PLAYER_SAVINGS == 0)
+            {
+                SwitchModes();//since not enough gold we switch directly to sell
+                handleButton.interactable = false;
+                float rawValueGold = GetAmountToGiveInGold();
+                if (dollarsTrading)
+                {
+                    if (MoneyManager.PLAYER_DOLLARS == 0)
+                    {
+                        //transfer 15% of highest amount currency to dollars so :
+                        //      currency = 1000£ we take 150£
+                        //  150£ -> to gold = x gold and x gold to dollars.
+                        float price = (float)myRoom.CustomProperties[DOLLARS_PRICE];
+                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        MoneyManager.PLAYER_DOLLARS += toAdd;
+
+                    }
+                }
+                else if (eurosTrading)
+                {
+                    if (MoneyManager.PLAYER_EUROS == 0)
+                    {
+                        float price = (float)myRoom.CustomProperties[EUROS_PRICE];
+                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        MoneyManager.PLAYER_EUROS += toAdd;
+                    }
+                }
+                else if (poundsTrading)
+                {
+                    if (MoneyManager.PLAYER_POUNDS == 0)
+                    {
+                        float price = (float)myRoom.CustomProperties[POUNDS_PRICE];
+                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        MoneyManager.PLAYER_POUNDS += toAdd;
+                    }
+                }
+                else if (yensTrading)
+                {
+                    if (MoneyManager.PLAYER_YENS == 0)
+                    {
+                        float price = (float)myRoom.CustomProperties[YEN_PRICE];
+                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        MoneyManager.PLAYER_YENS += toAdd;
+                    }
+
+                }
+                MoneyManager.instance.UpdateAmountText();
+                MoneyManager.instance.UpdateMaxCurrency();
+            }
+            else
+            {
+                MoneyManager.PLAYER_GOLD = MoneyManager.PLAYER_SAVINGS;
+                MoneyManager.PLAYER_SAVINGS = 0;
+                savingsText.text=MoneyManager.PLAYER_SAVINGS.ToString() + " G";
+                MoneyManager.instance.UpdateAmountText();
+            }
+        }
+
+        
+    }
+    private float GetAmountToGiveInGold()
+    {
+        float amount = 0;
+        float value = 0;
+        float thePrice = 0; 
+        switch (MoneyManager.PLAYER_HIGHEST_CURRENCY_NAME)
+        {
+            case "d":
+                value = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .15f, 1);
+                MoneyManager.PLAYER_DOLLARS = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .85f, 2);
+                thePrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
+                amount = (float)Math.Round(thePrice * value, 1);
+                break;
+            case "e":
+                value = (float)Math.Round(MoneyManager.PLAYER_EUROS * .15f, 1);
+                MoneyManager.PLAYER_EUROS = (float)Math.Round(MoneyManager.PLAYER_EUROS * .85f, 2);
+                thePrice = (float)myRoom.CustomProperties[EUROS_PRICE];
+                amount = (float)Math.Round(thePrice * value, 1);
+                break;
+            case "p":
+                value = (float)Math.Round(MoneyManager.PLAYER_POUNDS * .15f, 1);
+                MoneyManager.PLAYER_POUNDS = (float)Math.Round(MoneyManager.PLAYER_POUNDS * .85f, 2);
+                thePrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
+                amount = (float)Math.Round(thePrice * value, 1);
+                break;
+            case "y":
+                value = (float)Math.Round(MoneyManager.PLAYER_YENS * .15f, 1);
+                MoneyManager.PLAYER_YENS = (float)Math.Round(MoneyManager.PLAYER_YENS * .85f, 2);
+                thePrice = (float)myRoom.CustomProperties[YEN_PRICE];
+                amount = (float)Math.Round(thePrice * value, 1);
+                break;
+        }
+        return amount;
+    }  
+    
     public void Confirm()
     {
         if (!string.IsNullOrEmpty(myInputField.text))

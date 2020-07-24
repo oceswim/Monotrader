@@ -42,13 +42,14 @@ public class BoardManager : MonoBehaviour
 
     public static void SetPosition(int index,bool turn)
     {
-       
-        PositionManager(index);
+
+        //PositionManager(index);
+        FakeFunction();
         if (turn)
         {
           newTurn = turn;
         }
-        //FakeFuntion();
+        
     }
     public void BackWardMechanic()
     {
@@ -137,5 +138,12 @@ public class BoardManager : MonoBehaviour
 
             }
         }
+    }
+    private static void FakeFunction()
+    {
+        MechanicsManager.instance.CurrenciesTrading("euros");
+        //MechanicsManager.instance.CurrenciesTrading("dollars");
+        //MechanicsManager.instance.CurrenciesTrading("pounds");
+        //MechanicsManager.instance.CurrenciesTrading("yens");
     }
 }
