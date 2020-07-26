@@ -64,6 +64,7 @@ ScriptsOnlyBuild:
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
+    - UnityEditor.TestTools.TestRunner.TestListCacheData
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.EventTrigger
@@ -1212,7 +1213,7 @@ ScriptsOnlyBuild:
     className: CurrentRoomEmptyRoomTtlProperty
   - hash:
       serializedVersion: 2
-      Hash: 4cbb0a3fa4869cd95a6c801304ef3a3b
+      Hash: 0e1274ba5fee1610cba36c2ad9013946
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: TradingManager
@@ -1524,7 +1525,7 @@ ScriptsOnlyBuild:
     className: ServerProperty
   - hash:
       serializedVersion: 2
-      Hash: 7b9692eda05d3bf5ef37ec2c4f0324d6
+      Hash: 4788c85943fa20a87954fb11daa61354
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BoardManager

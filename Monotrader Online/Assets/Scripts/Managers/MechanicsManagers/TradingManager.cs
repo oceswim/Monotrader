@@ -23,12 +23,12 @@ public class TradingManager : MonoBehaviour
     public Slider mySlider;
     public TMP_Text currencyText, valueText, buyText, sellText, notEnoughText,savingsText;
     private int tradingMode, currencyMode; // 0 is buy 1 is sell
-    public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading;
+    public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading, BeginProcess;
     private float currencyPriceInGold;
     private double latestValue;
     private string currencyModeText;
     private float currencyToChange;
-    public static bool BeginProcess;
+    private bool penalty;
     // Start is called before the first frame update
     void Start()
     {
@@ -105,7 +105,7 @@ public class TradingManager : MonoBehaviour
             {
                 case 0://buy
                        //check player pref from lucky so that the transaction is 15% more.
-                    price = Math.Round((theValue / currencyPriceInGold), 1);
+                    price = Math.Round((theValue / currencyPriceInGold), MidpointRounding.AwayFromZero);
                     latestValue = price;
                     valueText.text = price.ToString() + " " + currencyModeText;
 
@@ -114,7 +114,7 @@ public class TradingManager : MonoBehaviour
                 case 1:
 
                     //check player pref from lucky so that the transaction brings less 15%.
-                    price = Math.Round(currencyPriceInGold * theValue, 1);
+                    price = Math.Round(currencyPriceInGold * theValue, MidpointRounding.AwayFromZero);
                     latestValue = price;
                     valueText.text = price.ToString() + " G";
                     //currency -> gold
@@ -298,8 +298,9 @@ public class TradingManager : MonoBehaviour
                         //transfer 15% of highest amount currency to dollars so :
                         //      currency = 1000£ we take 150£
                         //  150£ -> to gold = x gold and x gold to dollars.
+                        penalty = true;
                         float price = (float)myRoom.CustomProperties[DOLLARS_PRICE];
-                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_DOLLARS += toAdd;
 
                     }
@@ -308,8 +309,9 @@ public class TradingManager : MonoBehaviour
                 {
                     if (MoneyManager.PLAYER_EUROS == 0)
                     {
+                        penalty = true;
                         float price = (float)myRoom.CustomProperties[EUROS_PRICE];
-                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_EUROS += toAdd;
                     }
                 }
@@ -317,8 +319,9 @@ public class TradingManager : MonoBehaviour
                 {
                     if (MoneyManager.PLAYER_POUNDS == 0)
                     {
+                        penalty = true;
                         float price = (float)myRoom.CustomProperties[POUNDS_PRICE];
-                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_POUNDS += toAdd;
                     }
                 }
@@ -326,11 +329,21 @@ public class TradingManager : MonoBehaviour
                 {
                     if (MoneyManager.PLAYER_YENS == 0)
                     {
+                        penalty = true;
                         float price = (float)myRoom.CustomProperties[YEN_PRICE];
-                        float toAdd = (float)Math.Round((rawValueGold / price), 1);
+                        float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_YENS += toAdd;
                     }
 
+                }
+                if(penalty)
+                {
+                    penalty = false;
+                    MoneyManager.PLAYER_GOLD -= 500;
+                    if(MoneyManager.PLAYER_GOLD<0)//we put the text color to red
+                    {
+                        MoneyManager.instance.ChangeText();
+                    }
                 }
                 MoneyManager.instance.UpdateAmountText();
                 MoneyManager.instance.UpdateMaxCurrency();
@@ -354,26 +367,26 @@ public class TradingManager : MonoBehaviour
         switch (MoneyManager.PLAYER_HIGHEST_CURRENCY_NAME)
         {
             case "d":
-                value = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .15f, 1);
-                MoneyManager.PLAYER_DOLLARS = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .85f, 2);
+                value = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .15f, MidpointRounding.AwayFromZero);
+                MoneyManager.PLAYER_DOLLARS = (float)Math.Round(MoneyManager.PLAYER_DOLLARS * .85f, MidpointRounding.AwayFromZero);
                 thePrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
                 amount = (float)Math.Round(thePrice * value, 1);
                 break;
             case "e":
-                value = (float)Math.Round(MoneyManager.PLAYER_EUROS * .15f, 1);
-                MoneyManager.PLAYER_EUROS = (float)Math.Round(MoneyManager.PLAYER_EUROS * .85f, 2);
+                value = (float)Math.Round(MoneyManager.PLAYER_EUROS * .15f, MidpointRounding.AwayFromZero);
+                MoneyManager.PLAYER_EUROS = (float)Math.Round(MoneyManager.PLAYER_EUROS * .85f, MidpointRounding.AwayFromZero);
                 thePrice = (float)myRoom.CustomProperties[EUROS_PRICE];
                 amount = (float)Math.Round(thePrice * value, 1);
                 break;
             case "p":
                 value = (float)Math.Round(MoneyManager.PLAYER_POUNDS * .15f, 1);
-                MoneyManager.PLAYER_POUNDS = (float)Math.Round(MoneyManager.PLAYER_POUNDS * .85f, 2);
+                MoneyManager.PLAYER_POUNDS = (float)Math.Round(MoneyManager.PLAYER_POUNDS * .85f, MidpointRounding.AwayFromZero);
                 thePrice = (float)myRoom.CustomProperties[POUNDS_PRICE];
                 amount = (float)Math.Round(thePrice * value, 1);
                 break;
             case "y":
                 value = (float)Math.Round(MoneyManager.PLAYER_YENS * .15f, 1);
-                MoneyManager.PLAYER_YENS = (float)Math.Round(MoneyManager.PLAYER_YENS * .85f, 2);
+                MoneyManager.PLAYER_YENS = (float)Math.Round(MoneyManager.PLAYER_YENS * .85f, MidpointRounding.AwayFromZero);
                 thePrice = (float)myRoom.CustomProperties[YEN_PRICE];
                 amount = (float)Math.Round(thePrice * value, 1);
                 break;
@@ -392,7 +405,7 @@ public class TradingManager : MonoBehaviour
                 {
                     //we decrease the value obtained with the gold input
                     Debug.Log("price before malus :" + theValue);
-                    double rounded =Math.Round(theValue * MALUS_AMOUNT, 1);
+                    double rounded =Math.Round(theValue * MALUS_AMOUNT, MidpointRounding.AwayFromZero);
                     theValue = (int)rounded;
                     Debug.Log("price with malus :" + theValue);
                     PlayerPrefs.SetInt(MALUS, 0);
@@ -417,7 +430,7 @@ public class TradingManager : MonoBehaviour
                     break;
             }
             UpdateMoneyManagerAmounts(currencyMode, newCurr);
-            UpdateBankings(theValue, (int)Math.Round(latestValue, 0), currencyMode, tradingMode);
+            UpdateBankings(theValue, (int)Math.Round(latestValue, MidpointRounding.AwayFromZero), currencyMode, tradingMode);
             myInputField.text = string.Empty;
             mySlider.value = mySlider.minValue;
             malusObject.SetActive(false);

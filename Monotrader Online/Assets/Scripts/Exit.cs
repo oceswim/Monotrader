@@ -13,7 +13,16 @@ public class Exit : MonoBehaviourPunCallbacks
     public AudioSource exitSound;
     public GameObject onePlayerLeft;
     private GameObject Dice1, Dice2;
+    public static bool exitAfterDQ, playerWasDQ;
 
+    private void Update()
+    {
+        if(exitAfterDQ)
+        {
+            exitAfterDQ = false;
+            ExitGame(GAME_EXIT);
+        }
+    }
     public void ExitGame(string mode)
     {
         switch (mode)
@@ -59,9 +68,17 @@ public class Exit : MonoBehaviourPunCallbacks
             photonView.RPC("SetIndPlayerToPlay",RpcTarget.AllBuffered,temp);
         }
         GameManager.diceRollCount = 0;//resets the dice roll count to make sure its value matches the new player count    
-        if (FriendsManager.instance.playerItems.Count < PlayerPrefs.GetInt(MIN_PLAYER_KEY))
-        {    
-            onePlayerLeft.SetActive(true);
+
+        if (!playerWasDQ)
+        {
+            if (FriendsManager.instance.playerItems.Count < PlayerPrefs.GetInt(MIN_PLAYER_KEY))
+            {
+                onePlayerLeft.SetActive(true);
+            }
+        }
+        else
+        {
+            playerWasDQ = false;
         }
 
 

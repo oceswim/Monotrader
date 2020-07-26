@@ -36,7 +36,9 @@ public class MainMenu : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = false;
         index = minPlayerPerRoom = 1;
         gameMode.text = MULTIPLAYER_MODE;
+  
     }
+
 
     public void FindOponents()
     {

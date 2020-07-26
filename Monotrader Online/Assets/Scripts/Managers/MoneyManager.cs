@@ -310,7 +310,10 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         PLAYER_SAVINGS = 0;//TO PUT TO 0 !
         myGold = INITIAL_GOLD;
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
-        PLAYER_GOLD= myGold;
+        
+
+
+        PLAYER_GOLD = myGold;
         PLAYER_DOLLARS= myDollars;
         PLAYER_EUROS= myEuros;
         PLAYER_POUNDS= myPounds;
@@ -661,7 +664,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
 
        
-        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
+        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
         totalFortuneText.text = totalFortune.ToString();
 
@@ -690,7 +693,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         float yens =PLAYER_YENS;//we get the value of x euros in gold
         float gold =PLAYER_GOLD;
 
-        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, 2);
+        double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
         totalFortuneText.text = totalFortune.ToString();
         //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
@@ -899,6 +902,10 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         UpdateHistoryGUI();
         
     }
+    public void ChangeText()
+    {
+        goldAmount.color = new Color32(255, 0, 0, 255);
+    }
     public void NewTurnFunction()
     {
         float dolPrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
@@ -919,5 +926,34 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
             Debug.Log("Changing m3,m2,m1 to :" + HISTORY_TURN_M3 + "" + HISTORY_TURN_M2 + " " + HISTORY_TURN_M1);
         }
+    }
+    public void PlayerDQMechanic(float g, float d, float e, float p, float y)
+    {
+        if(!photonView.IsMine)
+        {
+            photonView.TransferOwnership(myPlayer);
+        }
+        Debug.Log($"giving {g}, {d}, {e}, {p}, {y} to others");
+        photonView.RPC("GiveToOthers", RpcTarget.AllBuffered, myPlayer.NickName,g, d, e, p, y);
+    }
+    [PunRPC]
+    private void GiveToOthers(string giverName,float g, float d, float e,float p, float y)
+    {
+        if (!myPlayer.NickName.Equals(giverName))
+        {
+            PLAYER_GOLD += g;
+            PLAYER_DOLLARS += d;
+            PLAYER_EUROS += e;
+            PLAYER_POUNDS += p;
+            PLAYER_YENS += y;
+
+            UpdateFortuneInGame();
+        }
+        else
+        {
+            Exit.exitAfterDQ = true;
+        }
+
+       
     }
 }

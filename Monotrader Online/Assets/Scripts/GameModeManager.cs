@@ -27,7 +27,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     public StatePresetManager theStateManager;
     public TMP_Text gameModeText,lostText,wonText;
 
-    public static bool checkFortune, playerNameTagOn, arrivedLate;
+    public static bool checkFortune, playerNameTagOn, arrivedLate, disqualified;
 
 
     // Start is called before the first frame update
@@ -113,6 +113,16 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                 }
             }
         
+            if(disqualified)
+        {
+            disqualified = false;
+            if (!photonView.IsMine)
+            {
+                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+            string winnerName = PhotonNetwork.PlayerListOthers[0].NickName;
+            photonView.RPC("WinnerPanelActivationAfterDQ", RpcTarget.AllBuffered, winnerName);
+        }
     }
     //this is for master player only
     public void ConfirmGameMode()
@@ -234,6 +244,21 @@ public class GameModeManager : MonoBehaviourPunCallbacks
             DisplayLosePannel(name);
         }
     }
+
+    [PunRPC]
+    private void WinnerPanelActivationAfterDQ(string name)
+    {
+        DeactivateRollButton();
+        if (name.Equals(myPlayer.NickName))
+        {
+            Exit.playerWasDQ = true;
+            DisplayWinPannel();
+        }
+        else
+        {
+            Exit.exitAfterDQ = true;
+        }
+    }
     private void DeactivateRollButton()
     {
 
@@ -268,4 +293,5 @@ public class GameModeManager : MonoBehaviourPunCallbacks
         myRoom.SetCustomProperties(myRoom.CustomProperties);
 
     }
+
 }

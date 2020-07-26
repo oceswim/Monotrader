@@ -31,7 +31,7 @@ public class SavingsManager : MonoBehaviour
     }
     private void SetSavingsText()
     {
-        percentage = Math.Round(myGold * .15f, 1);
+        percentage = Math.Round(myGold * .15f, MidpointRounding.AwayFromZero);
         string text = $"You can place 15% of your gold to your savings." +
             $"It represents {percentage.ToString()} Gold."+
             $"Do you want to ?";

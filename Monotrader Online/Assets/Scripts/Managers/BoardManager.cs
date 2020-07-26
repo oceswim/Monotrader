@@ -1,11 +1,12 @@
 ﻿using Photon.Pun;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour
+public class BoardManager : MonoBehaviourPunCallbacks
 {
     private static bool actionDone,newTurn,reset;
-    public GameObject taxeSubPanel, taxesPanel;
-
+    public GameObject taxeSubPanel, taxesPanel,disqualifiedPanel;
+    private const int NEW_TURN_MONEY = 2000;
+    private static int x = 0;
     void Start()
     {
         actionDone =reset= false;
@@ -20,7 +21,14 @@ public class BoardManager : MonoBehaviour
             if (newTurn)
             {
                 newTurn = false;
-                GameManager.instance.TurnManager();
+                if (!CheckForBankingsValues())
+                {
+                    GameManager.instance.TurnManager();
+                }
+                else
+                {
+                    disqualifiedPanel.SetActive(true);
+                }
             }
             else
             {
@@ -42,9 +50,11 @@ public class BoardManager : MonoBehaviour
 
     public static void SetPosition(int index,bool turn)
     {
-
-        //PositionManager(index);
-        FakeFunction();
+       
+         PositionManager(index);
+        
+          //  FakeFunction();
+       
         if (turn)
         {
           newTurn = turn;
@@ -141,9 +151,72 @@ public class BoardManager : MonoBehaviour
     }
     private static void FakeFunction()
     {
-        MechanicsManager.instance.CurrenciesTrading("euros");
+        if (x == 0)
+        {
+            x++;
+            MechanicsManager.instance.CurrenciesTrading("euros");
+        }
+        else
+        {
+            actionDone = true;
+        }
         //MechanicsManager.instance.CurrenciesTrading("dollars");
         //MechanicsManager.instance.CurrenciesTrading("pounds");
         //MechanicsManager.instance.CurrenciesTrading("yens");
+    }
+
+    private bool CheckForBankingsValues()
+    {
+        bool returnValue = false;
+        if((MoneyManager.PLAYER_GOLD + NEW_TURN_MONEY)<=0 ||
+            MoneyManager.PLAYER_DOLLARS <=0 || 
+            MoneyManager.PLAYER_EUROS <=0 || 
+            MoneyManager.PLAYER_POUNDS <=0 || 
+            MoneyManager.PLAYER_YENS <=0)
+        {
+            returnValue = true;
+            
+        }
+        return returnValue;
+    }
+
+    public void ExitAfterDisqualified()
+    {
+        // we give the player's leftovers to the rest if player count left is more than 1
+        if(PhotonNetwork.PlayerListOthers.Length>1)
+        {
+            float g=0, d=0, e=0, p=0, y = 0;
+            int quotient = PhotonNetwork.PlayerListOthers.Length;
+            if (MoneyManager.PLAYER_GOLD > 0)
+            {
+                g = MoneyManager.PLAYER_GOLD / quotient;
+            }
+            if (MoneyManager.PLAYER_EUROS > 0)
+            {
+                e = MoneyManager.PLAYER_EUROS / quotient;
+            }
+            if (MoneyManager.PLAYER_DOLLARS > 0)
+            {
+                d = MoneyManager.PLAYER_DOLLARS / quotient;
+            }
+            if (MoneyManager.PLAYER_POUNDS > 0)
+            {
+                p = MoneyManager.PLAYER_POUNDS / quotient;
+            }
+            if (MoneyManager.PLAYER_YENS>0)
+            {
+                y = MoneyManager.PLAYER_YENS / quotient;
+            }
+
+            MoneyManager.instance.PlayerDQMechanic(g, d, e, p, y);
+            
+
+        }
+        else if(PhotonNetwork.PlayerListOthers.Length == 1)
+        {
+            //player left wins
+            GameModeManager.disqualified = true;
+        }
+        
     }
 }
