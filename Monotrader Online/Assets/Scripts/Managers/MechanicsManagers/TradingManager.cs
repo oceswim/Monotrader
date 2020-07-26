@@ -340,10 +340,7 @@ public class TradingManager : MonoBehaviour
                 {
                     penalty = false;
                     MoneyManager.PLAYER_GOLD -= 500;
-                    if(MoneyManager.PLAYER_GOLD<0)//we put the text color to red
-                    {
-                        MoneyManager.instance.ChangeText();
-                    }
+                    
                 }
                 MoneyManager.instance.UpdateAmountText();
                 MoneyManager.instance.UpdateMaxCurrency();

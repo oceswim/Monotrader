@@ -852,13 +852,60 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     {
         
         goldAmount.text = PLAYER_GOLD.ToString();
-        PLAYER_HIGHEST_CURRENCY_NAME = "d";
         dollarsAmount.text = PLAYER_DOLLARS.ToString();
         eurosAmount.text = PLAYER_EUROS.ToString();
         poundsAmount.text = PLAYER_POUNDS.ToString();
         yenAmount.text = PLAYER_YENS.ToString();
-    }
 
+        UpdateTextColor();
+    }
+    private void UpdateTextColor()
+    {
+        if (PLAYER_GOLD <= 0)//we put the text color to red
+        {
+            goldAmount.color = new Color32(255, 0, 0, 255);
+        }
+        else
+        {
+            goldAmount.color = new Color32(255, 255, 255, 255);
+        }
+
+        if (PLAYER_DOLLARS <= 0)//we put the text color to red
+        {
+            dollarsAmount.color = new Color32(255, 0, 0, 255);
+        }
+        else
+        {
+            dollarsAmount.color = new Color32(255, 255, 255, 255);
+        }
+
+        if (PLAYER_EUROS <= 0)//we put the text color to red
+        {
+            eurosAmount.color = new Color32(255, 0, 0, 255);
+        }
+        else
+        {
+            eurosAmount.color = new Color32(255, 255, 255, 255);
+        }
+
+        if (PLAYER_POUNDS <= 0)//we put the text color to red
+        {
+            poundsAmount.color = new Color32(255, 0, 0, 255);
+        }
+        else
+        {
+            poundsAmount.color = new Color32(255, 255, 255, 255);
+        }
+
+        if (PLAYER_YENS <= 0)//we put the text color to red
+        {
+            yenAmount.color = new Color32(255, 0, 0, 255);
+        }
+        else
+        {
+            yenAmount.color = new Color32(255, 255, 255, 255);
+        }
+    }
     public void UpdateMaxCurrency()
     {
         var l = new List<float>() { PLAYER_DOLLARS, PLAYER_EUROS, PLAYER_POUNDS,PLAYER_YENS };
@@ -902,10 +949,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         UpdateHistoryGUI();
         
     }
-    public void ChangeText()
-    {
-        goldAmount.color = new Color32(255, 0, 0, 255);
-    }
+
     public void NewTurnFunction()
     {
         float dolPrice = (float)myRoom.CustomProperties[DOLLARS_PRICE];
