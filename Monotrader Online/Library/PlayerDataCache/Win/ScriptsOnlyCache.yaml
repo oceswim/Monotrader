@@ -79,6 +79,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Outline
     - UnityEngine.UI.RectMask2D
     - UnityEngine.UI.ScrollRect
+    - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Shadow
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
@@ -305,6 +306,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 9932}
     - Class: 114
+      Script: {instanceID: 9934}
+    - Class: 114
       Script: {instanceID: 9978}
     - Class: 114
       Script: {instanceID: 10002}
@@ -315,6 +318,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10236}
     - Class: 114
+      Script: {instanceID: 10350}
+    - Class: 114
       Script: {instanceID: 10382}
     - Class: 114
       Script: {instanceID: 10468}
@@ -322,6 +327,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10500}
     - Class: 114
       Script: {instanceID: 10548}
+    - Class: 114
+      Script: {instanceID: 10694}
     - Class: 114
       Script: {instanceID: 10764}
     - Class: 114
@@ -2109,4 +2116,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
   - Assets/Scenes/Game.unity
-  playerPath: C:/Users/Oceane/Desktop/tries/b3/Monotrader Online.exe
+  playerPath: C:/Users/Oceane/Desktop/tries/Prototype1/Monotrader Online.exe

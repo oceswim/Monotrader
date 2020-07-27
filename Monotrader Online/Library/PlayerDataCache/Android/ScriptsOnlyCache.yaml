@@ -81,6 +81,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Outline
     - UnityEngine.UI.RectMask2D
     - UnityEngine.UI.ScrollRect
+    - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Shadow
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
@@ -307,6 +308,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 9932}
     - Class: 114
+      Script: {instanceID: 9934}
+    - Class: 114
       Script: {instanceID: 9978}
     - Class: 114
       Script: {instanceID: 10002}
@@ -317,6 +320,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10236}
     - Class: 114
+      Script: {instanceID: 10350}
+    - Class: 114
       Script: {instanceID: 10382}
     - Class: 114
       Script: {instanceID: 10468}
@@ -324,6 +329,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10500}
     - Class: 114
       Script: {instanceID: 10548}
+    - Class: 114
+      Script: {instanceID: 10694}
     - Class: 114
       Script: {instanceID: 10764}
     - Class: 114
@@ -645,7 +652,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 0a325768ffb9b3eb886e4bf9f7d9224e
+      Hash: 4a80378bc0b3a5dd3b1d42341d9787be
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameModeManager
@@ -1215,7 +1222,7 @@ ScriptsOnlyBuild:
     className: CurrentRoomEmptyRoomTtlProperty
   - hash:
       serializedVersion: 2
-      Hash: 4cbb0a3fa4869cd95a6c801304ef3a3b
+      Hash: 0e1274ba5fee1610cba36c2ad9013946
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: TradingManager
@@ -1227,7 +1234,7 @@ ScriptsOnlyBuild:
     className: TextContainer
   - hash:
       serializedVersion: 2
-      Hash: 1df803cf72c89ce779d08cc278a7242f
+      Hash: d01b904cf719924d8e1125ee776906bf
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PrefabSpawner
@@ -1527,7 +1534,7 @@ ScriptsOnlyBuild:
     className: ServerProperty
   - hash:
       serializedVersion: 2
-      Hash: 7b9692eda05d3bf5ef37ec2c4f0324d6
+      Hash: 4788c85943fa20a87954fb11daa61354
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BoardManager
@@ -2111,4 +2118,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
   - Assets/Scenes/Game.unity
-  playerPath: D:/COURSFAC/Builds/try.apk
+  playerPath: C:/Users/Oceane/Desktop/tries/Prototype1/Mobile/Monotrader_Online.apk

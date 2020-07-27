@@ -69,25 +69,47 @@ public class GameModeManager : MonoBehaviourPunCallbacks
             {
                 if (timerOn)
                 {
-                    if (TIMER_LIMIT > 0)
+                if (TIMER_LIMIT > 0)
+                {
+                    TIMER_LIMIT -= Time.deltaTime;
+                    DisplayTime(TIMER_LIMIT);
+                }
+                else
+                {
+
+                    DeactivateRollButton();
+                    gameModeText.text = "Done!";
+                    string key = "Player" + myPlayer.ActorNumber + "Fortune";
+                    if (myRoom.CustomProperties[key] == null)
                     {
-                        TIMER_LIMIT -= Time.deltaTime;
-                        DisplayTime(TIMER_LIMIT);
+                        float totalFortune = MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS;
+                        SetRoomProperty(key,totalFortune);
+                    }
+                    if (myPlayer.IsMasterClient)
+                    {
+                        bool goodToGo = true;
+                        foreach(Player p in PhotonNetwork.PlayerListOthers)
+                        {
+                            string theKey = "Player" + p.ActorNumber + "Fortune";
+                            if(myRoom.CustomProperties[theKey] == null)
+                            {
+                                goodToGo = false;
+                                continue;
+                            }
+                        }
+                        if (goodToGo)
+                        {
+                            CheckWinner();
+                            timerOn = false;
+                        }
+                        
                     }
                     else
                     {
-
-                        DeactivateRollButton();
-                        gameModeText.text = "Done!";
-                        if (myPlayer.IsMasterClient)
-                        {
-                            CheckWinner();
-                        }
-                        else
-                        {
-                            //display a "and the winner is..." panel
-                        }
                         timerOn = false;
+                    }
+                       
+                    
                     }
                 }
                 else
@@ -194,7 +216,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     }
     private void CheckWinner()
     {
-        float winnerFortune = PlayerPrefs.GetFloat(FORTUNE);
+        float winnerFortune = MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS;
         winnerName = myPlayer.NickName;
         foreach(Player p in PhotonNetwork.PlayerListOthers)
         {
@@ -244,7 +266,17 @@ public class GameModeManager : MonoBehaviourPunCallbacks
             DisplayLosePannel(name);
         }
     }
+    [PunRPC]
+    private float GetPlayerFortune(string name)
+    {
+        float theFortune = 0;
+        if (name.Equals(myPlayer.NickName))
+        {
 
+            theFortune = MoneyManager.PLAYER_FORTUNE;
+        }
+        return theFortune;
+    }
     [PunRPC]
     private void WinnerPanelActivationAfterDQ(string name)
     {
@@ -278,7 +310,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
         lostText.text = $"Sorry but {theWinner} won this game... Your time will come soon!";
     }
   
-    private void SetRoomProperty(string hashKey, int value)//general room properties
+    private void SetRoomProperty(string hashKey, float value)//general room properties
     {
         if (myRoom.CustomProperties[hashKey] == null)
         {
@@ -291,7 +323,10 @@ public class GameModeManager : MonoBehaviourPunCallbacks
 
         }
         myRoom.SetCustomProperties(myRoom.CustomProperties);
-
+        while(myRoom.CustomProperties[hashKey] == null)
+        {
+            Debug.Log("Waiting");
+        }
     }
 
 }
