@@ -14,7 +14,7 @@ public class Exit : MonoBehaviourPunCallbacks
     public GameObject onePlayerLeft;
     private GameObject Dice1, Dice2;
     public static bool exitAfterDQ, playerWasDQ;
-
+    private bool turnToSet=true;
     private void Update()
     {
         if(exitAfterDQ)
@@ -33,7 +33,12 @@ public class Exit : MonoBehaviourPunCallbacks
             case GAME_EXIT:
                 if (FriendsManager.instance.CallRPCFriendLeaving(PhotonNetwork.LocalPlayer.NickName))
                 {
+                    if (!photonView.IsMine)
+                    {
+                        photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
 
+                    }
+                    photonView.RPC("TurnToSet", RpcTarget.AllBuffered, GameManager.instance.myTurn); ;
                     PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
                     exitSound.Play();
                     PhotonNetwork.LeaveRoom();
@@ -56,16 +61,35 @@ public class Exit : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if(GameManager.instance.myTurn)
+        if (!turnToSet)
         {
-            Debug.Log("Im " + PhotonNetwork.LocalPlayer + " and it's my turn");
-            int temp = GetIndex();
-            if(!photonView.IsMine)
+            if (GameManager.instance.myTurn)
             {
-                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                Debug.Log("Im " + PhotonNetwork.LocalPlayer + " and it's my turn");
+                int temp = GetIndex();
+                if (!photonView.IsMine)
+                {
+                    photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
 
+                }
+                photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, temp);
+               
             }
-            photonView.RPC("SetIndPlayerToPlay",RpcTarget.AllBuffered,temp);
+        }
+        else
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                int size = PhotonNetwork.PlayerList.Length;
+                int randInt = Random.Range(0, size);
+                Debug.Log("the random int :" + randInt);
+                if (!photonView.IsMine)
+                {
+                    photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+
+                }
+                photonView.RPC("SetIndPlayerToPlay", RpcTarget.AllBuffered, randInt);
+            }
         }
         GameManager.diceRollCount = 0;//resets the dice roll count to make sure its value matches the new player count    
 
@@ -108,5 +132,9 @@ public class Exit : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel(0);//back to menu on left room
     }
 
-
+    [PunRPC]
+    private void TurnToSet(bool toSet)
+    {
+        turnToSet = toSet;
+    }
 }

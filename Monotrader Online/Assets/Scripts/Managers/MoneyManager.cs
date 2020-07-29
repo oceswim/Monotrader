@@ -308,7 +308,9 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     private void SetInitialAmounts(bool masterClient)
     {
         PLAYER_SAVINGS = 0;//TO PUT TO 0 !
+        
         myGold = INITIAL_GOLD;
+ 
         myEuros = myDollars = myPounds = myYens = INITIAL_CURRENCIES;
         
 

@@ -18,14 +18,17 @@ public class GameManager : MonoBehaviourPunCallBacks
     private const string DICE_2_HASHKEY = "Dice2Name";
     private const string TURN_COUNT = "turnCountOverall";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
-
-    private string PLAYER_GOLD;
+    private const int FINAL_SECONDS = 6;
 
     //private variables
     private Player myPlayer;
     private List<DicesManager> inGameDices = new List<DicesManager>();
     private bool dicesRolling;
-  
+    private float TIMER_END = 0;
+    private float TIMER_LIMIT = 30;
+    private string PLAYER_GOLD;
+    private bool finalSeconds, timerRollReset;
+
     //private int moveVal, diceStatus, turnCounter;
     private int moveVal;
     
@@ -38,12 +41,14 @@ public class GameManager : MonoBehaviourPunCallBacks
     public static Room myRoom;
     public static int playerIndexToPlay,diceRollCount,TURN_COUNT_VALUE;
 
+
     //public variables
     public AudioSource mainTheme;
     public AudioSource secondaryTheme;
     public bool gameCanStart,myTurn;
-    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther;
-    public TMP_Text turnCountText;
+    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject;
+    public TMP_Text timerTurnText;
+
 
     private void Awake()
     {
@@ -75,7 +80,6 @@ public class GameManager : MonoBehaviourPunCallBacks
         TURN_COUNT_VALUE=1;
         gameCanStart =dicesRolling= false;
         myRoom = PhotonNetwork.CurrentRoom;
-        turnCountText.text = "Turn #"+TURN_COUNT_VALUE.ToString();
         SetRoomProperty(PLAYERS_NEW_TURN, 0);
     }
 
@@ -116,14 +120,26 @@ public class GameManager : MonoBehaviourPunCallBacks
             if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
             {
                 Debug.Log(playerIndexToPlay + " it's the player ind to play it corresponds to " + PhotonNetwork.PlayerList[playerIndexToPlay].NickName);
-                if(!myPlayer.Equals(PhotonNetwork.PlayerList[playerIndexToPlay]))
+                if (!myPlayer.Equals(PhotonNetwork.PlayerList[playerIndexToPlay]))
                 {
                     myTurn = false;
                     DiceUI.SetActive(false);
                 }
             }
+            if (!timerTurnObject.activeSelf)
+            {
+                timerTurnObject.SetActive(true);
+            }
+
+            TurnTimer();
+            
             if (dicesRolling)
             {
+                if(!timerRollReset)
+                {
+                    TIMER_LIMIT = 30;
+                    timerRollReset = true;
+                }
 
                 if (diceStatus == 2)
                 {
@@ -140,6 +156,10 @@ public class GameManager : MonoBehaviourPunCallBacks
         }
         else if (!myTurn && gameCanStart)
         {
+            if (timerTurnObject.activeSelf)
+            {
+                timerTurnObject.SetActive(false);
+            }
             if (CheckIfMyTurn())
             {
 
@@ -150,6 +170,80 @@ public class GameManager : MonoBehaviourPunCallBacks
         }
 
 
+    }
+
+    private void TurnTimer()
+    {
+        Debug.Log("timer limit");
+        if (TIMER_LIMIT > 0)
+        {
+            if (finalSeconds)
+            {
+                
+                TIMER_END = TIMER_END + Time.deltaTime;
+                if (TIMER_END >= 0.5)
+                {
+                    timerTurnText.enabled = true;
+                }
+                if (TIMER_END >= 1)
+                {
+                    timerTurnText.enabled = false;
+                    TIMER_END = 0;
+                }
+            }
+            TIMER_LIMIT -= Time.deltaTime;
+            DisplayTime(TIMER_LIMIT);
+        }
+        else
+        {
+            ResetTimer();
+            DiceUI.SetActive(false);
+            if (myRoom.PlayerCount == 1)
+            {
+                RollDices(false);
+            }
+            else
+            {
+                BoardManager.NextTurn();
+            }
+         
+        }
+    }
+    private void ResetTimer()
+    {
+        if(timerRollReset)
+        {
+            timerRollReset = false;
+        }
+        finalSeconds = false;
+        TIMER_LIMIT = 30;
+    }
+    private void DisplayTime(float timeToDisplay)
+    {
+
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        if (timeToDisplay > 0)
+        {
+            timerTurnText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+        else
+        {
+            timerTurnText.text = "";
+        }
+        if (timeToDisplay < FINAL_SECONDS && !finalSeconds)
+        {
+            finalSeconds = true;
+            timerTurnText.color = new Color(255, 0, 0, 255);
+        }
+        else
+        {
+            Color32 normalColor = new Color32(66, 255, 0, 255);
+            if(!timerTurnText.color.Equals(normalColor) && !finalSeconds)
+            {
+                timerTurnText.color = normalColor;
+            }
+        }
     }
     //sets the player's custom properties with an int
     private void SetCustomPpties(string hashKey,int ind)//
@@ -276,6 +370,7 @@ public class GameManager : MonoBehaviourPunCallBacks
         int index;
         //have to operate a change in index here when switch turn after a player leaves
         myTurn = false;
+        ResetTimer();
         if (playerIndexToPlay ==(PhotonNetwork.PlayerList.Length-1))
         {
             index = 0;
@@ -303,7 +398,6 @@ public class GameManager : MonoBehaviourPunCallBacks
         TURN_COUNT_VALUE++;
         SetRoomPlayersNewTurn(1);
         int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
-        turnCountText.text = "Turn #"+TURN_COUNT_VALUE.ToString();
         NewTurnMechanic();
         /*if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
         {
@@ -439,6 +533,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     {
         if (playerIndexToPlay != ind)
         {
+            Debug.Log("the player to play now :" + PhotonNetwork.PlayerList[ind].NickName);
             playerIndexToPlay = ind;
         }
     }

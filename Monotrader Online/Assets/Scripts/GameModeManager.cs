@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 
 public class GameModeManager : MonoBehaviourPunCallbacks
 {
@@ -14,13 +15,15 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     private const int TIME_LIMIT = 1;
     private const int AMOUNT_REACH = 2;
     private const float AMOUNT_LIMIT = 30000;
+    private const int FINAL_SECONDS = 6;
     private float TIMER_LIMIT = 900; //15 mins = 60 * 15
+    private float TIMER_END = 0;
     private string winnerName;
     private int mode,playerAmount;
-    private bool timerOn, started,amountGoal;
+    private bool timerOn, started,amountGoal,finalSeconds, ticksOn;
     private Room myRoom;
     private Player myPlayer;
-
+    public AudioSource ClockTicks,winSound,loseSound;
     public Toggle timeLimit, scoreLimit;
     public GameObject MasterPanel, OtherPanel, display, charSelectionPanel, winPanel, losePanel, diceRollButton, bankManager;
     public PrefabSpawner thePrefabSpawner;
@@ -39,7 +42,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
         myPlayer = PhotonNetwork.LocalPlayer;
         myRoom = GameManager.myRoom;
         playerAmount = myRoom.PlayerCount;
-        started =playerNameTagOn=arrivedLate= false;
+        started =playerNameTagOn=arrivedLate=finalSeconds= false;
         if (myRoom.CustomProperties[STARTED_ALREADY] != null)
         {
             if ((int)myRoom.CustomProperties[STARTED_ALREADY] == 1)
@@ -71,12 +74,30 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                 {
                 if (TIMER_LIMIT > 0)
                 {
+                    if(finalSeconds)
+                    {
+                        if(!ticksOn)
+                        {
+                            ClockTicks.Play();
+                            ticksOn = true;
+                        }
+                        TIMER_END = TIMER_END + Time.deltaTime;
+                        if (TIMER_END >= 0.5)
+                        {
+                            gameModeText.enabled = true;
+                        }
+                        if (TIMER_END >= 1)
+                        {
+                            gameModeText.enabled = false;
+                            TIMER_END = 0;
+                        }
+                    }
                     TIMER_LIMIT -= Time.deltaTime;
                     DisplayTime(TIMER_LIMIT);
                 }
                 else
                 {
-
+                    ClockTicks.Stop();
                     DeactivateRollButton();
                     gameModeText.text = "Done!";
                     string key = "Player" + myPlayer.ActorNumber + "Fortune";
@@ -209,10 +230,16 @@ public class GameModeManager : MonoBehaviourPunCallbacks
 
     private void DisplayTime(float timeToDisplay)
     {
+        
         float minutes = Mathf.FloorToInt(timeToDisplay / 60);
         float seconds = Mathf.FloorToInt(timeToDisplay % 60);
-
+        
         gameModeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        if(timeToDisplay<FINAL_SECONDS && !finalSeconds)
+        {
+            finalSeconds = true;
+            gameModeText.color = new Color(255, 0, 0, 255);
+        }
     }
     private void CheckWinner()
     {
@@ -260,6 +287,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
         {
 
             DisplayWinPannel();
+
         }
         else
         {
@@ -301,12 +329,15 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     }
     private void DisplayWinPannel()
     {
+
         winPanel.SetActive(true);
+        winSound.Play();
         wonText.text = WIN_MESSAGE;
     }    
     private void DisplayLosePannel(string theWinner)
     {
         losePanel.SetActive(true);
+        loseSound.Play();
         lostText.text = $"Sorry but {theWinner} won this game... Your time will come soon!";
     }
   
@@ -328,5 +359,22 @@ public class GameModeManager : MonoBehaviourPunCallbacks
             Debug.Log("Waiting");
         }
     }
+    private void SetRoomProperty(string hashKey, int value)//general room properties
+    {
+        if (myRoom.CustomProperties[hashKey] == null)
+        {
+            myRoom.CustomProperties.Add(hashKey, value);
+        }
+        else
+        {
 
+            myRoom.CustomProperties[hashKey] = value;
+
+        }
+        myRoom.SetCustomProperties(myRoom.CustomProperties);
+        while (myRoom.CustomProperties[hashKey] == null)
+        {
+            Debug.Log("Waiting");
+        }
+    }
 }
