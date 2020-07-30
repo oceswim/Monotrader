@@ -57,12 +57,22 @@ public class PlayerNameInput : MonoBehaviour
     //saves the player name and updates the nickname value of PUN player
     public void SaveName()
     {
-        string playerName = nameInputField.text;
+
+        string playerName = FirstLetterToUpper(nameInputField.text);
         PhotonNetwork.NickName = playerName;
         PlayerPrefs.SetString(playerNameKey, playerName);
 
     }
-   
 
+    public string FirstLetterToUpper(string str)
+    {
+        if (str == null)
+            return null;
+
+        if (str.Length > 1)
+            return char.ToUpper(str[0]) + str.Substring(1);
+
+        return str.ToUpper();
+    }
 
 }

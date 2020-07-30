@@ -94,6 +94,7 @@ public class FriendsManager : MonoBehaviourPunCallBacks
             }
 
             photonView.RPC("UpdateOtherColor", RpcTarget.AllBuffered, "You");
+            //called once everyone is ready to go
         }
 
     }

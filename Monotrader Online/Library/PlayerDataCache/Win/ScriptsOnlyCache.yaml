@@ -30,6 +30,7 @@ ScriptsOnlyBuild:
     - TaxesManager
     - ToggleManager
     - TradingManager
+    - TryNameTag
     - UiManager
     - VariationManager
     PhotonUnityNetworking.Demos.dll:
@@ -187,45 +188,47 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11188}
     - Class: 114
-      Script: {instanceID: 11240}
+      Script: {instanceID: 11212}
     - Class: 114
-      Script: {instanceID: 11244}
+      Script: {instanceID: 11242}
     - Class: 114
-      Script: {instanceID: 11332}
+      Script: {instanceID: 11246}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11334}
     - Class: 114
-      Script: {instanceID: 11370}
+      Script: {instanceID: 11350}
     - Class: 114
-      Script: {instanceID: 11438}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11482}
+      Script: {instanceID: 11440}
     - Class: 114
-      Script: {instanceID: 11516}
+      Script: {instanceID: 11484}
     - Class: 114
-      Script: {instanceID: 11572}
+      Script: {instanceID: 11518}
     - Class: 114
-      Script: {instanceID: 11588}
+      Script: {instanceID: 11574}
     - Class: 114
-      Script: {instanceID: 11756}
+      Script: {instanceID: 11590}
     - Class: 114
-      Script: {instanceID: 11982}
+      Script: {instanceID: 11758}
     - Class: 114
-      Script: {instanceID: 11986}
+      Script: {instanceID: 11984}
     - Class: 114
-      Script: {instanceID: 12012}
+      Script: {instanceID: 11988}
     - Class: 114
-      Script: {instanceID: 12058}
+      Script: {instanceID: 12014}
     - Class: 114
-      Script: {instanceID: 12072}
+      Script: {instanceID: 12060}
     - Class: 114
-      Script: {instanceID: 12080}
+      Script: {instanceID: 12074}
     - Class: 114
       Script: {instanceID: 12082}
     - Class: 114
-      Script: {instanceID: 12102}
+      Script: {instanceID: 12084}
     - Class: 114
-      Script: {instanceID: 12120}
+      Script: {instanceID: 12104}
+    - Class: 114
+      Script: {instanceID: 12122}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -346,43 +349,45 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11194}
     - Class: 114
-      Script: {instanceID: 11240}
+      Script: {instanceID: 11212}
     - Class: 114
-      Script: {instanceID: 11244}
+      Script: {instanceID: 11242}
     - Class: 114
-      Script: {instanceID: 11262}
+      Script: {instanceID: 11246}
     - Class: 114
-      Script: {instanceID: 11332}
+      Script: {instanceID: 11264}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11334}
     - Class: 114
-      Script: {instanceID: 11356}
+      Script: {instanceID: 11350}
     - Class: 114
-      Script: {instanceID: 11426}
+      Script: {instanceID: 11358}
     - Class: 114
-      Script: {instanceID: 11444}
+      Script: {instanceID: 11428}
     - Class: 114
-      Script: {instanceID: 11452}
+      Script: {instanceID: 11446}
     - Class: 114
-      Script: {instanceID: 11516}
+      Script: {instanceID: 11454}
     - Class: 114
-      Script: {instanceID: 11588}
+      Script: {instanceID: 11518}
     - Class: 114
-      Script: {instanceID: 11756}
+      Script: {instanceID: 11590}
     - Class: 114
-      Script: {instanceID: 11796}
+      Script: {instanceID: 11758}
     - Class: 114
-      Script: {instanceID: 11934}
+      Script: {instanceID: 11798}
     - Class: 114
-      Script: {instanceID: 11982}
+      Script: {instanceID: 11936}
     - Class: 114
-      Script: {instanceID: 12012}
+      Script: {instanceID: 11984}
     - Class: 114
-      Script: {instanceID: 12058}
+      Script: {instanceID: 12014}
     - Class: 114
-      Script: {instanceID: 12094}
+      Script: {instanceID: 12060}
     - Class: 114
-      Script: {instanceID: 12102}
+      Script: {instanceID: 12096}
+    - Class: 114
+      Script: {instanceID: 12104}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1412,6 +1417,12 @@ ScriptsOnlyBuild:
     className: InputField
   - hash:
       serializedVersion: 2
+      Hash: 82243b12f3586f93ee32ec4f9b524fe0
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TryNameTag
+  - hash:
+      serializedVersion: 2
       Hash: c9a8b80298a116835b51ba1cf9284367
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -2116,4 +2127,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
   - Assets/Scenes/Game.unity
-  playerPath: C:/Users/Oceane/Desktop/tries/Prototype1/Monotrader Online.exe
+  playerPath: C:/Users/Oceane/Desktop/tries/Prototype2/Monotrader Online.exe

@@ -36,8 +36,10 @@ public class PlayerNameTag : MonoBehaviourPunCallBacks
      
         if (myPlayer.IsMasterClient)
         {
+           
             SetName();
         }
+
     }
 
     //sets the text of the billboard to the corresponding player name
@@ -68,4 +70,6 @@ public class PlayerNameTag : MonoBehaviourPunCallBacks
             start += Time.deltaTime;
         }
     }
+
+
 }

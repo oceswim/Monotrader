@@ -67,6 +67,7 @@ MonoBehaviour:
   - WinnerPanelActivationAfterDQ
   - GetPlayerFortune
   - TurnToSet
+  - SetNameAndColor
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

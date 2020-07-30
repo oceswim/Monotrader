@@ -38,7 +38,7 @@ public class Exit : MonoBehaviourPunCallbacks
                         photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
 
                     }
-                    photonView.RPC("TurnToSet", RpcTarget.AllBuffered, GameManager.instance.myTurn); ;
+                    photonView.RPC("TurnToSet", RpcTarget.AllBuffered, GameManager.instance.myTurn); 
                     PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
                     exitSound.Play();
                     PhotonNetwork.LeaveRoom();
