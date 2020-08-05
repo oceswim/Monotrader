@@ -45,15 +45,16 @@ public class BoardManager : MonoBehaviourPunCallbacks
             taxesPanel.SetActive(false); 
             taxeSubPanel.SetActive(true);
         }
-        
+
     }
 
     public static void SetPosition(int index,bool turn)
     {
-       
-         PositionManager(index);
-        
-          //  FakeFunction();
+
+        PositionManager(index);
+ 
+ 
+
        
         if (turn)
         {
@@ -151,18 +152,10 @@ public class BoardManager : MonoBehaviourPunCallbacks
     }
     private static void FakeFunction()
     {
-        if (x == 0)
-        {
-            x++;
-            MechanicsManager.instance.CurrenciesTrading("euros");
-        }
-        else
-        {
-            actionDone = true;
-        }
-        //MechanicsManager.instance.CurrenciesTrading("dollars");
-        //MechanicsManager.instance.CurrenciesTrading("pounds");
-        //MechanicsManager.instance.CurrenciesTrading("yens");
+      
+            MechanicsManager.instance.TaxesManage();
+        
+      
     }
 
     private bool CheckForBankingsValues()
@@ -216,6 +209,10 @@ public class BoardManager : MonoBehaviourPunCallbacks
         {
             //player left wins
             GameModeManager.disqualified = true;
+        }
+        else
+        {
+            Exit.exitAfterDQ = true;
         }
         
     }

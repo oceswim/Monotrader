@@ -50,7 +50,7 @@ public class BlackTuesdayManager : MonoBehaviour
         increase =Math.Round(UnityEngine.Random.Range(.05f, .21f),2);
         DELTA = Math.Round(1 + increase, 2);
         
-        SetNewTrends((float)increase*10);
+        SetNewTrends((float)increase);
     }
     private void WorldVariation()
     {

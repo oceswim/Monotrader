@@ -7,7 +7,7 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallBacks
 {
-    private const string PREFDICE = "DiceVal";
+    public static int PREFDICE;
 
     //room property keys
     private const string PLAYER_STATE = "myState";
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     void Start()
     {
         
-        moveVal = diceStatus= 0 ;
+       PREFDICE= moveVal = diceStatus= 0 ;
         TURN_COUNT_VALUE=1;
         gameCanStart =dicesRolling= false;
         myRoom = PhotonNetwork.CurrentRoom;
@@ -146,8 +146,10 @@ public class GameManager : MonoBehaviourPunCallBacks
                     diceStatus = 0;
                     dicesRolling = false;
 
-                    PlayerPrefs.SetInt(PREFDICE, moveVal);
+                    PREFDICE = moveVal;
                     moveVal = 0;
+
+                    Debug.Log("PREFDICE: " + PREFDICE);
                     //activate movement
                     MovementManager.moveMe = true;
                 }
@@ -455,7 +457,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     //starts the dice rolling mechanics when the player clicks on the roll button.
     public void RollDices(bool taxesRoll)
     {
-
+        Debug.Log("IS IT TAX ROLL ?" + taxesRoll);
         foreach (DicesManager s in inGameDices)
         {
             s.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.LocalPlayer);

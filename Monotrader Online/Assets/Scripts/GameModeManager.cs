@@ -15,6 +15,8 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     private const int TIME_LIMIT = 1;
     private const int AMOUNT_REACH = 2;
     private const float AMOUNT_LIMIT = 30000;
+    private const float AMOUNT_LIMIT_SINGLE = 20000;
+    private float THE_AMOUNT = 0;
     private const int FINAL_SECONDS = 6;
     private float TIMER_LIMIT = 900; //15 mins = 60 * 15
     private float TIMER_END = 0;
@@ -140,7 +142,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                         if (checkFortune)
                         {
                             checkFortune = false;
-                            if ((MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS) > AMOUNT_LIMIT)
+                            if ((MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS) > THE_AMOUNT)
                             {
                                 amountGoal = false;
                                 if (!photonView.IsMine)
@@ -275,7 +277,15 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                 break;
             case AMOUNT_REACH:
                 amountGoal = true;
-                gameModeText.text = "Get a fortune of 30,000 to win!";
+                if (PhotonNetwork.PlayerListOthers.Length>0)
+                {
+                    THE_AMOUNT = AMOUNT_LIMIT;
+                }
+                else
+                {
+                    THE_AMOUNT = AMOUNT_LIMIT_SINGLE;
+                }
+                gameModeText.text = "Get a fortune of " +THE_AMOUNT.ToString()+ " to win!";
                 break;
         }
     }

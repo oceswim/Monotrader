@@ -19,7 +19,7 @@ public class TaxesManager : MonoBehaviour
     private const string POUNDS_PRICE = "Pounds_Price";
     private const string YEN_PRICE = "Yen_Price";
     private const string PREFDICE = "DiceVal";
-    private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
+   
     private const int BACK_POS_1 = -4;
     private const int BACK_POS_2 = -6;
 
@@ -51,7 +51,7 @@ public class TaxesManager : MonoBehaviour
             status = 0;
             dice1 = values[0];
             dice2 = values[1];
-         
+            Debug.Log("DICE 1" + dice1 + " vs DICE2" + dice2);
             if (dice1 != dice2)
             {
                 MoveBack();
@@ -61,7 +61,7 @@ public class TaxesManager : MonoBehaviour
             else
             {
                 Done();//double done so can keep playing.
-                //add some effects here.
+
             }
             
         }
@@ -184,19 +184,21 @@ public class TaxesManager : MonoBehaviour
     //here we call gamemanager roll with taxes roll set to true
     public void MoveBack()
     {
-        Debug.Log("moving back: " + PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY));
+       
 
             //set pref dice to minus
-            if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==18)
+            if(MovementManager.POSITION_INDEX==18)
             {
-                PlayerPrefs.SetInt(PREFDICE, BACK_POS_1);
+            Debug.Log("backwards to 14");
+                GameManager.PREFDICE= BACK_POS_1;
            
                 MovementManager.backWards = true;
                 MovementManager.moveMe = true;
             }
-            else if(PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY)==27)
+            else if(MovementManager.POSITION_INDEX==27)
             {
-                PlayerPrefs.SetInt(PREFDICE, BACK_POS_2);
+            Debug.Log("backwards to 21");
+            GameManager.PREFDICE= BACK_POS_2;
           
                 MovementManager.backWards = true;
                 MovementManager.moveMe = true;
@@ -208,7 +210,7 @@ public class TaxesManager : MonoBehaviour
     }
     public void Done()
     {
-       
+        values = new List<int>();
         BoardManager.NextTurn();
         gameObject.SetActive(false);
         subPanel.SetActive(true);

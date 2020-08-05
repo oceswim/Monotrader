@@ -8,16 +8,15 @@ public class DicesManager : MonoBehaviourPunCallBacks
     private Rigidbody myBody;
     private Room myRoom;
 
-    private int myIndex, temp;
+    private int myIndex;
     private Vector3 noVelocity = Vector3.zero;
     private bool canGuess;
     public bool roll,goodToRoll;
     public bool taxesRoll,switchOwner;
-    private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
     private static float dirX, dirY, dirZ;
     public void Start()
     {
-        dirX = dirY = dirZ =temp= 0;
+        dirX = dirY = dirZ = 0;
         myRoom = PhotonNetwork.CurrentRoom;
         roll = canGuess = taxesRoll =goodToRoll= false;
         myBody = transform.GetComponent<Rigidbody>();
@@ -136,6 +135,7 @@ public class DicesManager : MonoBehaviourPunCallBacks
         else
         {
             taxesRoll = false;
+            Debug.Log("ADDING " + diceVal + " TO DICE VALS");
             TaxesManager.values.Add(diceVal);
             TaxesManager.status++;
         }

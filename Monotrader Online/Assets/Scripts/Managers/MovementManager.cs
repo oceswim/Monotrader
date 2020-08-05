@@ -4,7 +4,7 @@ using UnityEngine;
 public class MovementManager : MonoBehaviourPunCallBacks
 {
     //the different hashkeys and constant private variables
-    private const string PREFDICE = "DiceVal";
+
     private const int TARGET_AMOUNT = 27;
     private const int TARGET_LIST_SIZE = 28;
     private const int CORNER_1 = 7;
@@ -12,7 +12,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
     private const int CORNER_3 = 21;
     private const int CORNER_4 = 0;
     private const float SPEED = 5f;
-    private const string POSITION_INDEX_PREF_KEY = "myPositionIndex";
+    public static int POSITION_INDEX;
     private Transform[] Targets;
     private Transform transformToMove, endPoint;
     private int myActorNum, myPositionIndex, movementIndex;
@@ -25,7 +25,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
     
     private void Start()
     {
-        PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, 0);
+        POSITION_INDEX= 0;
         transformToMove = FindMyTransform();
         controller = transformToMove.GetComponent<CharacterController>();
         string pathToTargets = "BoardGame/Player" + myActorNum.ToString() + "Spots";
@@ -42,7 +42,9 @@ public class MovementManager : MonoBehaviourPunCallBacks
         {
 
             moveMe = false;
-            int diceVal= PlayerPrefs.GetInt(PREFDICE);
+            int diceVal = GameManager.PREFDICE;
+            Debug.Log("PREF DICE " +diceVal);
+        
             Movement(diceVal);
         }
 
@@ -53,7 +55,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
     private Transform FindMyTransform()
     {
         Transform myTransf;
-        myPositionIndex = PlayerPrefs.GetInt(POSITION_INDEX_PREF_KEY);
+        myPositionIndex = POSITION_INDEX;
         myActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
         //string myName = PlayerPrefs.GetString(PLAYER_NAME_PREF_KEY);
         string myName = "Player" + myActorNum.ToString();
@@ -147,6 +149,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
                 if (newPositionIndex <= 14)
                 {
                     //straight line
+                    Debug.Log("BACKWARDS HERE");
                     movementIndex = 1;
                     movementMode = 1;
                 }
@@ -193,6 +196,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
                     movementIndex = 7;
                     movementMode = 3;
                 }
+                
 
             }
             else if (oldPosition >= 21 && oldPosition <= 27)
@@ -404,7 +408,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
                 }
                 break;
         }
-        PlayerPrefs.SetInt(POSITION_INDEX_PREF_KEY, myPositionIndex);
+        POSITION_INDEX= myPositionIndex;
         doneMoving = false;
         if (!backWards)
         {
