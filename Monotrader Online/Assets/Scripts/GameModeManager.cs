@@ -193,7 +193,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void GoToCharSelect()
     {
-        Debug.Log("in go to charselect");
+
         if(PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;//we close the room to anyone else trying to join it when master client chose the game mode.

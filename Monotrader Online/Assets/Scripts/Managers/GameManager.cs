@@ -26,8 +26,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     private bool dicesRolling;
     private float TIMER_END = 0;
     private float TIMER_LIMIT = 30;
-    private string PLAYER_GOLD;
-    private bool finalSeconds, timerRollReset;
+    private bool finalSeconds, timerRollReset,turnTimeOn;
 
     //private int moveVal, diceStatus, turnCounter;
     private int moveVal;
@@ -40,13 +39,14 @@ public class GameManager : MonoBehaviourPunCallBacks
     public static GameManager instance = null;
     public static Room myRoom;
     public static int playerIndexToPlay,diceRollCount,TURN_COUNT_VALUE;
-
-
+    public static string actionInPlace = "null";
+    public static bool malusOn = false;
     //public variables
     public AudioSource mainTheme;
     public AudioSource secondaryTheme;
+    public AudioSource newTurnSFX;
     public bool gameCanStart,myTurn;
-    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject;
+    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject,yourTurnTextObject;
     public TMP_Text timerTurnText;
 
 
@@ -76,9 +76,10 @@ public class GameManager : MonoBehaviourPunCallBacks
     void Start()
     {
         
-       PREFDICE= moveVal = diceStatus= 0 ;
+        PREFDICE= moveVal = diceStatus= 0;
         TURN_COUNT_VALUE=1;
-        gameCanStart =dicesRolling= false;
+        gameCanStart =dicesRolling=malusOn= false;
+        turnTimeOn = true;
         myRoom = PhotonNetwork.CurrentRoom;
         SetRoomProperty(PLAYERS_NEW_TURN, 0);
     }
@@ -117,39 +118,48 @@ public class GameManager : MonoBehaviourPunCallBacks
         }
         if (myTurn && gameCanStart)
         {
+
             if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
             {
-                Debug.Log(playerIndexToPlay + " it's the player ind to play it corresponds to " + PhotonNetwork.PlayerList[playerIndexToPlay].NickName);
                 if (!myPlayer.Equals(PhotonNetwork.PlayerList[playerIndexToPlay]))
                 {
                     myTurn = false;
                     DiceUI.SetActive(false);
                 }
             }
-            if (!timerTurnObject.activeSelf)
+            if (!timerTurnObject.activeSelf && turnTimeOn)//the turn timer object is off and timer is on
             {
-                timerTurnObject.SetActive(true);
+                timerTurnObject.SetActive(true);//object activated
+                
             }
-
-            TurnTimer();
-            
-            if (dicesRolling)
+            if (turnTimeOn)//timer on we display the time running down
             {
-                if(!timerRollReset)
+                TurnTimer();
+            }
+            else
+            {
+                timerTurnObject.SetActive(false);//timer off we hide the timer
+            }
+            if (dicesRolling)//player clicked on the roll
+            {
+                if(turnTimeOn)//timer set to off until dices done rolling
                 {
-                    TIMER_LIMIT = 30;
-                    timerRollReset = true;
+                    turnTimeOn = false;
+                    ResetTimer();
                 }
-
                 if (diceStatus == 2)
                 {
+                    if (!timerRollReset)//once the player rolled the dices and they finished rolling, timer resets to 30 so the player has 30seconds to play
+                    {
+                        turnTimeOn = true;
+                        timerRollReset = true;
+                    }
                     diceStatus = 0;
                     dicesRolling = false;
 
                     PREFDICE = moveVal;
                     moveVal = 0;
 
-                    Debug.Log("PREFDICE: " + PREFDICE);
                     //activate movement
                     MovementManager.moveMe = true;
                 }
@@ -164,7 +174,10 @@ public class GameManager : MonoBehaviourPunCallBacks
             }
             if (CheckIfMyTurn())
             {
-
+                if (myRoom.PlayerCount > 1)
+                {
+                    yourTurnTextObject.SetActive(true);
+                }
                 myTurn = true;
                 DiceUI.SetActive(true);
             }
@@ -200,8 +213,13 @@ public class GameManager : MonoBehaviourPunCallBacks
         {
             ResetTimer();
             DiceUI.SetActive(false);
+            if(!actionInPlace.Equals("null"))
+            {
+                MechanicsManager.instance.DeactivateMechanic(actionInPlace);
+            }
             if (myRoom.PlayerCount == 1)
             {
+
                 RollDices(false);
             }
             else
@@ -217,7 +235,14 @@ public class GameManager : MonoBehaviourPunCallBacks
         {
             timerRollReset = false;
         }
-        finalSeconds = false;
+        if (finalSeconds)
+        {
+            finalSeconds = false;
+            if(!timerTurnText.enabled)
+            {
+                timerTurnText.enabled = true;
+            }
+        }
         TIMER_LIMIT = 30;
     }
     private void DisplayTime(float timeToDisplay)
@@ -327,7 +352,6 @@ public class GameManager : MonoBehaviourPunCallBacks
         if (playerIndexToPlay < PhotonNetwork.PlayerList.Length)
         {
             Player playerToplay = PhotonNetwork.PlayerList[playerIndexToPlay];
-            Debug.Log(" - Player to play is :" + playerToplay.NickName);
             if (playerToplay.Equals(myPlayer))
             {
                 isItMyTurn = true;
@@ -419,7 +443,8 @@ public class GameManager : MonoBehaviourPunCallBacks
     private void NewTurnMechanic()//one player cross new turn
     {
         MoneyManager.instance.NewTurnFunction();
-        PLAYER_GOLD += 2000;
+        newTurnSFX.Play();
+        MoneyManager.PLAYER_GOLD += 2000;
         BankManager.instance.UpdateGold(-2000);
         BankManager.Trigger = true;
         MoneyManager.instance.UpdateFortuneInGame();
@@ -457,7 +482,6 @@ public class GameManager : MonoBehaviourPunCallBacks
     //starts the dice rolling mechanics when the player clicks on the roll button.
     public void RollDices(bool taxesRoll)
     {
-        Debug.Log("IS IT TAX ROLL ?" + taxesRoll);
         foreach (DicesManager s in inGameDices)
         {
             s.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.LocalPlayer);

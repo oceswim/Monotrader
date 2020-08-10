@@ -4,7 +4,28 @@ using UnityEngine;
 
 public class UiManager : MonoBehaviour
 {
-    public GameObject bankings, history, trends;
+    public GameObject bankings, history, trends,tradingManager;
+    public static bool tradeOn=false;
+
+    private void Update()
+    {
+        if(tradeOn)
+        {
+            tradeOn = false;
+            if(bankings.activeSelf)
+            {
+                bankings.SetActive(false);
+            }
+            if(history.activeSelf)
+            {
+                history.SetActive(false);
+            }
+            if(trends.activeSelf)
+            {
+                trends.SetActive(false);
+            }
+        }
+    }
     // Start is called before the first frame update
     public void HandleUI(GameObject UI)
     {

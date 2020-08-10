@@ -10,10 +10,7 @@ public class ToggleManager : MonoBehaviour
     public EventTrigger eventTrigger1, eventTrigger2;
     public Toggle toggle1, toggle2;
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+
     private void Update()
     {
         if(toggle1.isOn && eventTrigger1.enabled)

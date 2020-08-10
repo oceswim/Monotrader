@@ -59,7 +59,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
     }
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected to master");
+
         if(isConnecting)
         {
             PhotonNetwork.JoinRandomRoom();
@@ -79,17 +79,17 @@ public class MainMenu : MonoBehaviourPunCallbacks
     }
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("No clients are waiting for oponent, creating new room");
+
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayerPerRoom, IsOpen=true });
         
     }
     public override void OnJoinedRoom()//this is for the player trying to join a party
     {
-        Debug.Log("Client successfully joined the room");
+
         SetKeys();
         SetColor(PhotonNetwork.CurrentRoom);
         int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
-        Debug.Log(PhotonNetwork.CurrentRoom.Name + " and p count : " + playerCount);
+
         if(playerCount < minPlayerPerRoom)
         {
             waitingStatusText.text = "Waiting for oponent";

@@ -162,7 +162,7 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 		this.chatClient.ConnectUsingSettings(this.chatAppSettings);
 
 		//this.ChannelToggleToInstantiate.gameObject.SetActive(false);
-		Debug.Log("Connecting as: " + this.UserName);
+
 
 		this.ConnectingLabel.SetActive(true);
 	}
@@ -420,7 +420,7 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 
 		}
 
-		Debug.Log("OnSubscribed: " + string.Join(", ", channels));
+
 
 		// Switch to the first newly created channel
 		this.ShowChannel(channels[0]);

@@ -11,7 +11,6 @@ public class SpinTheWheel : MonoBehaviour
     public const string POUNDS_UPDATE = "PoundsUpdate";
     public const string YENS_UPDATE = "YensUpdate";
 
-    private const string MALUS = "myMalus";
     public GameObject theWheel,confirmButton;
     private bool spin;
     private float rotSpeed;
@@ -44,6 +43,7 @@ public class SpinTheWheel : MonoBehaviour
                 spin = false;
                 float finalRot =theWheel.transform.localEulerAngles.z;
                 DeterminePerk(finalRot);
+
             }
             theWheel.transform.Rotate(0, 0, rotSpeed);
             Spinning();
@@ -83,68 +83,68 @@ public class SpinTheWheel : MonoBehaviour
 
     private void DeterminePerk(float rotation)
     {
-      
+
         double value = Math.Round(rotation, 1);
 
-        if(value>=0 && value<=96)
-        {
-            mode1 = true;
-            float newGold = MoneyManager.PLAYER_GOLD + 500;
-            BankManager.instance.UpdateGold(-500);
+         if(value>=0 && value<=96)
+         {
+             mode1 = true;
+             MoneyManager.PLAYER_GOLD += 500;
+             BankManager.instance.UpdateGold(-500);
 
-        }
-        else if(value >= 96.1 && value <=190)
-        {
-            mode1 = true;
-            float newGold = MoneyManager.PLAYER_GOLD - 250;
-            BankManager.instance.UpdateGold(250);
+         }
+         else if(value >= 96.1 && value <=190)
+         {
+             mode1 = true;
+             MoneyManager.PLAYER_GOLD -= 250;
+             BankManager.instance.UpdateGold(250);
 
-        }
-        else if(value >= 274.1 && value <= 360)
-        {
-         
-            //use player pref here.
-            PlayerPrefs.SetInt(MALUS, 1);
- 
-        }
-        else if(value >= 190.1 && value <= 274)
-        {
-           
-            mode1 = true;
-            string key = "";
+         }
+         else if(value >= 274.1 && value <= 360)
+         {
 
-            int randomInt = UnityEngine.Random.Range(0, 4);
-            switch(randomInt)
-            {
-                case 0:
-                    MoneyManager.PLAYER_DOLLARS+=500;
-                    BankManager.instance.UpdateDollars(-500);
+             //use player pref here.
+             GameManager.malusOn = true;
 
-                    //dollars
-                    break;
-                case 1:
-                    MoneyManager.PLAYER_EUROS+=500;
-                    BankManager.instance.UpdateEuros(-500);
+         }
+         else if(value >= 190.1 && value <= 274)
+         {
 
-                    //euros
-                    break;
-                case 2:
-                    MoneyManager.PLAYER_POUNDS+=500;
-                    BankManager.instance.UpdatePounds(-500);
+             mode1 = true;
 
-                    //pounds
-                    break;
-                case 3:
-                    MoneyManager.PLAYER_YENS+=500;
-                    BankManager.instance.UpdateYens(-500);
+             int randomInt = UnityEngine.Random.Range(0, 4);
+             switch(randomInt)
+             {
+                 case 0:
+                     MoneyManager.PLAYER_DOLLARS+=500;
+                     BankManager.instance.UpdateDollars(-500);
 
-                    //yen
-                    break;
+                     //dollars
+                     break;
+                 case 1:
+                     MoneyManager.PLAYER_EUROS+=500;
+                     BankManager.instance.UpdateEuros(-500);
 
-            }
+                     //euros
+                     break;
+                 case 2:
+                     MoneyManager.PLAYER_POUNDS+=500;
+                     BankManager.instance.UpdatePounds(-500);
 
-        }
-        
+                     //pounds
+                     break;
+                 case 3:
+                     MoneyManager.PLAYER_YENS+=500;
+                     BankManager.instance.UpdateYens(-500);
+
+                     //yen
+                     break;
+
+             }
+
+         }
+
+
         confirmButton.SetActive(true);
     }
     private void SetRoomProperty(string hashKey, int value)

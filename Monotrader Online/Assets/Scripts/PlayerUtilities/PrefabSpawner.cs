@@ -76,10 +76,11 @@ public class PrefabSpawner : MonoBehaviourPunCallBacks
         {
             case "CoinsStack":
                 prefb.transform.localPosition = new Vector3(0, -.25f, 0);
-                prefb.transform.localScale = new Vector3(150, 150, 150);
+                //prefb.transform.localScale = new Vector3(150, 150, 150);
                 break;
-            case "CreditCard":
-                prefb.transform.localPosition = new Vector3(0, .72f, 0);
+            case "Chest":
+                prefb.transform.Rotate(new Vector3(0, 180, 0));
+                //prefb.transform.localScale = new Vector3(2, 2, 2);
                 break;
             case "GoldIngot":
                 prefb.transform.localPosition = new Vector3(0, -.25f, 0);
@@ -87,7 +88,7 @@ public class PrefabSpawner : MonoBehaviourPunCallBacks
             case "PileBill":
                 prefb.transform.localPosition = new Vector3(0, .25f, 0);
                 prefb.transform.Rotate(new Vector3(-90, 0, 0));
-                prefb.transform.localScale = new Vector3(40, 40, 40);
+                //prefb.transform.localScale = new Vector3(40, 40, 40);
                 break;
         }
 

@@ -52,7 +52,7 @@ public class BoardManager : MonoBehaviourPunCallbacks
     {
 
         PositionManager(index);
- 
+
  
 
        

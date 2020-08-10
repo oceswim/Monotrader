@@ -7,8 +7,7 @@ using System;
 public class TradingManager : MonoBehaviour
 {
 
-    private const float MALUS_AMOUNT = 1.15f;
-    private const string MALUS = "myMalus";
+    private const float MALUS_AMOUNT = .85f;
     private const string EUROS_PRICE = "Euros_Price";
     private const string DOLLARS_PRICE = "Dollars_Price";
     private const string POUNDS_PRICE = "Pounds_Price";
@@ -20,8 +19,8 @@ public class TradingManager : MonoBehaviour
     public GameObject[] myTitles = new GameObject[4];
     public GameObject malusObject, valueMinimumText;
     public TMP_InputField myInputField;
-    public Slider mySlider;
-    public TMP_Text currencyText, valueText, buyText, sellText, notEnoughText,savingsText;
+    public Toggle buyToggle, sellToggle;
+    public TMP_Text currencyText, valueText, notEnoughText,savingsText,trendValueText,availableGoldText,availableCurrencyText;
     private int tradingMode, currencyMode; // 0 is buy 1 is sell
     public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading, BeginProcess;
     private float currencyPriceInGold;
@@ -39,13 +38,7 @@ public class TradingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (BeginProcess)
-        {
-            tradingMode = 0;//set to buy intially.
-            UpdateText(tradingMode);
-            CheckMin();
-            BeginProcess = false;
-        }
+     
         if (eurosTrading)
         {
             currencyToChange = MoneyManager.PLAYER_EUROS;
@@ -82,30 +75,44 @@ public class TradingManager : MonoBehaviour
             currencyPriceInGold = (float)myRoom.CustomProperties[YEN_PRICE];
             currencyMode = 4;
         }
-  
+        if (BeginProcess)
+        {
+            if (GameManager.malusOn)
+            {
+
+                Debug.Log("MALUS ON");
+                malusObject.SetActive(true);
+
+            }
+            UiManager.tradeOn = true;
+            tradingMode = 0;//set to buy intially.
+            ShowAvailabilities();
+            UpdateText(tradingMode);
+            CheckMin();
+            BeginProcess = false;
+        }
     }
 
 
     public void UpdateTextValue(string value) // check here if the value is less than what's in the bank + is less than what player has. otherwise need to put less.
     {
-        if (PlayerPrefs.HasKey(MALUS))
-        {
-            if (PlayerPrefs.GetInt(MALUS) > 0)
-            {
-                Debug.Log("MALUS ON");
-                malusObject.SetActive(true);
-            }
-        }
+
         if (!string.IsNullOrEmpty(value))
         {
             string inputVal = value;
             int theValue = int.Parse(inputVal);
             double price;
+            double malusVariation = 1;
+            if(GameManager.malusOn)
+            {
+                malusVariation = MALUS_AMOUNT;
+            }
             switch (tradingMode)
             {
                 case 0://buy
                        //check player pref from lucky so that the transaction is 15% more.
-                    price = Math.Round((theValue / currencyPriceInGold), MidpointRounding.AwayFromZero);
+                    
+                    price = Math.Round((theValue * currencyPriceInGold*malusVariation), MidpointRounding.AwayFromZero);
                     latestValue = price;
                     valueText.text = price.ToString() + " " + currencyModeText;
 
@@ -114,7 +121,7 @@ public class TradingManager : MonoBehaviour
                 case 1:
 
                     //check player pref from lucky so that the transaction brings less 15%.
-                    price = Math.Round(currencyPriceInGold * theValue, MidpointRounding.AwayFromZero);
+                    price = Math.Round((theValue / currencyPriceInGold)*malusVariation , MidpointRounding.AwayFromZero);
                     latestValue = price;
                     valueText.text = price.ToString() + " G";
                     //currency -> gold
@@ -241,21 +248,17 @@ public class TradingManager : MonoBehaviour
     }
     public void SwitchModes()
     {
-        if (mySlider.value == mySlider.maxValue)
+        if (buyToggle.isOn)
         {
-            mySlider.value = mySlider.minValue;
-            tradingMode = (int)mySlider.value;
-            buyText.gameObject.SetActive(true);
-            sellText.gameObject.SetActive(false);
+            
+            tradingMode = 0;
             UpdateText(tradingMode);
             Debug.Log("Switching to buy");
         }
         else
         {
-            mySlider.value = mySlider.maxValue;
-            tradingMode = (int)mySlider.value;
-            buyText.gameObject.SetActive(false);
-            sellText.gameObject.SetActive(true);
+            
+            tradingMode = 1;
             UpdateText(tradingMode);
             Debug.Log("Switching to sell");
         }
@@ -281,6 +284,12 @@ public class TradingManager : MonoBehaviour
 
         }
 
+    }
+    private void ShowAvailabilities()
+    {
+        availableGoldText.text = $"You have {MoneyManager.PLAYER_GOLD.ToString()}G";
+        availableCurrencyText.text = $"You have {currencyToChange.ToString()}{currencyModeText}";
+        trendValueText.text = $"1G = {currencyPriceInGold.ToString()}{currencyModeText}";
     }
     private void CheckMin()
     {
@@ -396,17 +405,10 @@ public class TradingManager : MonoBehaviour
         if (!string.IsNullOrEmpty(myInputField.text))
         {
             int theValue = int.Parse(myInputField.text);
-            if (PlayerPrefs.HasKey(MALUS))
+            if (GameManager.malusOn)
             {
-                if (PlayerPrefs.GetInt(MALUS) > 0)
-                {
-                    //we decrease the value obtained with the gold input
-                    Debug.Log("price before malus :" + theValue);
-                    double rounded =Math.Round(theValue * MALUS_AMOUNT, MidpointRounding.AwayFromZero);
-                    theValue = (int)rounded;
-                    Debug.Log("price with malus :" + theValue);
-                    PlayerPrefs.SetInt(MALUS, 0);
-                }
+                GameManager.malusOn=false;
+                malusObject.SetActive(false);
             }
             float newCurr=0;
             switch (tradingMode)
@@ -429,8 +431,9 @@ public class TradingManager : MonoBehaviour
             UpdateMoneyManagerAmounts(currencyMode, newCurr);
             UpdateBankings(theValue, (int)Math.Round(latestValue, MidpointRounding.AwayFromZero), currencyMode, tradingMode);
             myInputField.text = string.Empty;
-            mySlider.value = mySlider.minValue;
-            malusObject.SetActive(false);
+            buyToggle.isOn = true;
+            sellToggle.isOn = false;
+            
             if (myTitles[0].activeSelf)
             {
                 myTitles[0].SetActive(false);

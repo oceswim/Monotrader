@@ -29,10 +29,41 @@ public class MechanicsManager : MonoBehaviour
         savingsText.text = "0 G";
     }
 
-
+    public void DeactivateMechanic(string mechanic)
+    {
+        switch(mechanic)
+        {
+            case "currency":
+                currenciesObject.SetActive(false);
+                break;
+            case "taxes":
+                taxesObject.SetActive(false);
+                break;
+            case "crisis":
+                crisisObject.SetActive(false);
+                break;
+            case "national":
+                nationalobject.SetActive(false);
+                break;
+            case "worldwide":
+                worldWideObject.SetActive(false);
+                break;
+            case "luck":
+                luckObject.SetActive(false);
+                break;
+            case "savings":
+                savingsObject.SetActive(false);
+                break;
+            case "tuesday":
+                blackTuesdayObject.SetActive(false);
+                break;
+        }
+        GameManager.actionInPlace = "null";
+    }
 
     public void CurrenciesTrading(string mode)
     {
+        GameManager.actionInPlace = "currency";
         currenciesObject.SetActive(true);
         TradingManager.BeginProcess = true;
         switch (mode)
@@ -54,22 +85,25 @@ public class MechanicsManager : MonoBehaviour
     }
     public void TaxesManage()
     {
-        Debug.Log("In taxes manage");
+        GameManager.actionInPlace = "taxes";
         taxesObject.SetActive(true);
         TaxesManager.BeginProcess = true;
     }
     public void CrisisManage()
     {
+        GameManager.actionInPlace = "crisis";
         crisisObject.SetActive(true);
         CrisisManager.BeginProcess = true;
     }
     public void BlackTuesday()
     {
+        GameManager.actionInPlace = "tuesday";
         blackTuesdayObject.SetActive(true);
         BlackTuesdayManager.BeginProcess = true;
     }
     public void NationalVariation()
     {
+        GameManager.actionInPlace = "national";
         nationalobject.SetActive(true);
         VariationManager.BeginProcess = true;
         VariationManager.nationalVar = true;
@@ -77,17 +111,20 @@ public class MechanicsManager : MonoBehaviour
     }
     public void WorldWideVariation()
     {
+        GameManager.actionInPlace = "worldwide";
         worldWideObject.SetActive(true);
         VariationManager.BeginProcess = true;
         VariationManager.worldVar = true;
     }
     public void Savings()
     {
+        GameManager.actionInPlace = "savings";
         SavingsManager.BeginProcess = true;
         savingsObject.SetActive(true);
     }
     public void Luck()
     {
+        GameManager.actionInPlace = "luck";
         SpinTheWheel.BeginProcess = true;
         luckObject.SetActive(true);
     }

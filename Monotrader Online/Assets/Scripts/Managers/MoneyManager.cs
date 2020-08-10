@@ -290,7 +290,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         while(i<1.1)
         {
             TRENDS_VALUES[index] = (float)(Math.Round(i,2));
-            Debug.Log($"i: {TRENDS_VALUES[index]} and index: {index}");
+
             i += .01f;
             index++;
             
@@ -343,24 +343,11 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         SetRoomProperty(HISTORY_STATUS, ind);
     }
 
-    //allows to set each currencies amount each player owns to the room properties
-  /*  private void SetRoomAmounts(float g, float d, float e, float p, float y)
-    {
-
-        SetRoomProperty(PLAYER_GOLD, g);
-        SetRoomProperty(PLAYER_EUROS, e);
-        SetRoomProperty(PLAYER_DOLLARS, d);
-        SetRoomProperty(PLAYER_POUNDS, p);
-        SetRoomProperty(PLAYER_YENS, y);
-
-
-
-    }*/
 
     //allows to set each currencies prices to the room properties
     private void SetRoomPrices(float dol, float eur, float pou, float yen)
     {
-        Debug.Log($"EUROS:{eur} D:{dol} P:{pou} Y:{yen}");
+
         SetRoomProperty(EUROS_PRICE, eur);
         SetRoomProperty(DOLLARS_PRICE, dol);
         SetRoomProperty(POUNDS_PRICE, pou);
@@ -370,7 +357,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     //allows to set each currencies trends variation to the room properties
     private void SetRoomTrends(float d, float e, float p, float y)
     {
-        Debug.Log($"EUROS:{e} D:{d} P:{p} Y:{y}");
+
         SetRoomProperty(DOLLARS_TREND, d);
         SetRoomProperty(EUROS_TREND, e);
         SetRoomProperty(POUNDS_TREND, p);
@@ -663,18 +650,18 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         float pounds = (float)myRoom.CustomProperties[POUNDS_PRICE] * PLAYER_POUNDS;//we get the value of x euros in gold
         float yens = (float)myRoom.CustomProperties[YEN_PRICE] * PLAYER_YENS;//we get the value of x euros in gold
         float gold = PLAYER_GOLD;
-
-
        
+
+
+
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
         PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
         totalFortuneText.text = totalFortune.ToString();
 
-        //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
-        PLAYER_EUROS= euros;
-        PLAYER_DOLLARS= dollars;
-        PLAYER_POUNDS= pounds;
-        PLAYER_YENS= yens;
+        PLAYER_EUROS= (float)Math.Round(euros, MidpointRounding.AwayFromZero);
+        PLAYER_DOLLARS= (float)Math.Round(dollars, MidpointRounding.AwayFromZero);
+        PLAYER_POUNDS = (float)Math.Round(pounds, MidpointRounding.AwayFromZero);
+        PLAYER_YENS= (float)Math.Round(yens, MidpointRounding.AwayFromZero);
 
         UpdateAmountText();
         UpdateMaxCurrency();
@@ -722,7 +709,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         string M3 = HISTORY_TURN_M3;
         string M2 = HISTORY_TURN_M2;
         string M1 = HISTORY_TURN_M1;
-        Debug.Log($"M3:{M3} M2: {M2} M1:{M1} ");
+
         string Actual = (string)myRoom.CustomProperties[HISTORY_TURN_ACTUAL];
 
         string[] m3 = M3.Split('_');
@@ -932,7 +919,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
             PLAYER_HIGHEST_CURRENCY_NAME = "y";
             PLAYER_HIGHEST_CURRENCY_VALUE = PLAYER_YENS;
         }
-        Debug.Log("Highest currency: " + PLAYER_HIGHEST_CURRENCY_NAME);
+
     }
     [PunRPC]
     private void TrendsUpdates(bool roll)//roll determines if the trend updates comes from when all players rolled the dices

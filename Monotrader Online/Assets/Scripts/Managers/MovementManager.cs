@@ -43,7 +43,7 @@ public class MovementManager : MonoBehaviourPunCallBacks
 
             moveMe = false;
             int diceVal = GameManager.PREFDICE;
-            Debug.Log("PREF DICE " +diceVal);
+
         
             Movement(diceVal);
         }
