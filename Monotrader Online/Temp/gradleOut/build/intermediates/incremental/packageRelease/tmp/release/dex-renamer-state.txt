@@ -1,4 +1,0 @@
-#Tue Aug 11 14:54:20 CEST 2020
-base.0=D\:\\COURSFAC\\Monotrader\\Monotrader Online\\Temp\\gradleOut\\build\\intermediates\\transforms\\dexMerger\\release\\0
-path.0=classes.dex
-renamed.0=classes.dex
