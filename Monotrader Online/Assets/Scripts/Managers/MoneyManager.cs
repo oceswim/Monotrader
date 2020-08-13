@@ -12,7 +12,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
     private const float INITIAL_GOLD = 5000;
     private const float INITIAL_CURRENCIES = 2500;
-    private const string FORTUNE = "myFortune";
+
 
     private const string EUROS_PRICE = "Euros_Price";
     private const string DOLLARS_PRICE = "Dollars_Price";
@@ -655,8 +655,9 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
 
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
-        PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
-        totalFortuneText.text = totalFortune.ToString();
+        PLAYER_FORTUNE= (float)totalFortune;
+        float total = PLAYER_FORTUNE + PLAYER_SAVINGS;
+        totalFortuneText.text = total.ToString();
 
         PLAYER_EUROS= (float)Math.Round(euros, MidpointRounding.AwayFromZero);
         PLAYER_DOLLARS= (float)Math.Round(dollars, MidpointRounding.AwayFromZero);
@@ -683,8 +684,9 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         float gold =PLAYER_GOLD;
 
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
-        PlayerPrefs.SetFloat(FORTUNE, (float)totalFortune);
-        totalFortuneText.text = totalFortune.ToString();
+        PLAYER_FORTUNE= (float)totalFortune;
+        float total = PLAYER_FORTUNE + PLAYER_SAVINGS;
+        totalFortuneText.text = total.ToString();
         //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.
         UpdateAmountText();
         UpdateMaxCurrency();

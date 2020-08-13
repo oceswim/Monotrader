@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     public AudioSource secondaryTheme;
     public AudioSource newTurnSFX;
     public bool gameCanStart,myTurn;
-    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject,yourTurnTextObject;
+    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject,yourTurnTextObject, SidePanelChat,SidePanelFriendsList;
     public TMP_Text timerTurnText;
 
 
@@ -111,7 +111,11 @@ public class GameManager : MonoBehaviourPunCallBacks
                 {
                     gameCanStart = true;
                     AddDiceInstance();
-                    
+                    if(myRoom.PlayerCount ==1)
+                    {
+                        SidePanelChat.SetActive(false);
+                        SidePanelFriendsList.SetActive(false);
+                    }
                 }
 
             }

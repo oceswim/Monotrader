@@ -10,10 +10,13 @@
 
 namespace Photon.Chat
 {
+
     using System.Collections.Generic;
     using System.Text;
+    using UnityEngine;
 
-    #if SUPPORTED_UNITY || NETFX_CORE
+
+#if SUPPORTED_UNITY || NETFX_CORE
     using Hashtable = ExitGames.Client.Photon.Hashtable;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
     #endif
@@ -30,6 +33,7 @@ namespace Photon.Chat
     /// </remarks>
     public class ChatChannel
     {
+  
         /// <summary>Name of the channel (used to subscribe and unsubscribe).</summary>
         public readonly string Name;
 
@@ -63,6 +67,7 @@ namespace Photon.Chat
 
         /// <summary>Subscribed users.</summary>
         public readonly HashSet<string> Subscribers = new HashSet<string>();
+
 
         /// <summary>Used internally to create new channels. This does NOT create a channel on the server! Use ChatClient.Subscribe.</summary>
         public ChatChannel(string name)
@@ -110,16 +115,38 @@ namespace Photon.Chat
 
         /// <summary>Provides a string-representation of all messages in this channel.</summary>
         /// <returns>All known messages in format "Sender: Message", line by line.</returns>
-        public string ToStringMessages()
+        public string ToStringMessages(string myNickname)
         {
+            
             StringBuilder txt = new StringBuilder();
             for (int i = 0; i < this.Messages.Count; i++)
             {
-                txt.AppendLine(string.Format("{0}: {1}", this.Senders[i], this.Messages[i]));
+                string name = this.Senders[i];
+                if(this.Senders[i].Equals(myNickname))
+                {
+                    name = "You";
+                }
+                if (name.Equals("You") && Messages[i].ToString().Equals("%You're online!"))
+                {
+                    txt.AppendLine(string.Format("<color=green>{0}</color>", "You're Online"));
+                }
+                else if(!Messages[i].ToString().Equals("%You're online!")) //once each player sent that they're online can write what you want
+                {
+                    if (i % 2 == 0)
+                    {
+                        txt.AppendLine(string.Format("<color=orange>{0}:</color> {1}", name, this.Messages[i]));
+                    }
+                    else
+                    {
+                        txt.AppendLine(string.Format("<color=blue>{0}:</color> {1}", name, this.Messages[i]));
+                    }
+                }
+
+                
             }
             return txt.ToString();
         }
-
+ 
         internal void ReadProperties(Dictionary<object, object> newProperties)
         {
             if (newProperties != null && newProperties.Count > 0)

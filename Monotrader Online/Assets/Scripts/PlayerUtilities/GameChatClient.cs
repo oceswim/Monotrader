@@ -19,10 +19,10 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 	private string[] PlayerList;
 
 	public int HistoryLengthToFetch; // set in inspector. Up to a certain degree, previously sent messages can be fetched for context
-
+	private int connexionIndex;
 	public string UserName { get; set; }
 
-	private string selectedChannelName; // mainly used for GUI/input
+	private string selectedChannelName,initialContent; // mainly used for GUI/input
 	private bool sender;
 
 	public ChatClient chatClient;
@@ -93,7 +93,9 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 
 	public void Start()
 	{
+
 		DontDestroyOnLoad(this.gameObject);
+		connexionIndex = 0;
 		this.StateText.text = "";
 		this.StateText.gameObject.SetActive(true);
 		this.ConnectingLabel.SetActive(false);
@@ -198,6 +200,7 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 	{
 		if (this.InputFieldChat != null)
 		{
+			
 			this.SendChatMessage(this.InputFieldChat.text);
 			this.InputFieldChat.text = "";
 		}
@@ -234,8 +237,6 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 			string[] splitNames = this.selectedChannelName.Split(new char[] { ':' });
 			privateChatTarget = splitNames[1];
 		}
-		//UnityEngine.Debug.Log("selectedChannelName: " + selectedChannelName + " doingPrivateChat: " + doingPrivateChat + " privateChatTarget: " + privateChatTarget);
-
 
 		if (inputLine[0].Equals('\\'))
 		{
@@ -324,6 +325,7 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 			}
 			else
 			{
+
 				this.chatClient.PublishMessage(this.selectedChannelName, inputLine);
 			}
 		}
@@ -368,10 +370,6 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 			// add to the UI as well
 			foreach (string _friend in this.PlayerList)
 			{
-				/*if (this.FriendListUiItemtoInstantiate != null && _friend != this.UserName)
-				{
-					this.InstantiateFriendButton(_friend);
-				}*/
 				if (this.FriendListUiItemtoInstantiate != null)
 				{
 					if (_friend != this.UserName)
@@ -396,10 +394,12 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 
 		this.chatClient.SetOnlineStatus(ChatUserStatus.Online); // You can set your online state (without a mesage).
 		connectingPanel.SetActive(false);
+		
 	}
 
 	public void OnDisconnected()
 	{
+	
 		this.ConnectingLabel.SetActive(false);
 	}
 
@@ -413,16 +413,8 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 
 	public void OnSubscribed(string[] channels, bool[] results)
 	{
-		// in this demo, we simply send a message into each channel. This is NOT a must have!
-		foreach (string channel in channels)
-		{
-			this.chatClient.PublishMessage(channel, "is online."); // you don't HAVE to send a msg on join but you could.
-
-		}
-
-
-
 		// Switch to the first newly created channel
+		this.chatClient.PublishMessage("Main", "%You're online!");
 		this.ShowChannel(channels[0]);
 	}
 
@@ -592,9 +584,8 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 		}
 
 		this.selectedChannelName = channelName;
-		this.CurrentChannelText.text = channel.ToStringMessages();
-		Debug.Log("ShowChannel: " + this.selectedChannelName);
-
+		
+		this.CurrentChannelText.text = channel.ToStringMessages(PhotonNetwork.LocalPlayer.NickName);
 		foreach (KeyValuePair<string, Toggle> pair in this.channelToggles)
 		{
 			pair.Value.isOn = pair.Key == channelName ? true : false;

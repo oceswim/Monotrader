@@ -602,8 +602,8 @@ public class ChatGui : MonoBehaviour, IChatClientListener
 		}
 
 		this.selectedChannelName = channelName;
-		this.CurrentChannelText.text = channel.ToStringMessages();
-		Debug.Log("ShowChannel: " + this.selectedChannelName);
+		//this.CurrentChannelText.text = channel.ToStringMessages();
+		//Debug.Log("ShowChannel: " + this.selectedChannelName);
 
 		foreach (KeyValuePair<string, Toggle> pair in this.channelToggles)
 		{

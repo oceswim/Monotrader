@@ -13,8 +13,9 @@ namespace Photon.Chat
     using System;
     using System.Collections.Generic;
     using ExitGames.Client.Photon;
+    using UnityEngine;
 
-    #if SUPPORTED_UNITY || NETFX_CORE
+#if SUPPORTED_UNITY || NETFX_CORE
     using Hashtable = ExitGames.Client.Photon.Hashtable;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
     #endif
@@ -550,7 +551,6 @@ namespace Photon.Chat
                 }
                 return false;
             }
-
             Dictionary<byte, object> parameters = new Dictionary<byte, object>
                 {
                     { (byte)ChatParameterCode.Channel, channelName },

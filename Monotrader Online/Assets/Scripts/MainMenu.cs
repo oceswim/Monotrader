@@ -18,6 +18,7 @@ public class MainMenu : MonoBehaviourPunCallbacks
 
     public AudioSource GameStarting;
     public TMP_Text gameMode;
+    public GameObject FindOponentPanel;
     private int index;
     private bool isConnecting = false;
     private const string GameVersion = "0.1";
@@ -43,9 +44,19 @@ public class MainMenu : MonoBehaviourPunCallbacks
     public void FindOponents()
     {
         isConnecting = true;
-        findOponnentPanel.SetActive(false);
+        if (findOponnentPanel.activeSelf)
+        {
+            findOponnentPanel.SetActive(false);
+        }
         waitingStatusPanel.SetActive(true);
-        waitingStatusText.text = "Searching.. ";
+        if (minPlayerPerRoom == 1)
+        {
+            waitingStatusText.text = "Game is about to start...";
+        }
+        else
+        {
+            waitingStatusText.text = "Searching.. ";
+        }
 
         if(PhotonNetwork.IsConnected)
         {
@@ -190,9 +201,11 @@ public class MainMenu : MonoBehaviourPunCallbacks
         {
             case 0:
                 minPlayerPerRoom = 1;
+                FindOponents();
                 break;
             case 1:
                 minPlayerPerRoom = 2;
+                findOponnentPanel.SetActive(true);
                 break;
         }
         PlayerPrefs.SetInt(MIN_PLAYER_KEY, minPlayerPerRoom);
