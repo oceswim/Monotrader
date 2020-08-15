@@ -443,8 +443,8 @@ public class GameChatClient : MonoBehaviourPunCallBacks, IChatClientListener
 			FriendsManager.instance.SetFriendInstance(_friendItem);
 
 		}
-		FriendsManager.instance.AddInstanceToList(_friendItem);
-		
+		FriendsManager.instance.AddInstanceToItemList(_friendItem);//leave this here cause used by friend manager
+
 	}
 
 	public void OnUnsubscribed(string[] channels)

@@ -14,12 +14,11 @@ public class FriendsManager : MonoBehaviourPunCallBacks
     private FriendItem myPlayerItem;
     public List<FriendItem> playerItems = new List<FriendItem>();
     public static FriendsManager instance = null;
-    private const string FORTUNE = "myFortune";
     private const string FRIENDTOCHANGE = "friendToChange";
     private string REDPREF;
     private string GREENPREF;
     private string BLUEPREF;
-    public static bool changeFortune, initialFortune, colorSet;//are activated in money manager
+    public static bool changeFortune, colorSet;//are activated in money manager
     private Player myPlayer;
     private Room myRoom;
     private int r, g, b, transparency;
@@ -63,24 +62,8 @@ public class FriendsManager : MonoBehaviourPunCallBacks
                 photonView.TransferOwnership(myPlayer);
 
             }
-            string theFortune = PlayerPrefs.GetFloat(FORTUNE).ToString();
+            string theFortune = (MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS).ToString();
             UpdateMyFortune(theFortune);
-        }
-
-        if (initialFortune)
-        {
-            initialFortune = false;
-            if (myPlayer.IsMasterClient)
-            {
-                if (!photonView.IsMine)
-                {
-                    photonView.TransferOwnership(myPlayer);
-
-                }
-                string fortune = PlayerPrefs.GetFloat(FORTUNE).ToString();
-                photonView.RPC("UpdateAllFortune", RpcTarget.AllBuffered, fortune);
-
-            }
         }
 
         if (playerItems.Count == PhotonNetwork.PlayerList.Length && !colorSet)
@@ -92,8 +75,8 @@ public class FriendsManager : MonoBehaviourPunCallBacks
                 photonView.TransferOwnership(myPlayer);
 
             }
-
-            photonView.RPC("UpdateOtherColor", RpcTarget.AllBuffered, "You");
+            string theFortune = (MoneyManager.PLAYER_FORTUNE).ToString();
+            photonView.RPC("UpdateOtherColor", RpcTarget.AllBuffered, "You",theFortune);
             //called once everyone is ready to go
         }
 
@@ -105,17 +88,17 @@ public class FriendsManager : MonoBehaviourPunCallBacks
         PlayerPrefs.SetString(FRIENDTOCHANGE, nameOfFriend);
         colorSet = true;
 
-    }  
+    }
     public bool CallRPCFriendLeaving(string theName)
     {
         if (!photonView.IsMine)
         {
             photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
         }
-        photonView.RPC("SomeoneLeft", RpcTarget.AllBuffered,theName);
+        photonView.RPC("SomeoneLeft", RpcTarget.AllBuffered, theName);
         return true;
     }
-    
+
     private void InitialiseColor()
     {
         r = PlayerPrefs.GetInt(REDPREF);
@@ -131,19 +114,22 @@ public class FriendsManager : MonoBehaviourPunCallBacks
             transparency = 255;
         }
     }
+
+    public void AddInstanceToItemList(FriendItem i)//allows to fill the item list and update fortune value
+    {
+
+        if (!photonView.IsMine)
+        {
+            photonView.TransferOwnership(myPlayer);
+        }
+        playerItems.Add(i);
+    }
+  
+
     public void SetFriendInstance(FriendItem instance)
     {
         myPlayerItem = instance;
-    }
-    public void AddInstanceToList(FriendItem instance)
-    {
-        playerItems.Add(instance);
-        if (instance.NameLabel.Equals("You"))
-        {
-
-            myPlayerItem = instance;
-        }
-
+        Debug.Log(myPlayer.NickName + " set the friend instance my item to" + instance.name);
     }
 
     [PunRPC]
@@ -168,12 +154,14 @@ public class FriendsManager : MonoBehaviourPunCallBacks
     [PunRPC]
     private void UpdateAllFortune(string fortune)
     {
+        Debug.Log("THE FORTUNE IN RPC :" + fortune);
         foreach (FriendItem f in playerItems)
         {
             f.FortuneLabel.text = fortune;
         }
 
     }
+
 
     private void UpdateMyFortune(string fortune)
     {
@@ -200,7 +188,7 @@ public class FriendsManager : MonoBehaviourPunCallBacks
         }
     }
 
-    private void UpdateMyItemColor(FriendItem theItem)
+   /* private void UpdateMyItemColor(FriendItem theItem)
     {
 
 
@@ -211,16 +199,18 @@ public class FriendsManager : MonoBehaviourPunCallBacks
 
 
 
-    }
+    }*/
 
     [PunRPC]
-    private void UpdateOtherColor(string theName)
+    private void UpdateOtherColor(string theName,string fortune)
     {
 
         foreach (FriendItem f in playerItems)
         {
+            f.FortuneLabel.text = fortune;//we set the fortune amount to display to everyone
             if (f.NameLabel.text.Equals(theName))
             {
+                
                 int red = PlayerPrefs.GetInt(REDPREF);
                 int green = PlayerPrefs.GetInt(GREENPREF);
                 int blue = PlayerPrefs.GetInt(BLUEPREF);

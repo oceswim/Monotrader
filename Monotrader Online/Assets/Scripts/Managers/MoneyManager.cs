@@ -50,8 +50,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
     private Player myPlayer;
     private Room myRoom;
-    private string actorNumber;
-    private bool playersReady,updateOnceFortune, updateOnceGUI,setUpOnceTrend,changeTurn;
+    private bool playersReady,updateOnceFortune, updateOnceGUI,setUpOnceTrend;
 
     private List<Player> notReadyPlayers = new List<Player>();
 
@@ -95,8 +94,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     {
 
         PopulateTrendsList();
-        actorNumber = myPlayer.ActorNumber.ToString();
-        playersReady =setUpOnceTrend=changeTurn= false;
+        playersReady =setUpOnceTrend= false;
         myRoom = GameManager.myRoom;
         InitialiseHistoryPrefs();
 
@@ -159,10 +157,8 @@ public class MoneyManager : MonoBehaviourPunCallBacks
                         playersReady = true;
                         waitingForObject.SetActive(false);
                         SetInitialAmounts(myPlayer.IsMasterClient);
-                        //set setctions object to true
+                    
                         sectionsManagerObject.SetActive(true);
-                        FriendsManager.initialFortune = true;
-
 
                     }
                 }
@@ -179,11 +175,12 @@ public class MoneyManager : MonoBehaviourPunCallBacks
                             Wait(2);
                             if (updateOnceFortune)
                             {
+
                                 UpdateFortune();
                                 updateOnceFortune = false;
 
                             }
-
+                            
 
                             UpdateTrendDisplay();
                             UpdateHistoryGUI();
@@ -320,6 +317,8 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         PLAYER_EUROS= myEuros;
         PLAYER_POUNDS= myPounds;
         PLAYER_YENS= myYens;
+
+        PLAYER_FORTUNE = PLAYER_GOLD + PLAYER_DOLLARS + PLAYER_EUROS + PLAYER_POUNDS + PLAYER_YENS;
 
         float initD;
         float initE;
@@ -666,6 +665,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
 
         UpdateAmountText();
         UpdateMaxCurrency();
+
         if (!updateOnceFortune)
         {
             FriendsManager.changeFortune = true;
@@ -684,7 +684,8 @@ public class MoneyManager : MonoBehaviourPunCallBacks
         float gold =PLAYER_GOLD;
 
         double totalFortune = Math.Round(euros + dollars + pounds + yens + gold, MidpointRounding.AwayFromZero);
-        PLAYER_FORTUNE= (float)totalFortune;
+      
+        PLAYER_FORTUNE = (float)totalFortune;
         float total = PLAYER_FORTUNE + PLAYER_SAVINGS;
         totalFortuneText.text = total.ToString();
         //SetRoomAmounts(gold, dollars, euros, pounds, yens);//each player modifies its room amount.

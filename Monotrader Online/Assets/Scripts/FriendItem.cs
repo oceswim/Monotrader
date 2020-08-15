@@ -39,6 +39,7 @@ public class FriendItem : MonoBehaviourPunCallBacks {
 
 		NameLabel.text = string.Empty;
 		FortuneLabel.text = string.Empty;
+		
 		//call the rpc to update everyone's colors in friends manager 
 	}
 
