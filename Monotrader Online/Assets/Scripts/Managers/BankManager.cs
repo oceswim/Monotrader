@@ -9,7 +9,7 @@ public class BankManager : MonoBehaviourPunCallBacks
 {
     //private variable
     private const int INITIAL_GOLD = 10000;
-    private const int INITIAL_CURRENCIES = 5000;
+    private const int INITIAL_CURRENCIES = 7500;
     private GameObject GoldBank, DollarsBank, EurosBank, PoundsBank, YensBank;
     private BankScript goldB, dollarsB, eurosB, poundsB, yensB;
     private Room myRoom;
@@ -23,7 +23,7 @@ public class BankManager : MonoBehaviourPunCallBacks
 
     private bool UpdateOnce;
 
-    public static bool Trigger;
+    public static bool Trigger,simpleUpdate;
     //public variables
     public const string GOLD_BANK = "GoldBank";
     public const string DOLLARS_BANK = "DollarsBank";
@@ -100,7 +100,18 @@ public class BankManager : MonoBehaviourPunCallBacks
             
                 
         }
-           
+          if(simpleUpdate)
+        {
+            simpleUpdate = false;
+
+            int g = CheckValue(GOLD_UPDATE);
+            int d = CheckValue(DOLLARS_UPDATE);
+            int e = CheckValue(EUROS_UPDATE);
+            int p = CheckValue(POUNDS_UPDATE);
+            int y = CheckValue(YENS_UPDATE);
+            UpdateMyGUI(g, d, e, p, y);
+
+        }
   
         
     }

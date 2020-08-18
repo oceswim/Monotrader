@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.UI;
+
 //all players
 public class VariationManager : MonoBehaviour
 {
@@ -22,12 +23,14 @@ public class VariationManager : MonoBehaviour
     private float euros, dollars, pounds, yens;
     public static bool worldVar,nationalVar;
     public TMP_Text nationalText, worldText;
-    public GameObject theWheel, confirmButton,panelNational,wheelPanel;
+    public GameObject theWheel, confirmButton,panelNational,wheelPanel,increaseObject,decreaseObject;
+    public Animator historyAnimation;
     public AudioSource wheelSpinningSound;
     private bool spin;
     private float rotSpeed;
     public static bool BeginProcess;
     public Button worldConfirm;
+    private int theMode;
     //either one or all currencies increase or decrease their value of 5%
     void Start()
     {
@@ -43,6 +46,7 @@ public class VariationManager : MonoBehaviour
     {
         if (BeginProcess)
         {
+            theMode = 0;
             BeginProcess = false;
             GetRoomProperties();
         }
@@ -70,6 +74,22 @@ public class VariationManager : MonoBehaviour
             theWheel.transform.Rotate(0, 0, rotSpeed);
             Spinning();
         }  
+
+        if(increaseObject.activeSelf || decreaseObject.activeSelf)
+        {
+            if (!historyAnimation.GetBool("BlinkH"))
+            {
+                historyAnimation.SetBool("BlinkH", true);
+            }
+        }
+        else
+        {
+            if(historyAnimation.GetBool("BlinkH"))
+            {
+                historyAnimation.SetBool("BlinkH",false);
+               
+            }
+        }
     }
     private void GetRoomProperties()
     {
@@ -93,11 +113,13 @@ public class VariationManager : MonoBehaviour
             case 0://less value
                 delta = LESS_VALUE;
                 mode = "less";
+                theMode = 1;
                 trendDelta = -.05f;
                 break;
             case 1://more value
                 delta = MORE_VALUE;
                 mode = "more";
+                theMode = 2;
                 trendDelta = .05f;
                 break;
         }
@@ -180,11 +202,13 @@ public class VariationManager : MonoBehaviour
                 delta = LESS_VALUE;
                 trendDelta = -.05f;
                 mode = "less";
+                theMode = 1;
                 break;
             case 1://more value
                 delta = MORE_VALUE;
                 trendDelta = .05f;
                 mode = "more";
+                theMode = 2;
                 break;
         }
         float newTrend;
@@ -229,7 +253,7 @@ public class VariationManager : MonoBehaviour
 
         }
         panelNational.SetActive(true);
-        nationalText.text = $"Something went wrong with {nationality} markets. {currency} are now {mode} expensive";
+        nationalText.text = $"The {nationality} markets collapsed. {currency} are now {mode} expensive";
         confirmButton.SetActive(true);
     }
     public void StartNational()
@@ -277,6 +301,19 @@ public class VariationManager : MonoBehaviour
     }
     public void Done()
     {
+        Debug.Log("THE MODE :" + theMode);
+        switch(theMode)
+        {
+            case 1:
+                Debug.Log("its a decrease");
+                decreaseObject.SetActive(true);
+                break;
+            case 2:
+                Debug.Log("its a increase");
+                increaseObject.SetActive(true);
+                break;
+
+        }
         BoardManager.NextTurn();
     }
 

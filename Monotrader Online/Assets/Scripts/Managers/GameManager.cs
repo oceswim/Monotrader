@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     private const string TURN_COUNT = "turnCountOverall";
     private const string PLAYERS_NEW_TURN = "Player_new_turn";
     private const int FINAL_SECONDS = 6;
+    private const int PENALTY_AMOUNT=500;
 
     //private variables
     private Player myPlayer;
@@ -44,9 +45,9 @@ public class GameManager : MonoBehaviourPunCallBacks
     //public variables
     public AudioSource mainTheme;
     public AudioSource secondaryTheme;
-    public AudioSource newTurnSFX;
     public bool gameCanStart,myTurn;
-    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject,yourTurnTextObject, SidePanelChat,SidePanelFriendsList;
+    public GameObject DiceUI,Dice, gameModeMaster,gameModeOther,timerTurnObject,yourTurnTextObject, SidePanelChat,SidePanelFriendsList,nonRollMessage,bankingsObject;
+    public Animator bankingsAnim;
     public TMP_Text timerTurnText;
 
 
@@ -188,6 +189,21 @@ public class GameManager : MonoBehaviourPunCallBacks
 
         }
 
+        Debug.Log("is bak active :" + bankingsObject.activeSelf);
+        if (bankingsObject.activeSelf || nonRollMessage.activeSelf)
+        {
+            if (!bankingsAnim.GetBool("BlinkB"))
+            {
+                bankingsAnim.SetBool("BlinkB", true);
+            }
+        }
+        else
+        {
+            if (bankingsAnim.GetBool("BlinkB"))
+            {
+                bankingsAnim.SetBool("BlinkB", false);
+            }
+        }
 
     }
 
@@ -216,22 +232,43 @@ public class GameManager : MonoBehaviourPunCallBacks
         else
         {
             ResetTimer();
-            DiceUI.SetActive(false);
+            //if player rolled and is not trading, we cancel the current action and it's othe rplayer turn.
             if(!actionInPlace.Equals("null"))
             {
                 MechanicsManager.instance.DeactivateMechanic(actionInPlace);
+                NonRollingPenalty(2);
             }
-            if (myRoom.PlayerCount == 1)
-            {
-
-                RollDices(false);
-            }
+            //else we roll the dice for him
             else
             {
-                BoardManager.NextTurn();
+                RollDices(false);
+                DiceUI.SetActive(false);
+                NonRollingPenalty(1);
             }
+            
+            
+            
+            //remove 500 of gold or the highest currency
+            
+   
          
         }
+    }
+    private void NonRollingPenalty(int mode)
+    {
+        MoneyManager.PLAYER_GOLD -= PENALTY_AMOUNT;
+        BankManager.instance.UpdateGold(PENALTY_AMOUNT);
+        nonRollMessage.SetActive(true);
+        if (mode == 1)
+        {
+            BankManager.simpleUpdate = true;
+        }
+        else
+        {
+            BankManager.Trigger = true;
+        }
+        MoneyManager.instance.UpdateFortuneInGame();
+        
     }
     private void ResetTimer()
     {
@@ -429,12 +466,7 @@ public class GameManager : MonoBehaviourPunCallBacks
         SetRoomPlayersNewTurn(1);
         int playersTurnUpdated = (int)myRoom.CustomProperties[PLAYERS_NEW_TURN];
         NewTurnMechanic();
-        /*if (playersTurnUpdated == PhotonNetwork.PlayerList.Length)
-        {
-            SetRoomPlayersNewTurn(0);
-            UpdateTurnCount();//overall turn gets increased
-            MoneyManager.newTurnFortune = true;
-        }*/
+
         
         MoneyManager.newTurnFortune = true;//allows to update the current bankings value based on the new trends.
     }
@@ -447,7 +479,7 @@ public class GameManager : MonoBehaviourPunCallBacks
     private void NewTurnMechanic()//one player cross new turn
     {
         MoneyManager.instance.NewTurnFunction();
-        newTurnSFX.Play();
+        bankingsObject.SetActive(true);
         MoneyManager.PLAYER_GOLD += 2000;
         BankManager.instance.UpdateGold(-2000);
         BankManager.Trigger = true;

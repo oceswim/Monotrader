@@ -45,7 +45,7 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     private string HISTORY_TURN_M1 = "History_Turn_Minus1";
     private string HISTORY_TURN_M2 = "History_Turn_Minus2";
     private string HISTORY_TURN_M3 = "History_Turn_Minus3";
-
+    private int trendUpdateActivator = 0;
     private float myGold, myDollars, myEuros, myYens, myPounds;
 
     private Player myPlayer;
@@ -55,7 +55,8 @@ public class MoneyManager : MonoBehaviourPunCallBacks
     private List<Player> notReadyPlayers = new List<Player>();
 
     public TMP_Text goldAmount, dollarsAmount, eurosAmount, poundsAmount, yenAmount, waitingForText, totalFortuneText;
-    public GameObject waitingForObject,sectionsManagerObject;
+    public GameObject waitingForObject,sectionsManagerObject,resetObject;
+    public Animator TrendAnimator;
     public TMP_Text[] dollarsTrendInGame, eurosTrendInGame, poundsTrendInGame, yensTrendInGame, dHistory, eHistory, pHistory, yHistory;
 
     public static float PLAYER_GOLD;
@@ -275,7 +276,23 @@ public class MoneyManager : MonoBehaviourPunCallBacks
                 }
 
             }
+
+            
         }
+        if (resetObject.activeSelf)
+        {
+            Debug.Log("Blink t true");
+            TrendAnimator.SetBool("BlinkT", true);
+
+        }
+        else
+        {
+            if (TrendAnimator.GetBool("BlinkT"))
+            {
+                TrendAnimator.SetBool("BlinkT", false);
+            }
+        }
+
     }
 
     //the trends list for each currency, from .9 to 1.1 value
@@ -399,7 +416,12 @@ public class MoneyManager : MonoBehaviourPunCallBacks
                yensTrendInGame[i].enabled = true;
                 
             }
+            
+             resetObject.SetActive(true);
+                
+            
         }
+
         dollarsTrendInGame[d].enabled = false;
         eurosTrendInGame[e].enabled = false;
         poundsTrendInGame[p].enabled = false;

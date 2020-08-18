@@ -15,24 +15,24 @@ public class TradingManager : MonoBehaviour
 
     private Room myRoom;
 
-    public Button confirmButton,handleButton;
+    public Button confirmButton;
     public GameObject[] myTitles = new GameObject[4];
     public GameObject malusObject, valueMinimumText;
     public TMP_InputField myInputField;
     public Toggle buyToggle, sellToggle;
     public TMP_Text currencyText, valueText, notEnoughText,savingsText,trendValueText,availableGoldText,availableCurrencyText;
     private int tradingMode, currencyMode; // 0 is buy 1 is sell
-    public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading, BeginProcess;
+    public static bool eurosTrading, poundsTrading, dollarsTrading, yensTrading, BeginProcess,stopProcess;
     private float currencyPriceInGold;
     private double latestValue;
     private string currencyModeText;
     private float currencyToChange;
-    private bool penalty;
+    private bool penalty,enoughCurrency;
     // Start is called before the first frame update
     void Start()
     {
         myRoom = GameManager.myRoom;
-
+        stopProcess =enoughCurrency= false;
     }
 
     // Update is called once per frame
@@ -42,8 +42,10 @@ public class TradingManager : MonoBehaviour
         if (eurosTrading)
         {
             currencyToChange = MoneyManager.PLAYER_EUROS;
+            
             eurosTrading = false;
-            myTitles[1].SetActive(true);
+            Debug.Log("SETTING EUROS TO TRUE");
+            ActivateProperTitle(1);
             currencyModeText = "€";
             currencyPriceInGold = (float)myRoom.CustomProperties[EUROS_PRICE];
             currencyMode = 2;
@@ -52,7 +54,8 @@ public class TradingManager : MonoBehaviour
         {
             currencyToChange = MoneyManager.PLAYER_DOLLARS;
             dollarsTrading = false;
-            myTitles[0].SetActive(true);
+            Debug.Log("SETTING d TO TRUE");
+            ActivateProperTitle(0);
             currencyModeText = "$";
             currencyPriceInGold = (float)myRoom.CustomProperties[DOLLARS_PRICE];
             currencyMode = 1;
@@ -61,7 +64,8 @@ public class TradingManager : MonoBehaviour
         {
             currencyToChange = MoneyManager.PLAYER_POUNDS;
             poundsTrading = false;
-            myTitles[2].SetActive(true);
+            Debug.Log("SETTING p TO TRUE");
+            ActivateProperTitle(2);
             currencyModeText = "£";
             currencyPriceInGold = (float)myRoom.CustomProperties[POUNDS_PRICE];
             currencyMode = 3;
@@ -70,13 +74,19 @@ public class TradingManager : MonoBehaviour
         {
             currencyToChange = MoneyManager.PLAYER_YENS;
             yensTrading = false;
-            myTitles[3].SetActive(true);
+            Debug.Log("SETTING y TO TRUE");
+            ActivateProperTitle(3);
             currencyModeText = "¥";
             currencyPriceInGold = (float)myRoom.CustomProperties[YEN_PRICE];
             currencyMode = 4;
         }
         if (BeginProcess)
         {
+            if (currencyToChange > 0)
+            {
+                enoughCurrency = true;
+            }
+            else { enoughCurrency = false; }
             if (GameManager.malusOn)
             {
 
@@ -84,16 +94,32 @@ public class TradingManager : MonoBehaviour
                 malusObject.SetActive(true);
 
             }
-            UiManager.tradeOn = true;
+         
             tradingMode = 0;//set to buy intially.
             ShowAvailabilities();
             UpdateText(tradingMode);
-            CheckMin();
+            CheckMin(enoughCurrency);
             BeginProcess = false;
         }
     }
 
-
+    private void ActivateProperTitle(int index)
+    {
+        for(int i=0;i<myTitles.Length;i++)
+        {
+            if(i == index)
+            {
+                myTitles[i].SetActive(true);
+            }
+            else
+            {
+                if(myTitles[i].activeSelf)
+                {
+                    myTitles[i].SetActive(false);
+                }
+            }
+        }
+    }
     public void UpdateTextValue(string value) // check here if the value is less than what's in the bank + is less than what player has. otherwise need to put less.
     {
 
@@ -250,7 +276,7 @@ public class TradingManager : MonoBehaviour
     {
         if (buyToggle.isOn)
         {
-            
+           
             tradingMode = 0;
             UpdateText(tradingMode);
             Debug.Log("Switching to buy");
@@ -268,16 +294,31 @@ public class TradingManager : MonoBehaviour
         }
 
     }
+
+    private void EmptyGold()
+    {
+        if(buyToggle.isOn)
+        {
+            buyToggle.isOn = false;
+            buyToggle.interactable = false;
+        }
+        sellToggle.isOn = true;
+        UpdateText(1);
+    }
     private void UpdateText(int mode)
     {
 
         switch (mode)
         {
             case 0://buy
+                if (!buyToggle.interactable)
+                { buyToggle.interactable = true; }
                 currencyText.text = "G =";
                 valueText.text = "0 " + currencyModeText;
                 break;
             case 1://sell
+                if (!sellToggle.interactable)
+                { sellToggle.interactable = true; }
                 currencyText.text = currencyModeText + " =";
                 valueText.text = "0 G";
                 break;
@@ -291,16 +332,16 @@ public class TradingManager : MonoBehaviour
         availableCurrencyText.text = $"You have {currencyToChange.ToString()}{currencyModeText}";
         trendValueText.text = $"1G = {currencyPriceInGold.ToString()}{currencyModeText}";
     }
-    private void CheckMin()
+    private void CheckMin(bool enoughCurr)
     {
+        
         if (MoneyManager.PLAYER_GOLD == 0)
         {
             if (MoneyManager.PLAYER_SAVINGS == 0)
             {
-                SwitchModes();//since not enough gold we switch directly to sell
-                handleButton.interactable = false;
+                EmptyGold();//since not enough gold we switch directly to sell
                 float rawValueGold = GetAmountToGiveInGold();
-                if (dollarsTrading)
+                if (currencyMode==1)//might be false so need to use currency mode 
                 {
                     if (MoneyManager.PLAYER_DOLLARS == 0)
                     {
@@ -311,10 +352,10 @@ public class TradingManager : MonoBehaviour
                         float price = (float)myRoom.CustomProperties[DOLLARS_PRICE];
                         float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_DOLLARS += toAdd;
-
+                        currencyToChange = MoneyManager.PLAYER_DOLLARS;
                     }
                 }
-                else if (eurosTrading)
+                else if (currencyMode==2)
                 {
                     if (MoneyManager.PLAYER_EUROS == 0)
                     {
@@ -322,9 +363,10 @@ public class TradingManager : MonoBehaviour
                         float price = (float)myRoom.CustomProperties[EUROS_PRICE];
                         float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_EUROS += toAdd;
+                        currencyToChange = MoneyManager.PLAYER_EUROS;
                     }
                 }
-                else if (poundsTrading)
+                else if (currencyMode==3)
                 {
                     if (MoneyManager.PLAYER_POUNDS == 0)
                     {
@@ -332,9 +374,10 @@ public class TradingManager : MonoBehaviour
                         float price = (float)myRoom.CustomProperties[POUNDS_PRICE];
                         float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_POUNDS += toAdd;
+                        currencyToChange = MoneyManager.PLAYER_POUNDS;
                     }
                 }
-                else if (yensTrading)
+                else if (currencyMode==4)
                 {
                     if (MoneyManager.PLAYER_YENS == 0)
                     {
@@ -342,6 +385,7 @@ public class TradingManager : MonoBehaviour
                         float price = (float)myRoom.CustomProperties[YEN_PRICE];
                         float toAdd = (float)Math.Round((rawValueGold / price), MidpointRounding.AwayFromZero);
                         MoneyManager.PLAYER_YENS += toAdd;
+                        currencyToChange = MoneyManager.PLAYER_YENS;
                     }
 
                 }
@@ -349,7 +393,7 @@ public class TradingManager : MonoBehaviour
                 {
                     penalty = false;
                     MoneyManager.PLAYER_GOLD -= 500;
-                    
+                    ShowAvailabilities();
                 }
                 MoneyManager.instance.UpdateAmountText();
                 MoneyManager.instance.UpdateMaxCurrency();
@@ -362,6 +406,22 @@ public class TradingManager : MonoBehaviour
                 MoneyManager.instance.UpdateAmountText();
             }
         }
+        else
+        {
+            if(MoneyManager.PLAYER_GOLD>0)
+            {
+                if(enoughCurr)
+                {
+                    sellToggle.interactable = true;
+                }
+                else
+                {
+                    sellToggle.interactable = false;
+                }
+            }
+        }
+        
+    
 
         
     }
@@ -433,25 +493,30 @@ public class TradingManager : MonoBehaviour
             myInputField.text = string.Empty;
             buyToggle.isOn = true;
             sellToggle.isOn = false;
-            
-            if (myTitles[0].activeSelf)
-            {
-                myTitles[0].SetActive(false);
-            }
-            if (myTitles[1].activeSelf)
-            {
-                myTitles[1].SetActive(false);
-            }
-            if (myTitles[2].activeSelf)
-            {
-                myTitles[2].SetActive(false);
-            }
-            if (myTitles[3].activeSelf)
-            {
-                myTitles[3].SetActive(false);
-            }
+            DeactivateTitle();
+           
         }
 
+    }
+    public void DeactivateTitle()
+    {
+
+        if (myTitles[0].activeSelf)
+        {
+            myTitles[0].SetActive(false);
+        }
+        if (myTitles[1].activeSelf)
+        {
+            myTitles[1].SetActive(false);
+        }
+        if (myTitles[2].activeSelf)
+        {
+            myTitles[2].SetActive(false);
+        }
+        if (myTitles[3].activeSelf)
+        {
+            myTitles[3].SetActive(false);
+        }
     }
     private void UpdateMoneyManagerAmounts(int mode, float value)
     {

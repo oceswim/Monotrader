@@ -9,6 +9,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
 {
     private const string FORTUNE = "myFortune";
     private const string WIN_MESSAGE = "Congrats ! You won the game!";
+    private const string DRAW_MESSAGE = "Congrats ! You reached the end, it's a draw!";
     public const string TIMER_TOGGLE_NAME = "Timer";
     public const string SCORE_TOGGLE_NAME = "ScoreReach";
     public const string STARTED_ALREADY = "startedAlready";
@@ -27,10 +28,10 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     private Player myPlayer;
     public AudioSource ClockTicks,winSound,loseSound;
     public Toggle timeLimit, scoreLimit;
-    public GameObject MasterPanel, OtherPanel, display, charSelectionPanel, winPanel, losePanel, diceRollButton, bankManager;
+    public GameObject MasterPanel, OtherPanel, display, charSelectionPanel, winPanel, losePanel, diceRollButton, bankManager,scoresPanel,line2Panel;
     public PrefabSpawner thePrefabSpawner;
     public StatePresetManager theStateManager;
-    public TMP_Text gameModeText,lostText,wonText;
+    public TMP_Text gameModeText,lostText,wonText,p1Score,p2Score,p3Score,p4Score;
 
     public static bool checkFortune, playerNameTagOn, arrivedLate, disqualified;
 
@@ -122,7 +123,14 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                         }
                         if (goodToGo)
                         {
-                            CheckWinner();
+                            if (PhotonNetwork.PlayerListOthers.Length > 0)
+                            {
+                                CheckWinner();
+                            }
+                            else
+                            {
+                                EndGameMessage();
+                            }
                             timerOn = false;
                         }
                         
@@ -247,6 +255,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     {
         float winnerFortune = MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS;
         winnerName = myPlayer.NickName;
+        int draw = 0;
         foreach(Player p in PhotonNetwork.PlayerListOthers)
         {
 
@@ -258,12 +267,33 @@ public class GameModeManager : MonoBehaviourPunCallbacks
                 winnerName = p.NickName;
 
             }
+            else
+            {
+                draw++;
+            }
+        }
+        if(draw.Equals(PhotonNetwork.PlayerListOthers.Length))
+        {
+            winnerName = "draw";
         }
         if (!photonView.IsMine)
         {
             photonView.TransferOwnership(myPlayer);
         }
         photonView.RPC("WinnerPanelActivation", RpcTarget.AllBuffered, winnerName);
+
+    }
+    private void EndGameMessage()
+    {
+       
+        winnerName = myPlayer.NickName;
+        DeactivateRollButton();
+        DisplayWinPannel();
+        winPanel.SetActive(true);
+        scoresPanel.SetActive(true);
+        ShowScores();
+        winSound.Play();
+        wonText.text = "You reached the end of the game, congrats!";
 
     }
     [PunRPC]
@@ -292,12 +322,17 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void WinnerPanelActivation(string name)
     {
+        ChangeStateTime(false);
         DeactivateRollButton();
         if(name.Equals(myPlayer.NickName))
         {
 
             DisplayWinPannel();
 
+        }
+        else if (name.Equals("draw"))
+        {
+            DisplayDrawPanel();
         }
         else
         {
@@ -318,6 +353,7 @@ public class GameModeManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void WinnerPanelActivationAfterDQ(string name)
     {
+        
         DeactivateRollButton();
         if (name.Equals(myPlayer.NickName))
         {
@@ -337,16 +373,72 @@ public class GameModeManager : MonoBehaviourPunCallbacks
             diceRollButton.SetActive(false);
         }
     }
+    private void DisplayDrawPanel()
+    {
+        winPanel.SetActive(true);
+        scoresPanel.SetActive(true);
+        ShowScores();
+        winSound.Play();
+        wonText.text = DRAW_MESSAGE;
+    }
     private void DisplayWinPannel()
     {
-
         winPanel.SetActive(true);
+        scoresPanel.SetActive(true);
+        ShowScores();
+        
         winSound.Play();
         wonText.text = WIN_MESSAGE;
-    }    
+    }
+    private void ShowScores()
+    {
+        switch(myRoom.PlayerCount)
+        {
+            case 1:
+                line2Panel.SetActive(false);
+                p2Score.gameObject.SetActive(false);
+                break;
+            case 2:
+                line2Panel.SetActive(false);
+                break;
+            case 3:
+                p4Score.gameObject.SetActive(false);
+                break;
+        }
+        foreach (Player p in PhotonNetwork.PlayerList)
+        {
+            if (p.ActorNumber == 1)
+            {
+                float total = MoneyManager.PLAYER_FORTUNE + MoneyManager.PLAYER_SAVINGS;
+                p1Score.text = "Your score:\n" + total.ToString();
+            }
+            else
+            {
+                string key = "Player" + p.ActorNumber + "Fortune";
+                float total = (float)myRoom.CustomProperties[key];
+                if (p.ActorNumber == 2)
+                {
+                    p2Score.text = "P2 score:\n" + total.ToString();
+                }
+                else if (p.ActorNumber == 3)
+                {
+                    p3Score.text = "P3 score:\n" + total.ToString();
+                }
+                else if (p.ActorNumber == 4)
+                {
+                    p4Score.text = "Your score:\n" + total.ToString();
+                }
+            }
+
+
+
+        }
+    }
     private void DisplayLosePannel(string theWinner)
     {
         losePanel.SetActive(true);
+        scoresPanel.SetActive(true);
+        ShowScores();
         loseSound.Play();
         lostText.text = $"Sorry but {theWinner} won this game... Your time will come soon!";
     }
@@ -385,6 +477,17 @@ public class GameModeManager : MonoBehaviourPunCallbacks
         while (myRoom.CustomProperties[hashKey] == null)
         {
             Debug.Log("Waiting");
+        }
+    }
+    public void ChangeStateTime(bool on)
+    {
+        if(on)
+        {
+            Time.timeScale = 1;
+        }
+        else
+        {
+            Time.timeScale = 0;
         }
     }
 }

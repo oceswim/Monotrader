@@ -27,6 +27,8 @@ public class CrisisManager : MonoBehaviour
     public Button confirmButton;
     public TMP_Text crisisText;
     public static bool BeginProcess;
+    public GameObject increaseObject;
+    public Animator historyAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +42,22 @@ public class CrisisManager : MonoBehaviour
         {
             WhichCurrency();
             BeginProcess = false;
+        }
+
+        if(increaseObject.activeSelf)
+        {
+            if (!historyAnimator.GetBool("BlinkH"))
+            {
+
+                historyAnimator.SetBool("BlinkH", true);
+            }
+        }
+        else
+        {
+            if(historyAnimator.GetBool("BlinkH"))
+            {
+                historyAnimator.SetBool("BlinkH", false);
+            }
         }
     }
     // Update is called once per frame
@@ -140,7 +158,6 @@ public class CrisisManager : MonoBehaviour
                 break;
 
         }
-        Debug.Log($"The which trend {whichTrend} and new trend {newTrend}");
         SetRoomProperty(whichTrend, newTrend);
         double newPrice = Math.Round((float)myRoom.CustomProperties[whichPrice] * CRISISAMOUNT,2);
         SetRoomProperty(whichPrice, (float)newPrice);
@@ -154,15 +171,7 @@ public class CrisisManager : MonoBehaviour
             
             if (affectedCurrencies.IndexOf(s) == (affectedCurrencies.Count - 1))
             {
-                if(affectedCurrencies.Count>1)
-                {
-                    text += s + " are affected.";
-                }
-                else
-                {
-                    text += s + " is affected.";
-                }
-                
+                    text += s + " will increase of 15%.";
             }
             else if(affectedCurrencies.IndexOf(s) == (affectedCurrencies.Count - 2))
             {
@@ -180,7 +189,7 @@ public class CrisisManager : MonoBehaviour
 
     public void Done()
     {
-
+        increaseObject.SetActive(true);
         BoardManager.NextTurn();
     }
     private void SetRoomProperty(string hashKey, float value)

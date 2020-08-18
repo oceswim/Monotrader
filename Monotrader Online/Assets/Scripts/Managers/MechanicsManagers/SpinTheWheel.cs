@@ -97,6 +97,7 @@ public class SpinTheWheel : MonoBehaviour
          {
              mode1 = true;
              MoneyManager.PLAYER_GOLD -= 250;
+            //adding to the bank
              BankManager.instance.UpdateGold(250);
 
          }

@@ -52,10 +52,7 @@ public class BoardManager : MonoBehaviourPunCallbacks
     {
 
         PositionManager(index);
-
- 
-
-       
+  
         if (turn)
         {
           newTurn = turn;

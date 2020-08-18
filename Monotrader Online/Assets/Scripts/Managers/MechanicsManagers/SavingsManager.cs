@@ -11,13 +11,14 @@ public class SavingsManager : MonoBehaviour
     public TMP_Text savingsText,totalSavings;
     public Button yesButton, noButton;
     public static bool BeginProcess,updateSavings;
-    
+    public GameObject savingsObject;
     // Start is called before the first frame update
   
     private void Update()
     {
         if(BeginProcess)
         {
+   
             myGold = MoneyManager.PLAYER_GOLD;
             myFortune = MoneyManager.PLAYER_FORTUNE;
             SetSavingsText();
@@ -28,6 +29,9 @@ public class SavingsManager : MonoBehaviour
             updateSavings = false;
             totalSavings.text = MoneyManager.PLAYER_SAVINGS.ToString() + " G";
         }
+
+        
+
     }
     private void SetSavingsText()
     {
@@ -41,6 +45,7 @@ public class SavingsManager : MonoBehaviour
     }
     public void Accept()
     {
+        
         if (MoneyManager.PLAYER_SAVINGS==0)
         {
           float oldPercentage = MoneyManager.PLAYER_SAVINGS;
@@ -61,6 +66,7 @@ public class SavingsManager : MonoBehaviour
     }
     public void Done()
     {
+        savingsObject.SetActive(true);
         BoardManager.NextTurn();
     }
 }

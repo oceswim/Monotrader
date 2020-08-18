@@ -8,12 +8,16 @@ public class AnimationManager : MonoBehaviour
     private const float END_DELTA = 1.2f;
     private const float _interpTime = .8f;
     public AudioSource yourTurnSFX;
+    private float initialVolume;
     private void Start()
     {
-
         myAnimator = GetComponent<Animator>();
+        initialVolume = yourTurnSFX.volume;
     }
-
+    private void OnDisable()
+    {
+        yourTurnSFX.volume = initialVolume;
+    }
     private void Update()
     {
         if (myAnimator != null)
@@ -46,8 +50,9 @@ public class AnimationManager : MonoBehaviour
     
     private void UpdateAudioVolume(float alpha)
     {
-
-        yourTurnSFX.volume -= (alpha/4);
+        
+            yourTurnSFX.volume -= (alpha / 4);
+        
         
     }
 }

@@ -5,7 +5,9 @@ public class MechanicsManager : MonoBehaviour
     public static MechanicsManager instance = null;
 
 
-    public GameObject currenciesObject, taxesObject, crisisObject, nationalobject, worldWideObject, luckObject, savingsObject, blackTuesdayObject;
+    public GameObject currenciesObject, taxesObject, crisisObject, nationalobject, worldWideObject, luckObject, savingsObject, blackTuesdayObject,savingsAnimObject,savingsPanelObject;
+    public Animator savingsAnim;
+
     public TMP_Text savingsText;
     // Start is called before the first frame update
 
@@ -28,7 +30,24 @@ public class MechanicsManager : MonoBehaviour
     {
         savingsText.text = "0 G";
     }
-
+    private void Update()
+    {
+        if (savingsAnimObject.activeSelf)
+        {
+            if (!savingsAnim.GetBool("BlinkS"))
+            {
+                savingsAnim.SetBool("BlinkS", true);
+            }
+        }
+        else
+        {
+            if (savingsAnim.GetBool("BlinkS"))
+            {
+                savingsAnim.SetBool("BlinkS", false);
+                savingsPanelObject.SetActive(false);
+            }
+        }
+    }
     public void DeactivateMechanic(string mechanic)
     {
         switch(mechanic)
@@ -66,6 +85,7 @@ public class MechanicsManager : MonoBehaviour
         GameManager.actionInPlace = "currency";
         currenciesObject.SetActive(true);
         TradingManager.BeginProcess = true;
+
         switch (mode)
         {
             case "euros":

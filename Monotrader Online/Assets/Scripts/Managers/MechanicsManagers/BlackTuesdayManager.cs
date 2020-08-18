@@ -23,6 +23,8 @@ public class BlackTuesdayManager : MonoBehaviour
     public TMP_Text blackTuesdayText;
     public static bool BeginProcess;
     public Button confirm;
+    public GameObject increaseObject;
+    public Animator historyAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,7 +44,20 @@ public class BlackTuesdayManager : MonoBehaviour
             WorldVariation();
             BeginProcess = false;
         }
-        
+        if(increaseObject.activeSelf)
+        {
+            if (!historyAnimator.GetBool("BlinkH"))
+            {
+                historyAnimator.SetBool("BlinkH", true);
+            }
+        }
+        else
+        {
+            if(historyAnimator.GetBool("BlinkH"))
+            {
+                historyAnimator.SetBool("BlinkH", false);
+            }
+        }
     }
     // Update is called once per frame
     private void SetDelta()
@@ -65,7 +80,7 @@ public class BlackTuesdayManager : MonoBehaviour
         double roundYens = Math.Round(yens, 2);
      
         SetNewPrices((float)roundDollars, (float)roundEuros, (float)roundPounds, (float)roundYens);
-        blackTuesdayText.text = $"Something horrible happened. Every currencies increased of {increase*100}%";
+        blackTuesdayText.text = $"The trading market collapsed. Every currencies increased of {increase*100}%";
         confirm.interactable = true;
     }
     private void SetNewTrends(float val)
@@ -106,6 +121,7 @@ public class BlackTuesdayManager : MonoBehaviour
     }
     public void Done()
     {
+        increaseObject.SetActive(true);
         BoardManager.NextTurn();
     }
 }
